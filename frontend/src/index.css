@@ -44,11 +44,11 @@
     }
 
     .edit-button {
-        @apply p-[0.625rem] bg-warning-500 text-white-900 text-[0.875rem] rounded-[0.3125rem]   gap-[0.3125rem] leading-[1.125rem] justify-center items-center w-full hover:bg-warning-600 shadow-[0_5px_15px_rgba(0,0,0,0.15)] active:bg-success-700 active:shadow-none transition-all ease-in-out duration-200;
+        @apply p-[0.625rem] bg-warning-500 text-white-900 text-[0.875rem] rounded-[0.3125rem] flex  gap-[0.3125rem] leading-[1.125rem] justify-center items-center w-full hover:bg-warning-600 shadow-[0_5px_15px_rgba(0,0,0,0.15)] active:bg-warning-700 active:shadow-none transition-all ease-in-out duration-200;
     }
 
     .clearElement {
-        @apply p-[0.625rem] bg-error-500 text-white-900 text-[0.875rem] rounded-[0.5rem]  flex items-center gap-[0.3125rem] leading-[1.125rem] justify-center  w-1/2 hover:bg-error-600 shadow-[0_5px_15px_rgba(0,0,0,0.15)] active:bg-error-700 active:shadow-none transition-all ease-in-out duration-200;
+        @apply p-[0.625rem] bg-error-500 text-white-900 text-[0.875rem] rounded-[0.5rem]  flex items-center gap-[0.3125rem] leading-[1.125rem] justify-center  w-full hover:bg-error-600 shadow-[0_5px_15px_rgba(0,0,0,0.15)] active:bg-error-700 active:shadow-none transition-all ease-in-out duration-200;
     }
 
     .headerStyle {
@@ -733,9 +733,9 @@ body {
 .loginPage {
     height: 100vh;
     background: radial-gradient(
-            100% 316.36% at 0% 50%,
-            #0090a3 0%,
-            rgba(36, 86, 50, 0.9) 100%
+        100% 316.36% at 0% 50%,
+        #0090a3 0%,
+        rgba(36, 86, 50, 0.9) 100%
     );
 }
 
@@ -938,14 +938,13 @@ input[type='checkbox']:checked::before {
     left: 20px;
 }
 
-
 /* sale toggle*/
 
 .sale-toggle-container input[type='checkbox']:checked {
-    background: #86A7E9;
+    background: #86a7e9;
 }
 
 .sale-toggle-container input[type='checkbox']:checked::before {
     left: 20px;
-    background: #4175DC;
+    background: #4175dc;
 }

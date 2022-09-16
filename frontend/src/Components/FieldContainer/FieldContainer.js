@@ -1,31 +1,30 @@
 import Input from '../Inputs/Input'
 import SelectInput from '../SelectInput/SelectInput'
 
-function FieldContainer(
-    {
-        star,
-        maxWidth,
-        value,
-        onChange,
-        label,
-        placeholder,
-        type,
-        select,
-        disabled,
-        options,
-        border,
-        onKeyUp,
-        autoComplete
-    }) {
+function FieldContainer({
+    star,
+    maxWidth,
+    value,
+    onChange,
+    label,
+    placeholder,
+    type,
+    select,
+    disabled,
+    options,
+    border,
+    onKeyUp,
+    autoComplete,
+}) {
     return (
         <div
             className={
                 maxWidth
                     ? `${maxWidth} ${
-                        border
-                            ? 'border-r-[1px] border-r-blue-100 pr-[1.25rem]'
-                            : ''
-                    }`
+                          border
+                              ? 'border-r-[1px] border-r-blue-100 pr-[1.25rem]'
+                              : ''
+                      }`
                     : 'grow'
             }
         >

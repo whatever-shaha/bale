@@ -22,15 +22,17 @@ function MainPage() {
         t('Sentabr'),
         t('Oktabr'),
         t('Noyabr'),
-        t('Dekabr')
+        t('Dekabr'),
     ]
     const dispatch = useDispatch()
-    const {reports, monthlyReport} = useSelector(
-        (state) => state.reports
-    )
+    const {reports, monthlyReport} = useSelector((state) => state.reports)
     const {currencyType} = useSelector((state) => state.currency)
     const filterMonthlyReport = () => {
-        return monthlyReport ? (currencyType === 'USD' ? map(monthlyReport.salesSum, (item) => item.usd) : map(monthlyReport.salesSum, (item) => item.uzs)) : []
+        return monthlyReport
+            ? currencyType === 'USD'
+                ? map(monthlyReport.salesSum, (item) => item.usd)
+                : map(monthlyReport.salesSum, (item) => item.uzs)
+            : []
     }
     const filterMonthlyReportCount = () => {
         const arr = filterMonthlyReport()
@@ -43,7 +45,7 @@ function MainPage() {
                 new Date().getMonth(),
                 new Date().getDate()
             ).toISOString(),
-            endDate: new Date().toISOString()
+            endDate: new Date().toISOString(),
         }
         dispatch(getReports(body))
         dispatch(getCurrency())
@@ -73,25 +75,51 @@ function MainPage() {
                     nth={2}
                     text={
                         currencyType === 'UZS'
-                            ? reports?.income?.incomeuzs?.toLocaleString('ru-Ru')
+                            ? reports?.income?.incomeuzs?.toLocaleString(
+                                  'ru-Ru'
+                              )
                             : reports?.income?.income?.toLocaleString('ru-Ru')
                     }
                     label={t('Sof foyda')}
                 />
-                <DailyCircle nth={3} text={currencyType === 'UZS'
-                    ? reports?.expenses?.expensesuzs?.toLocaleString('ru-Ru')
-                    : reports?.expenses?.expenses?.toLocaleString('ru-Ru')} label={t('Xarajatlar')} />
+                <DailyCircle
+                    nth={3}
+                    text={
+                        currencyType === 'UZS'
+                            ? reports?.expenses?.expensesuzs?.toLocaleString(
+                                  'ru-Ru'
+                              )
+                            : reports?.expenses?.expenses?.toLocaleString(
+                                  'ru-Ru'
+                              )
+                    }
+                    label={t('Xarajatlar')}
+                />
             </div>
             <div className={'h-[25rem]'}>
                 <LineChart
-                    label={[t('Oylik sotuvlar soni'), `${months[new Date().getMonth()]} : ${monthlyReport?.sales.length > 0 ? monthlyReport.sales[monthlyReport.sales.length - 1] : 0} ${t('ta')}`]}
+                    label={[
+                        t('Oylik sotuvlar soni'),
+                        `${months[new Date().getMonth()]} : ${
+                            monthlyReport?.sales.length > 0
+                                ? monthlyReport.sales[
+                                      monthlyReport.sales.length - 1
+                                  ]
+                                : 0
+                        } ${t('ta')}`,
+                    ]}
                     arr={monthlyReport?.sales}
                 />
             </div>
             <div className={'flex gap-[5%] h-[25rem]'}>
                 <div className={'w-[65%]'}>
                     <LineChart
-                        label={[t('Oylik sotuvlar summasi'), `${months[new Date().getMonth()]} : ${filterMonthlyReportCount()} ${currencyType}`]}
+                        label={[
+                            t('Oylik sotuvlar summasi'),
+                            `${
+                                months[new Date().getMonth()]
+                            } : ${filterMonthlyReportCount()} ${currencyType}`,
+                        ]}
                         arr={filterMonthlyReport()}
                     />
                 </div>
@@ -103,7 +131,7 @@ function MainPage() {
                                 : monthlyReport?.monthExpense?.usd,
                             currencyType === 'UZS'
                                 ? monthlyReport?.monthProfit?.uzs
-                                : monthlyReport?.monthProfit?.usd
+                                : monthlyReport?.monthProfit?.usd,
                         ]}
                     />
                 </div>
@@ -111,6 +139,5 @@ function MainPage() {
         </section>
     )
 }
-
 
 export default MainPage
