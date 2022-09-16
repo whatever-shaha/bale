@@ -153,13 +153,20 @@ const navListForDirector = [
         submenu: [
             {
                 id: 1,
+                label: 'Hamkorlar',
+                path: 'dukonlar/hamkorlar',
+                icon: '',
+                submenu: false,
+            },
+            {
+                id: 2,
                 label: 'Filiallar',
                 path: 'dukonlar/filiallar',
                 icon: '',
                 submenu: false,
             },
             {
-                id: 2,
+                id: 3,
                 label: 'Almashinuv',
                 path: 'dukonlar/almashinuv',
                 icon: '',
