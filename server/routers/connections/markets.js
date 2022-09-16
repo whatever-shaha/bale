@@ -185,21 +185,28 @@ const answerToRequest = async (req, res) => {
     }
 
     if (connection.accept) {
-      await Market.findByIdAndUpdate(connection.first, {
-        connections: { $push: connection.second },
-      });
-
-      await Market.findByIdAndUpdate(connection.second, {
-        connections: { $push: connection.first },
-      });
+      const firstMarket = await Market.findById(connection.first).and([
+        { connections: connection.second },
+      ]);
+      const secondMarket = await Market.findById(connection.second).and([
+        { connections: connection.first },
+      ]);
+      !firstMarket &&
+        (await Market.findByIdAndUpdate(connection.first, {
+          $push: { connections: connection.second },
+        }));
+      !secondMarket &&
+        (await Market.findByIdAndUpdate(connection.second, {
+          $push: { connections: connection.first },
+        }));
     }
     if (connection.rejected) {
       await Market.findByIdAndUpdate(connection.first, {
-        connections: { pull: connection.second },
+        $pull: { connections: connection.second },
       });
 
       await Market.findByIdAndUpdate(connection.second, {
-        connections: { $pull: connection.first },
+        $pull: { connections: connection.first._id },
       });
     }
 
@@ -219,6 +226,10 @@ const answerToRequest = async (req, res) => {
           select: "firstname phone lastname",
         },
       });
+    if (!updatedConnection) {
+      return res.status(400).json({ message: "So'rov topilmadi" });
+    }
+
     res.status(202).json(updatedConnection);
   } catch (error) {
     res.status(501).json({ error: error.message });
