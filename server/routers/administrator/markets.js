@@ -8,8 +8,6 @@ const { Inventory } = require("../../models/Inventory/Inventory.js");
 const {
   InventoryConnector,
 } = require("../../models/Inventory/InventoriesConnector.js");
-const { Order } = require("../../models/Orders/Product.js");
-const { OrderConnector } = require("../../models/Orders/Connector.js");
 const { Category } = require("../../models/Products/Category.js");
 const { Incoming } = require("../../models/Products/Incoming.js");
 const {
@@ -208,7 +206,6 @@ module.exports.deletemarket = async (req, res) => {
     await Expense.deleteMany({ market: id });
     await Inventory.deleteMany({ market: id });
     await InventoryConnector.deleteMany({ market: id });
-    await Order.deleteMany({ market: id });
     await Category.deleteMany({ market: id });
     await Incoming.deleteMany({ market: id });
     await IncomingConnector.deleteMany({ market: id });
@@ -218,7 +215,6 @@ module.exports.deletemarket = async (req, res) => {
     await ProductData.deleteMany({ market: id });
     await ProductPrice.deleteMany({ market: id });
     await TemporaryIncoming.deleteMany({ market: id });
-    await OrderConnector.deleteMany({ market: id });
     await Unit.deleteMany({ market: id });
     await Client.deleteMany({ market: id });
     await DailySaleConnector.deleteMany({ market: id });
