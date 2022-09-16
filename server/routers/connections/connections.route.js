@@ -31,6 +31,10 @@ router.post("/deleterequest", auth, (req, res) => {
   require("./markets").deleteRequestToConnection(req, res);
 });
 
+router.post("/getconnectionmarkets", auth, (req, res) => {
+  require("./markets").getConnectionMarkets(req, res);
+});
+
 // Filialar
 router.post("/getfilials", auth, (req, res) => {
   require("./filials").getfilials(req, res);

@@ -19,7 +19,7 @@ const getMarketByINN = async (req, res) => {
     }
 
     const secondMarket = await Market.findOne({ _id: { $ne: market }, inn })
-      .select("name phone1 director inn")
+      .select("name phone1 director inn connections")
       .populate("director", "firstname lastname phone");
     if (!secondMarket)
       return res.status(204).json({
@@ -90,7 +90,6 @@ const createRequestToConnection = async (req, res) => {
 const incomingRequestsToConnection = async (req, res) => {
   try {
     const { market } = req.body;
-
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
@@ -99,6 +98,7 @@ const incomingRequestsToConnection = async (req, res) => {
     }
 
     const connections = await Connection.find({ second: market })
+      .sort({ request: -1, createdAt: -1 })
       .select("first second createdAt request accept rejected")
       .populate({
         path: "first",
@@ -127,6 +127,7 @@ const sendingRequestsToConnection = async (req, res) => {
     }
 
     const connections = await Connection.find({ first: market })
+      .sort({ request: -1, createdAt: -1 })
       .select("second first createdAt request accept rejected")
       .populate({
         path: "second",
@@ -178,7 +179,7 @@ const answerToRequest = async (req, res) => {
     const { market, connection } = req.body;
 
     const marketData = await Market.findById(market);
-    if (!marketData) {
+    if (!marketData || connection.second !== market) {
       return res
         .status(404)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
@@ -255,6 +256,30 @@ const deleteRequestToConnection = async (req, res) => {
   }
 };
 
+const getConnectionMarkets = async (req, res) => {
+  try {
+    const { market } = req.body;
+
+    const marketData = await Market.findById(market).populate({
+      path: "connections",
+      select: "name phone1 inn director",
+      populate: {
+        path: "director",
+        select: "firstname phone lastname",
+      },
+    });
+    if (!marketData) {
+      return res
+        .status(404)
+        .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
+    }
+
+    res.status(200).json({ connections: marketData.connections });
+  } catch (error) {
+    res.status(501).json({ error: error.message });
+  }
+};
+
 module.exports = {
   getMarketByINN,
   createRequestToConnection,
@@ -263,4 +288,5 @@ module.exports = {
   getNewRequestToConnection,
   answerToRequest,
   deleteRequestToConnection,
+  getConnectionMarkets,
 };
