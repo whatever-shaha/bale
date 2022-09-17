@@ -15,6 +15,7 @@ import {useTranslation} from 'react-i18next'
 import SalesList from './ModalBodys/SalesList'
 import TotalReports from '../TotalReports/TotalReports.js'
 import {SavedIncomingsCheck} from '../SaleCheck/SavedIncomingsCheck.js'
+import RequestConnection from './ModalBodys/RequestConnection.js'
 
 function UniversalModal({
     isOpen,
@@ -41,6 +42,7 @@ function UniversalModal({
     saleproductsreport,
     totalreports,
     dataObject,
+    marketByInn,
 }) {
     const {t} = useTranslation(['common'])
 
@@ -161,6 +163,14 @@ function UniversalModal({
                         dataObject={dataObject}
                     />
                 )
+            case 'requestconnection':
+                return (
+                    <RequestConnection
+                        approveFunction={approveFunction}
+                        toggleModal={closeModal}
+                        market={marketByInn}
+                    />
+                )
             default:
                 return t('Bunday jadval topilmadi')
         }
@@ -176,7 +186,9 @@ function UniversalModal({
                     ? {...modalFull}
                     : body === 'exchanges'
                     ? {content: {width: '70%'}}
-                    : body === 'approve' || body === 'complete'
+                    : body === 'approve' ||
+                      body === 'complete' ||
+                      body === 'requestconnection'
                     ? {}
                     : {...customStyles}
             }

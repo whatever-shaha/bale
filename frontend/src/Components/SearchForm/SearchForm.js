@@ -8,50 +8,51 @@ import Dates from '../Dates/Dates.js'
 import {useTranslation} from 'react-i18next'
 import {map} from 'lodash'
 
-function SearchForm(
-    {
-        filterByTotal,
-        searchByCode,
-        searchById,
-        searchByDelivererName,
-        filterByDelivererName,
-        filterByDelivererNameWhenPressEnter,
-        searchByClientName,
-        filterByClientName,
-        filterByClientNameWhenPressEnter,
-        filterById,
-        filterByIdWhenPressEnter,
-        filterByCode,
-        filterByCodeAndNameAndCategoryWhenPressEnter,
-        searchByName,
-        filterByName,
-        filterBy,
-        searchByCategory,
-        filterByCategory,
-        numberOfChecks,
-        setNumberOfChecks,
-        clickPrintBtn,
-        startDate,
-        endDate,
-        setStartDate,
-        setEndDate,
-        date,
-        setDate,
-        clickConfirmBtn,
-        barcode,
-        filterByBarcode,
-        filterByBarcodeWhenPressEnter,
-        searchByDirectorName,
-        filterByDirectorName,
-        filterByDirectorNameWhenPressEnter,
-        searchByMarketName,
-        filterByMarketName,
-        filterByMarketNameWhenPressEnter,
-        searchBySellerName,
-        filterBySellerName,
-        filterBySellerNameWhenPressEnter,
-    }) {
-
+function SearchForm({
+    filterByTotal,
+    searchByCode,
+    searchById,
+    searchByDelivererName,
+    filterByDelivererName,
+    filterByDelivererNameWhenPressEnter,
+    searchByClientName,
+    filterByClientName,
+    filterByClientNameWhenPressEnter,
+    filterById,
+    filterByIdWhenPressEnter,
+    filterByCode,
+    filterByCodeAndNameAndCategoryWhenPressEnter,
+    searchByName,
+    filterByName,
+    filterBy,
+    searchByCategory,
+    filterByCategory,
+    numberOfChecks,
+    setNumberOfChecks,
+    clickPrintBtn,
+    startDate,
+    endDate,
+    setStartDate,
+    setEndDate,
+    date,
+    setDate,
+    clickConfirmBtn,
+    barcode,
+    filterByBarcode,
+    filterByBarcodeWhenPressEnter,
+    searchByDirectorName,
+    filterByDirectorName,
+    filterByDirectorNameWhenPressEnter,
+    searchByMarketName,
+    filterByMarketName,
+    filterByMarketNameWhenPressEnter,
+    searchBySellerName,
+    filterBySellerName,
+    filterBySellerNameWhenPressEnter,
+    searchByMarketInn,
+    filterByMarketInn,
+    filterByMarketInnWhenPressEnter,
+}) {
     const {t} = useTranslation(['common'])
     const chooseComponent = (key) => {
         switch (key) {
@@ -64,7 +65,7 @@ function SearchForm(
                         label={t('Kategoriya')}
                         element={
                             <FieldContainer
-                                placeholder={(`${t('misol')}: 000000`)}
+                                placeholder={`${t('misol')}: 000000`}
                                 type={'text'}
                                 value={searchByCategory}
                                 onChange={filterByCategory}
@@ -83,7 +84,7 @@ function SearchForm(
                         label={t('Maxsulot kodi')}
                         element={
                             <FieldContainer
-                                placeholder={(`${t('misol')}: 000000`)}
+                                placeholder={`${t('misol')}: 000000`}
                                 type={'text'}
                                 maxWidth={'flex-1'}
                                 value={searchByCode}
@@ -228,22 +229,22 @@ function SearchForm(
                     />
                 )
             case 'barcode':
-                return (<FilterButtons
-                    key={'barcode_1'}
-                    label={t('Shtrix kodi')}
-                    element={
-                        <FieldContainer
-                            placeholder={t('misol: 101')}
-                            type={'text'}
-                            value={barcode}
-                            onChange={filterByBarcode}
-                            maxWidth={'flex-1'}
-                            onKeyUp={
-                                filterByBarcodeWhenPressEnter
-                            }
-                        />
-                    }
-                />)
+                return (
+                    <FilterButtons
+                        key={'barcode_1'}
+                        label={t('Shtrix kodi')}
+                        element={
+                            <FieldContainer
+                                placeholder={t('misol: 101')}
+                                type={'text'}
+                                value={barcode}
+                                onChange={filterByBarcode}
+                                maxWidth={'flex-1'}
+                                onKeyUp={filterByBarcodeWhenPressEnter}
+                            />
+                        }
+                    />
+                )
             case 'directorName':
                 return (
                     <SearchInput
@@ -253,17 +254,30 @@ function SearchForm(
                         placeholder={'Direktor ismi yoki familyasi...'}
                         someClasses={'grow'}
                         onKeyUp={filterByDirectorNameWhenPressEnter}
-                    />)
+                    />
+                )
             case 'marketName':
                 return (
                     <SearchInput
                         key={'market_name_1'}
                         value={searchByMarketName}
                         onChange={filterByMarketName}
-                        placeholder={'Do\'kon nomi...'}
+                        placeholder={"Do'kon nomi..."}
                         someClasses={'grow'}
                         onKeyUp={filterByMarketNameWhenPressEnter}
-                    />)
+                    />
+                )
+            case 'inn':
+                return (
+                    <SearchInput
+                        key={'market_inn_1'}
+                        value={searchByMarketInn}
+                        onChange={filterByMarketInn}
+                        placeholder={"Do'kon INN si..."}
+                        someClasses={'grow'}
+                        onKeyUp={filterByMarketInnWhenPressEnter}
+                    />
+                )
             default:
                 return null
         }

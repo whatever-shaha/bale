@@ -1,14 +1,25 @@
 import React from 'react'
-import {BiPlus} from 'react-icons/bi'
+import {BiBell, BiPlus} from 'react-icons/bi'
 import {MdOutlineClear} from 'react-icons/md'
 
-const BtnAddRemove = ({onClick, text, add, edit}) => {
+const BtnAddRemove = ({onClick, text, add, edit, bell, count}) => {
     return (
         <button
             onClick={onClick}
-            className={`focus-visible:outline-none ${add ? 'createElement' : edit ? 'edit-button' : 'clearElement'}`}
+            className={`focus-visible:outline-none ${
+                add ? 'createElement' : edit ? 'edit-button' : 'clearElement'
+            }`}
         >
-            {add && !edit ? (
+            {bell ? (
+                <div className='plusIcon relative pr-2'>
+                    <BiBell size={18} />
+                    {count && (
+                        <span className='absolute bg-primary-800 text-white-900 w-[15px] h-[15px] rounded-full text-[10px] top-0'>
+                            {count}
+                        </span>
+                    )}
+                </div>
+            ) : add && !edit ? (
                 <div className='plusIcon'>
                     <BiPlus />
                 </div>

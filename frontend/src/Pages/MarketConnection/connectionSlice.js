@@ -126,7 +126,11 @@ const connectionSlice = createSlice({
         sendingRequests: [],
         countOfNewRequests: 0,
     },
-    reducers: {},
+    reducers: {
+        clearMarketByInn: (state) => {
+            state.marketByInn = null
+        },
+    },
     extraReducers: {
         [getMarketByInn.pending]: (state) => {
             state.loading = true
@@ -211,7 +215,7 @@ const connectionSlice = createSlice({
         },
         [getConnectionMarkets.fulfilled]: (state, {payload}) => {
             state.loading = false
-            state.connections = payload
+            state.connections = payload.connections
         },
         [getConnectionMarkets.rejected]: (state, {payload}) => {
             universalToast(payload, 'error')
@@ -220,4 +224,5 @@ const connectionSlice = createSlice({
     },
 })
 
+export const {clearMarketByInn} = connectionSlice.actions
 export default connectionSlice.reducer

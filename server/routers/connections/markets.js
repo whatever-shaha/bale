@@ -8,12 +8,12 @@ const getMarketByINN = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
     if (inn.length < 9) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Diqqat! Do'kon INN si 9 raqamdan iborat bo'lishi kerak.",
       });
     }
@@ -21,8 +21,9 @@ const getMarketByINN = async (req, res) => {
     const secondMarket = await Market.findOne({ _id: { $ne: market }, inn })
       .select("name phone1 director inn connections")
       .populate("director", "firstname lastname phone");
+
     if (!secondMarket)
-      return res.status(204).json({
+      return res.status(400).json({
         message: `Tizimda ${inn} raqamli INN ga ega bo'lgan do'kon ro'yxatdan o'tkazilmagan`,
       });
 
@@ -45,14 +46,14 @@ const createRequestToConnection = async (req, res) => {
     const first = await Market.findById(firstMarket);
     if (!first) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
     const second = await Market.findById(secondMarket);
 
     if (!second) {
-      return res.status(404).json({
+      return res.status(400).json({
         message: "Diqqat! So'rov yuboriladigan do'kon ma'lumotlari topilmadi",
       });
     }
@@ -92,7 +93,7 @@ const incomingRequestsToConnection = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
@@ -121,7 +122,7 @@ const sendingRequestsToConnection = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
@@ -150,7 +151,7 @@ const getNewRequestToConnection = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
@@ -180,7 +181,7 @@ const answerToRequest = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData || connection.second !== market) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
@@ -243,7 +244,7 @@ const deleteRequestToConnection = async (req, res) => {
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
@@ -261,15 +262,15 @@ const getConnectionMarkets = async (req, res) => {
 
     const marketData = await Market.findById(market).populate({
       path: "connections",
-      select: "name phone1 inn director",
+      select: "name phone1 inn director image",
       populate: {
         path: "director",
-        select: "firstname phone lastname",
+        select: "firstname phone lastname image",
       },
     });
     if (!marketData) {
       return res
-        .status(404)
+        .status(400)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
