@@ -9,10 +9,7 @@ const FilialConnectionCard = ({active, market}) => {
                     active ? 'active_shop' : ''
                 }`}
             >
-                <ConnectionAvatar
-                    border={true}
-                    director={market?.director?.image}
-                />
+                <ConnectionAvatar border={true} director={market?.director} />
                 <div className='product-cost'>
                     <div
                         className={'flex flex-col items-center justify-center'}
