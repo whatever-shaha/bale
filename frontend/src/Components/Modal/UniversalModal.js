@@ -16,7 +16,8 @@ import SalesList from './ModalBodys/SalesList'
 import TotalReports from '../TotalReports/TotalReports.js'
 import {SavedIncomingsCheck} from '../SaleCheck/SavedIncomingsCheck.js'
 import RequestConnection from './ModalBodys/RequestConnection.js'
-
+import RequestApplication from './ModalBodys/ReuqestApplication.js'
+import SendingApplication from './ModalBodys/SendingApplication.js'
 function UniversalModal({
     isOpen,
     toggleModal,
@@ -171,6 +172,22 @@ function UniversalModal({
                         market={marketByInn}
                     />
                 )
+            case 'sendingApplication':
+                    return (
+                        <SendingApplication
+                            approveFunction={approveFunction}
+                            toggleModal={closeModal}
+                            market={marketByInn}
+                        />
+            ) 
+            case 'requestApplication':
+                return (
+                    <RequestApplication
+                        approveFunction={approveFunction}
+                        toggleModal={closeModal}
+                        market={marketByInn}
+                    />
+            )    
             default:
                 return t('Bunday jadval topilmadi')
         }
