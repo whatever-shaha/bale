@@ -1,6 +1,7 @@
 import React from 'react'
 import FilialButtons from '../FilialButtons/FilialButtons'
 import ConnectionAvatar from '../Avatar/ConnectionAvatar'
+import {Link} from 'react-router-dom'
 const FilialConnectionCard = ({active, market}) => {
     return (
         <section>
@@ -15,7 +16,7 @@ const FilialConnectionCard = ({active, market}) => {
                         className={'flex flex-col items-center justify-center'}
                     >
                         <p className='product'>Do'kon INN</p>
-                        <p className='product-number'>{market?.inn}</p>
+                        <p className='product-number'>{market?.name}</p>
                     </div>
                     <div
                         className={'flex flex-col items-center justify-center'}
@@ -39,12 +40,18 @@ const FilialConnectionCard = ({active, market}) => {
                 </div>
                 <div className='shop-name flex flex-col w-[13.4375rem]'>
                     <div className='shop-title'>
-                        <p>{market?.name}</p>
+                        <p>INN: {market?.inn.toLocaleString('ru-RU')}</p>
                     </div>
                     <div className={'filial-btn'}>
-                        <FilialButtons type={'product'} />
-                        <FilialButtons type={'selling'} />
-                        <FilialButtons type={'payments'} />
+                        <Link to={'/dukonlar/hamkorlar/mahsulotlar'}>
+                            <FilialButtons type={'product'} />
+                        </Link>
+                        <Link to={'/dukonlar/hamkorlar/hamkormahsulotlari'}>
+                            <FilialButtons type={'selling'} />
+                        </Link>
+                        <Link to={'/dukonlar/hamkorlar/buyurtma'}>
+                            <FilialButtons type={'payments'} />
+                        </Link>
                     </div>
                 </div>
             </div>

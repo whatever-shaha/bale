@@ -13,7 +13,7 @@ import {
     getMarketByInn,
 } from './connectionSlice.js'
 import SearchForm from '../../Components/SearchForm/SearchForm.js'
-import {map, uniqueId} from 'lodash'
+import {map, uniqueId, filter} from 'lodash'
 function Connection() {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
@@ -70,9 +70,35 @@ function Connection() {
         })
     }
 
+    // filters
+    const filterByMarketName = (e) => {
+        const val = e.target.value.toLowerCase()
+        const filtered = filter(connections, (market) =>
+            market.name.toLowerCase().includes(val)
+        )
+        setConnectionMarkets(filtered)
+    }
+    const filterByMarketInn = (e) => {
+        const val = e.target.value.toLowerCase()
+        const filtered = filter(connections, (market) =>
+            market.inn.toString().toLowerCase().includes(val)
+        )
+        setConnectionMarkets(filtered)
+    }
+
+    const filterByDirectorName = (e) => {
+        const val = e.target.value.toLowerCase()
+        const filtered = filter(
+            connections,
+            (market) =>
+                market.director.firstname.toLowerCase().includes(val) ||
+                market.director.lastname.toLowerCase().includes(val)
+        )
+        setConnectionMarkets(filtered)
+    }
+
     // modal toggle
     const toggleModal = () => setModalVisible(!modalVisible)
-    console.log(connectionMarkets)
     useEffect(() => {
         setConnectionMarkets(connections)
     }, [connections])
@@ -121,6 +147,9 @@ function Connection() {
             </div>
             <SearchForm
                 filterBy={['marketName', 'inn', 'directorName', 'lastname']}
+                filterByMarketName={filterByMarketName}
+                filterByMarketInn={filterByMarketInn}
+                filterByDirectorName={filterByDirectorName}
             />
             <div className='mainPadding'>
                 {connectionMarkets &&

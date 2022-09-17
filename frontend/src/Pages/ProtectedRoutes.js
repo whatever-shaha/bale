@@ -202,6 +202,18 @@ const directorRoutes = [
         element: <Connection />,
     },
     {
+        path: '/dukonlar/hamkorlar/mahsulotlar',
+        element: <div>Mahsulotlar</div>,
+    },
+    {
+        path: '/dukonlar/hamkorlar/hamkormahsulotlari',
+        element: <div>hamkormahsulotlari</div>,
+    },
+    {
+        path: '/dukonlar/hamkorlar/buyurtma',
+        element: <div>buyurtma</div>,
+    },
+    {
         path: '/shaxsiy/parol',
         element: <EditProfile />,
     },
