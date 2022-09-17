@@ -80,7 +80,6 @@ const createRequestToConnection = async (req, res) => {
       second: secondMarket,
       request: true,
     }).save();
-
     res.status(201).json({ message: "So'rov muvaffaqiyatli yuborildi" });
   } catch (error) {
     res.status(501).json({ error: error.message });
