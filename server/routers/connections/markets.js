@@ -177,7 +177,6 @@ const getNewRequestToConnection = async (req, res) => {
 const answerToRequest = async (req, res) => {
   try {
     const { market, connection } = req.body;
-
     const marketData = await Market.findById(market);
     if (!marketData || connection.second !== market) {
       return res
@@ -240,7 +239,6 @@ const answerToRequest = async (req, res) => {
 const deleteRequestToConnection = async (req, res) => {
   try {
     const { market, connectionId } = req.body;
-
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res
@@ -248,7 +246,10 @@ const deleteRequestToConnection = async (req, res) => {
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
 
-    await Connection.findByIdAndDelete(connectionId);
+    const connection = await Connection.findByIdAndDelete(connectionId);
+    if (!connection) {
+      return res.status(400).json({ message: "So'rov topilmadi" });
+    }
 
     res.status(202).json({ message: "So'rov muvaffaqiyatli o'chirildi" });
   } catch (error) {

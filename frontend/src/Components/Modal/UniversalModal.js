@@ -44,6 +44,11 @@ function UniversalModal({
     totalreports,
     dataObject,
     marketByInn,
+    sendingRequests,
+    handleDeleteRequest,
+    incomingRequests,
+    handleAcceptRequest,
+    handleRejectRequest,
 }) {
     const {t} = useTranslation(['common'])
 
@@ -173,21 +178,21 @@ function UniversalModal({
                     />
                 )
             case 'sendingApplication':
-                    return (
-                        <SendingApplication
-                            approveFunction={approveFunction}
-                            toggleModal={closeModal}
-                            market={marketByInn}
-                        />
-            ) 
+                return (
+                    <SendingApplication
+                        sendingRequests={sendingRequests}
+                        handleDeleteRequest={handleDeleteRequest}
+                    />
+                )
             case 'requestApplication':
                 return (
                     <RequestApplication
-                        approveFunction={approveFunction}
-                        toggleModal={closeModal}
-                        market={marketByInn}
+                        incomingRequests={incomingRequests}
+                        handleDeleteRequest={handleDeleteRequest}
+                        handleAcceptRequest={handleAcceptRequest}
+                        handleRejectRequest={handleRejectRequest}
                     />
-            )    
+                )
             default:
                 return t('Bunday jadval topilmadi')
         }

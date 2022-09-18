@@ -7,22 +7,29 @@ import UniversalModal from '../../Components/Modal/UniversalModal.js'
 import {regexForTypeNumber} from '../../Components/RegularExpressions/RegularExpressions.js'
 import {useDispatch, useSelector} from 'react-redux'
 import {
+    answerToRequest,
     clearMarketByInn,
     createRequestToConnection,
+    deleteRequestToConnection,
     getConnectionMarkets,
     getMarketByInn,
+    incomingRequestsToConnection,
+    sendingRequestsToConnection,
 } from './connectionSlice.js'
 import SearchForm from '../../Components/SearchForm/SearchForm.js'
 import {map, uniqueId, filter} from 'lodash'
 function Connection() {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
-    const {marketByInn, connections} = useSelector((state) => state.connections)
+    const {marketByInn, connections, sendingRequests, incomingRequests} =
+        useSelector((state) => state.connections)
     const {market} = useSelector((state) => state.login)
     const [modalVisible, setModalVisible] = useState(false)
     const [inn, setInn] = useState('')
     const [modalBody, setModalBody] = useState('requestconnection')
-    const [connectionMarkets, setConnectionMarkets] = useState(connections)
+    const [connectionMarkets, setConnectionMarkets] = useState([])
+    const [allSendingRequests, setAllSendingRequests] = useState([])
+    const [allIncomingRequests, setAllIncomingRequests] = useState([])
 
     const clearForm = () => {
         setInn('')
@@ -46,19 +53,6 @@ function Connection() {
             }
         })
     }
-
-    const sendingRequest = (e) => {
-        e.preventDefault()
-        setModalVisible(true)
-        setModalBody('sendingApplication')
-    }
-
-    const requestApplication = (e) => {
-        e.preventDefault()
-        setModalVisible(true)
-        setModalBody('requestApplication')
-    }
-
     const handleCreateRequestToConnection = () => {
         const body = {firstMarket: market._id, secondMarket: marketByInn._id}
         dispatch(createRequestToConnection(body)).then(({error}) => {
@@ -66,8 +60,52 @@ function Connection() {
                 clearMarketByInn()
                 setModalVisible(false)
                 clearForm()
+                dispatch(sendingRequestsToConnection())
             }
         })
+    }
+    const handleDeleteRequest = (connectionId) => {
+        dispatch(deleteRequestToConnection({connectionId})).then(({error}) => {
+            if (!error) {
+                dispatch(sendingRequestsToConnection())
+                dispatch(incomingRequestsToConnection())
+            }
+        })
+    }
+    const handleAnswerRequest = (connection) => {
+        dispatch(answerToRequest({connection})).then(({error}) => {
+            if (!error) {
+                dispatch(incomingRequestsToConnection())
+                dispatch(getConnectionMarkets)
+            }
+        })
+    }
+    const handleAcceptRequest = (connection) => {
+        handleAnswerRequest({
+            ...connection,
+            accept: true,
+            rejected: false,
+            request: false,
+        })
+    }
+    const handleRejectRequest = (connection) => {
+        handleAnswerRequest({
+            ...connection,
+            accept: false,
+            rejected: true,
+            request: false,
+        })
+    }
+
+    const sendingRequest = (e) => {
+        e.preventDefault()
+        setModalVisible(true)
+        setModalBody('sendingApplication')
+    }
+    const requestApplication = (e) => {
+        e.preventDefault()
+        setModalVisible(true)
+        setModalBody('requestApplication')
     }
 
     // filters
@@ -96,15 +134,27 @@ function Connection() {
         )
         setConnectionMarkets(filtered)
     }
-
     // modal toggle
     const toggleModal = () => setModalVisible(!modalVisible)
+    // useEffects
     useEffect(() => {
         setConnectionMarkets(connections)
     }, [connections])
     useEffect(() => {
         dispatch(getConnectionMarkets())
     }, [dispatch])
+    useEffect(() => {
+        dispatch(sendingRequestsToConnection())
+    }, [dispatch])
+    useEffect(() => {
+        setAllSendingRequests(sendingRequests)
+    }, [sendingRequests])
+    useEffect(() => {
+        dispatch(incomingRequestsToConnection())
+    }, [dispatch])
+    useEffect(() => {
+        setAllIncomingRequests(incomingRequests)
+    }, [incomingRequests])
 
     return (
         <div>
@@ -115,6 +165,11 @@ function Connection() {
                 approveFunction={handleCreateRequestToConnection}
                 closeModal={handelCloseModal}
                 isOpen={modalVisible}
+                sendingRequests={allSendingRequests}
+                handleDeleteRequest={handleDeleteRequest}
+                incomingRequests={allIncomingRequests}
+                handleAcceptRequest={handleAcceptRequest}
+                handleRejectRequest={handleRejectRequest}
             />
 
             <form
@@ -134,8 +189,16 @@ function Connection() {
                             add={true}
                             text={"Yangi do'kon qo'shish"}
                         />
-                        <Button edit={true} text={'Yuborilganlar'} onClick={sendingRequest}/>
-                        <Button bell={true} text={"So'rovlar"} onClick={requestApplication}/>
+                        <Button
+                            edit={true}
+                            text={'Yuborilganlar'}
+                            onClick={sendingRequest}
+                        />
+                        <Button
+                            bell={true}
+                            text={"So'rovlar"}
+                            onClick={requestApplication}
+                        />
                     </div>
                 </div>
             </form>
@@ -154,7 +217,7 @@ function Connection() {
             <div className='mainPadding'>
                 {connectionMarkets &&
                     map(connectionMarkets, (market) => (
-                        <div key={uniqueId('markets')}>
+                        <div className='pb-4' key={uniqueId('markets')}>
                             <FilialConnectionCard market={market} />
                         </div>
                     ))}
