@@ -13,7 +13,7 @@ const BtnAddRemove = ({onClick, text, add, edit, bell, count}) => {
             {bell ? (
                 <div className='plusIcon relative pr-2'>
                     <BiBell size={18} />
-                    {count && (
+                    {count !== 0 && (
                         <span className='absolute bg-primary-800 text-white-900 w-[15px] h-[15px] rounded-full text-[10px] top-0'>
                             {count}
                         </span>

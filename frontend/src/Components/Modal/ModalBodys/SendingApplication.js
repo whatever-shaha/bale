@@ -78,7 +78,7 @@ function SendingApplication({sendingRequests, handleDeleteRequest}) {
                                                 className='text-success-700'
                                             />
                                         )}
-                                        {request?.reject && (
+                                        {request?.rejected && (
                                             <IoBanSharp
                                                 size={`1.5rem`}
                                                 className='text-warning-700'

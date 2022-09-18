@@ -13,6 +13,7 @@ import {
     deleteRequestToConnection,
     getConnectionMarkets,
     getMarketByInn,
+    getNewRequestsToConnection,
     incomingRequestsToConnection,
     sendingRequestsToConnection,
 } from './connectionSlice.js'
@@ -21,8 +22,13 @@ import {map, uniqueId, filter} from 'lodash'
 function Connection() {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
-    const {marketByInn, connections, sendingRequests, incomingRequests} =
-        useSelector((state) => state.connections)
+    const {
+        marketByInn,
+        connections,
+        sendingRequests,
+        incomingRequests,
+        countOfNewRequests,
+    } = useSelector((state) => state.connections)
     const {market} = useSelector((state) => state.login)
     const [modalVisible, setModalVisible] = useState(false)
     const [inn, setInn] = useState('')
@@ -76,7 +82,8 @@ function Connection() {
         dispatch(answerToRequest({connection})).then(({error}) => {
             if (!error) {
                 dispatch(incomingRequestsToConnection())
-                dispatch(getConnectionMarkets)
+                dispatch(getConnectionMarkets())
+                dispatch(getNewRequestsToConnection())
             }
         })
     }
@@ -138,20 +145,17 @@ function Connection() {
     const toggleModal = () => setModalVisible(!modalVisible)
     // useEffects
     useEffect(() => {
+        dispatch(getConnectionMarkets())
+        dispatch(incomingRequestsToConnection())
+        dispatch(sendingRequestsToConnection())
+        dispatch(getNewRequestsToConnection())
+    }, [dispatch])
+    useEffect(() => {
         setConnectionMarkets(connections)
     }, [connections])
     useEffect(() => {
-        dispatch(getConnectionMarkets())
-    }, [dispatch])
-    useEffect(() => {
-        dispatch(sendingRequestsToConnection())
-    }, [dispatch])
-    useEffect(() => {
         setAllSendingRequests(sendingRequests)
     }, [sendingRequests])
-    useEffect(() => {
-        dispatch(incomingRequestsToConnection())
-    }, [dispatch])
     useEffect(() => {
         setAllIncomingRequests(incomingRequests)
     }, [incomingRequests])
@@ -195,6 +199,7 @@ function Connection() {
                             onClick={sendingRequest}
                         />
                         <Button
+                            count={countOfNewRequests.count}
                             bell={true}
                             text={"So'rovlar"}
                             onClick={requestApplication}
