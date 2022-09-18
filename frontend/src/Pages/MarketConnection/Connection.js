@@ -46,6 +46,19 @@ function Connection() {
             }
         })
     }
+
+    const sendingRequest = (e) => {
+        e.preventDefault()
+        setModalVisible(true)
+        setModalBody('sendingApplication')
+    }
+
+    const requestApplication = (e) => {
+        e.preventDefault()
+        setModalVisible(true)
+        setModalBody('requestApplication')
+    }
+
     const handleCreateRequestToConnection = () => {
         const body = {firstMarket: market._id, secondMarket: marketByInn._id}
         dispatch(createRequestToConnection(body)).then(({error}) => {
@@ -95,8 +108,8 @@ function Connection() {
                             add={true}
                             text={"Yangi do'kon qo'shish"}
                         />
-                        <Button edit={true} text={'Yuborilganlar'} />
-                        <Button bell={true} text={"So'rovlar"} />
+                        <Button edit={true} text={'Yuborilganlar'} onClick={sendingRequest}/>
+                        <Button bell={true} text={"So'rovlar"} onClick={requestApplication}/>
                     </div>
                 </div>
             </form>
