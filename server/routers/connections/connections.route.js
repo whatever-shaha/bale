@@ -48,6 +48,10 @@ router.post("/showallproducts", auth, (req, res) => {
   require("./products").showAllProductsToConnection(req, res);
 });
 
+router.post("/getcheckshowall", auth, (req, res) => {
+  require("./products").getCheckShowAll(req, res);
+});
+
 // Filialar
 router.post("/getfilials", auth, (req, res) => {
   require("./filials").getfilials(req, res);

@@ -71,6 +71,29 @@ const showAllProductsToConnection = async (req, res) => {
   }
 };
 
+const getCheckShowAll = async (req, res) => {
+  try {
+    const { market, connectionMarket } = req.body;
+    const marketData = await Market.findById(market);
+    const marketDataConnection = await Market.findById(connectionMarket);
+    if (!marketData || !marketDataConnection) {
+      return res
+        .status(404)
+        .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
+    }
+    const products = await Product.find({ market });
+    const checkProducts = products.every((product) =>
+      product.connections.some(
+        (connection) => connection.toString() === connectionMarket
+      )
+    );
+
+    res.status(200).json(checkProducts);
+  } catch (error) {
+    res.status(501).json({ error: error.message });
+  }
+};
+
 const getProductsByConnection = async (req, res) => {
   try {
     const { market, connectionMarket, search, countPage, currentPage } =
@@ -132,4 +155,5 @@ module.exports = {
   showProductToConnection,
   getProductsByConnection,
   showAllProductsToConnection,
+  getCheckShowAll,
 };

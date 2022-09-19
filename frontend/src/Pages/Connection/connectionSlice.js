@@ -141,11 +141,25 @@ export const showAllProductsToConnectionMarket = createAsyncThunk(
     }
 )
 
+// Barcha mahsulotlarga ruxsatni tekshirish
+export const checkShowAllProducts = createAsyncThunk(
+    'connections/checkShowAll',
+    async (body = {}, {rejectWithValue}) => {
+        try {
+            const {data} = await Api.post('/connections/getcheckshowall', body)
+            return data
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+)
+
 const connectionSlice = createSlice({
     name: 'connections',
     initialState: {
         marketByInn: null,
         connections: [],
+        checkShowAll: false,
         loading: false,
         errorLoading: null,
         incomingRequests: [],
@@ -267,6 +281,13 @@ const connectionSlice = createSlice({
         [showAllProductsToConnectionMarket.rejected]: (state, {payload}) => {
             universalToast(payload, 'error')
             state.loading = false
+        },
+        [checkShowAllProducts.pending]: (state) => {},
+        [checkShowAllProducts.fulfilled]: (state, {payload}) => {
+            state.checkShowAll = payload
+        },
+        [checkShowAllProducts.rejected]: (state, {payload}) => {
+            universalToast(payload, 'error')
         },
     },
 })

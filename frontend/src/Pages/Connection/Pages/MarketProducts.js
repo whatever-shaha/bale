@@ -19,6 +19,7 @@ import NotFind from '../../../Components/NotFind/NotFind.js'
 import Table from '../../../Components/Table/Table.js'
 import SmallLoader from '../../../Components/Spinner/SmallLoader.js'
 import {
+    checkShowAllProducts,
     showAllProductsToConnectionMarket,
     showProductToConnectionMarket,
 } from '../connectionSlice.js'
@@ -37,7 +38,7 @@ const MarketProducts = () => {
         totalSearched,
         loadingExcel,
     } = useSelector((state) => state.products)
-    const {loading: connectionLoading} = useSelector(
+    const {loading: connectionLoading, checkShowAll} = useSelector(
         (state) => state.connections
     )
     const {currencyType} = useSelector((state) => state.currency)
@@ -55,6 +56,7 @@ const MarketProducts = () => {
         sort: '',
         count: 0,
     })
+
     // table headers
     const headers = [
         {title: t('№')},
@@ -72,7 +74,6 @@ const MarketProducts = () => {
             title: t('Ruxsat'),
         },
     ]
-    console.log("Data : ", data)
     const exportData = () => {
         let fileName = 'Dukonlar-hamkorlar-maxsulotlar'
         const exportHeader = [
@@ -292,6 +293,7 @@ const MarketProducts = () => {
                         products[index] = payload
                         setData(products)
                     }
+                    dispatch(checkShowAllProducts({connectionMarket}))
                 }
             }
         )
@@ -316,11 +318,18 @@ const MarketProducts = () => {
                         },
                     }
                     dispatch(getProducts(body))
+                    dispatch(checkShowAllProducts({connectionMarket: partner}))
                 }
             }
         )
     }
 
+    useEffect(() => {
+        const body = {
+            connectionMarket: partner,
+        }
+        dispatch(checkShowAllProducts(body))
+    }, [dispatch, partner])
     useEffect(() => {
         const body = {
             currentPage,
@@ -343,6 +352,7 @@ const MarketProducts = () => {
     useEffect(() => {
         setFilteredDataTotal(total)
     }, [total])
+
     return (
         <div className='mainPadding'>
             {loadingExcel && (
@@ -392,7 +402,10 @@ const MarketProducts = () => {
             />
             <div className={'mainPadding flex justify-end pr-12'}>
                 <p className='pr-3'>Umumiy ruxsat:</p>{' '}
-                <ProductCheckbox onChange={handleShowAllProducts} />
+                <ProductCheckbox
+                    onChange={handleShowAllProducts}
+                    value={checkShowAll}
+                />
             </div>
             <div className='tableContainerPadding'>
                 {loading || connectionLoading ? (
