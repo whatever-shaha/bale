@@ -50,6 +50,16 @@ const CategoryReport = lazy(() => import('./CategoryReport/CategoryReport.js'))
 const Connection = lazy(() => import('./Connection/Connection.js'))
 const MarketProducts = lazy(() => import('./Connection/Pages/MarketProducts'))
 const PartnerProducts = lazy(() => import('./Connection/Pages/PartnerProducts'))
+const IncomingOrders = lazy(() => import('./Orders/IncomingOrders/IncomingOrders.js'))
+const SendingOrders = lazy(() => import('./Orders/SendingOrders/SendingOrders.js'))
+const Orders = lazy(() => import('./Orders/IncomingOrders/Routes/Orders.js'))
+const SavedOrders = lazy(() => import('./Orders/IncomingOrders/Routes/SavedOrders'))
+const RegisterOrders = lazy(() => import('./Orders/IncomingOrders/Routes/RegisterOrders'))
+
+const OrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/Orders.js'))
+const SavedOrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/SavedOrders'))
+const RegisterOrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/RegisterOrders'))
+
 // <-- pages
 
 const directorRoutes = [
@@ -214,6 +224,42 @@ const directorRoutes = [
     {
         path: '/dukonlar/hamkorlar/buyurtma',
         element: <div>buyurtma</div>,
+    },
+    {
+        path: '/dukonlar/buyurtma_olish',
+        element: <IncomingOrders />,
+        subRoutes: [
+            {
+                path: 'buyurtmalar',
+                element: <Orders />,
+            },
+            {
+                path: 'saqlanganlar',
+                element: <SavedOrders />,
+            },
+            {
+                path: 'ruyxat',
+                element: <RegisterOrders />,
+            },
+        ],
+    },
+    {
+        path: '/dukonlar/buyurtma_berish',
+        element: <SendingOrders />,
+        subRoutes: [
+            {
+                path: 'buyurtmalar',
+                element: <OrdersSend />,
+            },
+            {
+                path: 'saqlanganlar',
+                element: <SavedOrdersSend />,
+            },
+            {
+                path: 'ruyxat',
+                element: <RegisterOrdersSend />,
+            },
+        ],
     },
     {
         path: '/shaxsiy/parol',

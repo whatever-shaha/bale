@@ -160,13 +160,27 @@ const navListForDirector = [
             },
             {
                 id: 2,
+                label: 'Buyurtma berish',
+                path: 'dukonlar/buyurtma_berish/buyurtmalar',
+                icon: '',
+                submenu: false,
+            },
+            {
+                id: 3,
+                label: 'Buyurtma olish',
+                path: 'dukonlar/buyurtma_olish/ruyxat',
+                icon: '',
+                submenu: false,
+            },
+            {
+                id: 4,
                 label: 'Filiallar',
                 path: 'dukonlar/filiallar',
                 icon: '',
                 submenu: false,
             },
             {
-                id: 3,
+                id: 5,
                 label: 'Almashinuv',
                 path: 'dukonlar/almashinuv',
                 icon: '',
