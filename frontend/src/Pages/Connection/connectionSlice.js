@@ -128,6 +128,19 @@ export const showProductToConnectionMarket = createAsyncThunk(
     }
 )
 
+// Partnerga mahsulotlarni ko'rsatish
+export const showAllProductsToConnectionMarket = createAsyncThunk(
+    'connections/showAllProductToConnectionMarket',
+    async (body = {}, {rejectWithValue}) => {
+        try {
+            const {data} = await Api.post('/connections/showallproducts', body)
+            return data
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+)
+
 const connectionSlice = createSlice({
     name: 'connections',
     initialState: {
@@ -241,6 +254,17 @@ const connectionSlice = createSlice({
             state.loading = false
         },
         [showProductToConnectionMarket.rejected]: (state, {payload}) => {
+            universalToast(payload, 'error')
+            state.loading = false
+        },
+        [showAllProductsToConnectionMarket.pending]: (state) => {
+            state.loading = true
+        },
+        [showAllProductsToConnectionMarket.fulfilled]: (state, {payload}) => {
+            state.loading = false
+            universalToast(payload.message, 'success')
+        },
+        [showAllProductsToConnectionMarket.rejected]: (state, {payload}) => {
             universalToast(payload, 'error')
             state.loading = false
         },

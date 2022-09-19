@@ -204,7 +204,7 @@ const directorRoutes = [
         element: <Connection />,
     },
     {
-        path: '/dukonlar/hamkorlar/mahsulotlar',
+        path: '/dukonlar/hamkorlar/mahsulotlar/:id',
         element: <MarketProducts />,
     },
     {

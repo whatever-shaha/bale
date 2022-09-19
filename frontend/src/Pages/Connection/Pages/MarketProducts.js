@@ -18,9 +18,15 @@ import Spinner from '../../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../../Components/NotFind/NotFind.js'
 import Table from '../../../Components/Table/Table.js'
 import SmallLoader from '../../../Components/Spinner/SmallLoader.js'
-import {showProductToConnectionMarket} from '../connectionSlice.js'
+import {
+    showAllProductsToConnectionMarket,
+    showProductToConnectionMarket,
+} from '../connectionSlice.js'
+import ProductCheckbox from '../../../Components/Checkbox/ProductCheckBox.js'
+import {useParams} from 'react-router-dom'
 
 const MarketProducts = () => {
+    const partner = useParams().id
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
     const {
@@ -31,6 +37,9 @@ const MarketProducts = () => {
         totalSearched,
         loadingExcel,
     } = useSelector((state) => state.products)
+    const {loading: connectionLoading} = useSelector(
+        (state) => state.connections
+    )
     const {currencyType} = useSelector((state) => state.currency)
     const [data, setData] = useState(products)
     const [searchedData, setSearchedData] = useState(searchedProducts)
@@ -134,7 +143,6 @@ const MarketProducts = () => {
             setFilteredDataTotal(filteredProducts.length)
         }
     }
-
     const filterByBarcode = (e) => {
         let val = e.target.value
         let valForSearch = val.replace(/\s+/g, ' ').trim()
@@ -152,7 +160,6 @@ const MarketProducts = () => {
             setFilteredDataTotal(filteredProducts.length)
         }
     }
-
     const filterByCategory = (e) => {
         let val = e.target.value
         let valForSearch = val.replace(/\s+/g, ' ').trim()
@@ -204,7 +211,6 @@ const MarketProducts = () => {
             dispatch(getProductsByFilter(body))
         }
     }
-
     const filterByBarcodeWhenPressEnter = (e) => {
         if (e.key === 'Enter') {
             setCurrentPage(0)
@@ -224,7 +230,6 @@ const MarketProducts = () => {
         setShowByTotal(value)
         setCurrentPage(0)
     }
-
     const filterData = (filterKey) => {
         if (filterKey === sorItem.filter) {
             switch (sorItem.count) {
@@ -286,13 +291,52 @@ const MarketProducts = () => {
             )
         }
     }
-    const handleShowProduct = (e, productId, connectionMarket) => {
+
+    const handleShowProduct = (e, productId, connectionMarket, index) => {
         const body = {
             productId,
             connectionMarket,
             add: e.target.checked,
         }
-        dispatch(showProductToConnectionMarket(body))
+        dispatch(showProductToConnectionMarket(body)).then(
+            ({error, payload}) => {
+                if (!error) {
+                    if (searchedData.length > 0 || totalSearched > 0) {
+                        let products = [...searchedData]
+                        products[index] = payload
+                        setSearchedData(products)
+                    } else {
+                        let products = [...data]
+                        products[index] = payload
+                        setData(products)
+                    }
+                }
+            }
+        )
+    }
+    const handleShowAllProducts = (e) => {
+        const body = {
+            connectionMarket: partner,
+            add: e.target.checked,
+        }
+        dispatch(showAllProductsToConnectionMarket(body)).then(
+            ({error, payload}) => {
+                if (!error) {
+                    const body = {
+                        currentPage,
+                        countPage: showByTotal,
+                        search: {
+                            name: searchByName.replace(/\s+/g, ' ').trim(),
+                            code: searchByCode.replace(/\s+/g, ' ').trim(),
+                            category: searchByCategory
+                                .replace(/\s+/g, ' ')
+                                .trim(),
+                        },
+                    }
+                    dispatch(getProducts(body))
+                }
+            }
+        )
     }
 
     useEffect(() => {
@@ -364,8 +408,12 @@ const MarketProducts = () => {
                 filterByBarcode={filterByBarcode}
                 filterByBarcodeWhenPressEnter={filterByBarcodeWhenPressEnter}
             />
+            <div className={'mainPadding flex justify-end pr-12'}>
+                <p className='pr-3'>Umumiy ruxsat:</p>{' '}
+                <ProductCheckbox onChange={handleShowAllProducts} />
+            </div>
             <div className='tableContainerPadding'>
-                {loading ? (
+                {loading || connectionLoading ? (
                     <Spinner />
                 ) : data.length === 0 && searchedData.length === 0 ? (
                     <NotFind text={'Maxsulot mavjud emas'} />

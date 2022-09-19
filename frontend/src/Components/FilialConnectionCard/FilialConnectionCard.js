@@ -43,7 +43,9 @@ const FilialConnectionCard = ({active, market}) => {
                         <p>INN: {market?.inn.toLocaleString('ru-RU')}</p>
                     </div>
                     <div className={'filial-btn'}>
-                        <Link to={'/dukonlar/hamkorlar/mahsulotlar'}>
+                        <Link
+                            to={`/dukonlar/hamkorlar/mahsulotlar/${market._id}`}
+                        >
                             <FilialButtons type={'product'} />
                         </Link>
                         <Link

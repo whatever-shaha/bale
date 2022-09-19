@@ -33,8 +33,8 @@ import DailyReport from './TableRows/DailyReport.js'
 import SupplierIncomingsTableRow from './TableRows/SupplierIncomingsTableRow'
 import {FilialShopDataIdTableRow} from './TableRows/FilialShopDataIdTablerow'
 import {CategoryReportTableRow} from './TableRows/CategoryReportTableRow'
-import { MarketProductsTableRow } from './TableRows/MarketProductsTableRow'
-import { PartnerProductsTableRow } from './TableRows/PartnerProductsTableRow'
+import {MarketProductsTableRow} from './TableRows/MarketProductsTableRow'
+import {PartnerProductsTableRow} from './TableRows/PartnerProductsTableRow'
 function Table({
     page,
     data,
@@ -431,19 +431,20 @@ function Table({
             case 'marketProducts':
                 return (
                     <MarketProductsTableRow
+                        handleShowProduct={handleShowProduct}
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
                     />
-             )
-             case 'partnerProducts':
+                )
+            case 'partnerProducts':
                 return (
                     <PartnerProductsTableRow
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
                     />
-            )
+                )
             default:
                 return (
                     <tr>

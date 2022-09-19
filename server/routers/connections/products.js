@@ -11,7 +11,9 @@ const showProductToConnection = async (req, res) => {
         .status(404)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
-    const product = await Product.findById(productId);
+    const product = await Product.findById(productId)
+      .populate("productdata", "barcode code name")
+      .populate("category", "code");
     if (!product) {
       return res
         .status(404)
