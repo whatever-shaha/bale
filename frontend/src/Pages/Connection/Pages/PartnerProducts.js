@@ -324,6 +324,7 @@ const PartnerProducts = () => {
     useEffect(() => {
         setFilteredDataTotal(total)
     }, [total])
+
     return (
         <div className='mainPadding'>
             {loadingExcel && (
