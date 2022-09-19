@@ -36,6 +36,7 @@ import {CategoryReportTableRow} from './TableRows/CategoryReportTableRow'
 import {MarketProductsTableRow} from './TableRows/MarketProductsTableRow'
 import {PartnerProductsTableRow} from './TableRows/PartnerProductsTableRow'
 import {RegisterOrdersTableRow} from './TableRows/RegisterOrdersTableRow'
+import {OrderProductsTableRow} from './TableRows/OrderProductsTableRow'
 function Table({
     page,
     data,
@@ -450,6 +451,15 @@ function Table({
                 return (
                     <RegisterOrdersTableRow
                        currency={currency}
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                    />
+            )
+            case 'orderProducts':
+                return (
+                    <OrderProductsTableRow
+                        currency={currency}
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
