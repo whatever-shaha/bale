@@ -74,6 +74,7 @@ function Table({
     productminimumpage,
     handleDelete,
     wholeSale,
+    handleShowProduct,
 }) {
     const checkRows = () => {
         switch (page) {

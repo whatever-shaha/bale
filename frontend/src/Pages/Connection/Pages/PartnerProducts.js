@@ -148,7 +148,6 @@ const PartnerProducts = () => {
             setFilteredDataTotal(filteredProducts.length)
         }
     }
-
     const filterByBarcode = (e) => {
         let val = e.target.value
         let valForSearch = val.replace(/\s+/g, ' ').trim()
@@ -166,7 +165,6 @@ const PartnerProducts = () => {
             setFilteredDataTotal(filteredProducts.length)
         }
     }
-
     const filterByCategory = (e) => {
         let val = e.target.value
         let valForSearch = val.replace(/\s+/g, ' ').trim()

@@ -18,6 +18,8 @@ import Spinner from '../../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../../Components/NotFind/NotFind.js'
 import Table from '../../../Components/Table/Table.js'
 import SmallLoader from '../../../Components/Spinner/SmallLoader.js'
+import {showProductToConnectionMarket} from '../connectionSlice.js'
+
 const MarketProducts = () => {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
@@ -296,6 +298,14 @@ const MarketProducts = () => {
             )
         }
     }
+    const handleShowProduct = (e, productId, connectionMarket) => {
+        const body = {
+            productId,
+            connectionMarket,
+            add: e.target.checked,
+        }
+        dispatch(showProductToConnectionMarket(body))
+    }
 
     useEffect(() => {
         const body = {
@@ -373,6 +383,7 @@ const MarketProducts = () => {
                     <NotFind text={'Maxsulot mavjud emas'} />
                 ) : (
                     <Table
+                        handleShowProduct={handleShowProduct}
                         currencyType={currencyType}
                         headers={headers}
                         page={'marketProducts'}
