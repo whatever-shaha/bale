@@ -548,12 +548,12 @@ const RegisterSelling = () => {
                         unitpriceuzs:
                             product.tradepriceuzs || product.unitpriceuzs,
                     }
-                    delete prev.tradeprice
-                    delete prev.tradepriceuzs
+                    prev.tradeprice && delete prev.tradeprice
+                    prev.tradepriceuzs && delete prev.tradepriceuzs
                     return prev
                 } else {
-                    delete product.tradeprice
-                    delete product.tradepriceuzs
+                    product.tradeprice && delete product.tradeprice
+                    product.tradepriceuzs && delete product.tradepriceuzs
                     return product
                 }
             }),

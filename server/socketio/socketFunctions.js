@@ -69,7 +69,48 @@ const getAllFilials = async ({ socket, market }) => {
   }
 };
 
+const getPartnerProducts = async ({ socket, market, partner }) => {
+  try {
+    const marke = await Market.findById(market);
+    if (!marke) {
+      return socket.emit("error", {
+        id: market,
+        message: "Diqqat! Do'kon ma'lumotlari topilmadi.",
+      });
+    }
+    const categories = await Category.find(
+      { market: partner },
+      { timestamp: 1, code: 1, name: 1, products: 1 }
+    )
+      .sort({ code: 1 })
+      .select("_id");
+
+    for (const category of categories) {
+      const products = await Product.find(
+        { market: partner, category, connections: market },
+        { timestamp: 1 }
+      )
+        .sort({ timestamp: -1 })
+        .select("market total productdata price category unit")
+        .populate("productdata", "name code barcode")
+        .populate(
+          "price",
+          "sellingprice incomingprice sellingpriceuzs incomingpriceuzs tradeprice tradepriceuzs"
+        )
+        .populate("category", "name code")
+        .populate("unit", "name");
+      socket.emit("getPartnerProducts", { id: market, products });
+    }
+  } catch (error) {
+    return socket.emit("error", {
+      id: market,
+      message: "Serverda xatolik yuz berdi",
+    });
+  }
+};
+
 module.exports = {
   getProductsByCount,
   getAllFilials,
+  getPartnerProducts,
 };

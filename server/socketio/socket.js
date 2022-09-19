@@ -1,4 +1,8 @@
-const { getProductsByCount, getAllFilials } = require("./socketFunctions.js");
+const {
+  getProductsByCount,
+  getAllFilials,
+  getPartnerProducts,
+} = require("./socketFunctions.js");
 const socketIO = (io) => {
   io.on("connection", (socket) => {
     socket.on("getProductsOfCount", async ({ market }) => {
@@ -12,6 +16,9 @@ const socketIO = (io) => {
         socket,
         market,
       });
+    });
+    socket.on("getPartnerProducts", async ({ market, partner }) => {
+      await getPartnerProducts({ socket, market, partner });
     });
   });
 };
