@@ -72,24 +72,15 @@ const MarketProducts = () => {
             title: t('Ruxsat'),
         },
     ]
-
+    console.log("Data : ", data)
     const exportData = () => {
-        let fileName = 'Maxsulotlar'
+        let fileName = 'Dukonlar-hamkorlar-maxsulotlar'
         const exportHeader = [
             t('№'),
             t('Shtrix kodi'),
             t('Mahsulot kategoriyasi'),
             t('Mahsulot kodi'),
             t('Mahsulot nomi'),
-            t('Soni'),
-            t("O'lchov birligi"),
-            t('Kelish narxi USD'),
-            t('Kelish narxi UZS'),
-            t('Sotish narxi USD'),
-            t('Sotish narxi UZS'),
-            'Optom narxi USD',
-            'Optom narxi UZS',
-            'Minimum qiymat',
         ]
         const body = {
             search: {
@@ -107,15 +98,6 @@ const MarketProducts = () => {
                         category: item?.category?.code || '',
                         code: item?.productdata?.code || '',
                         name: item?.productdata?.name || '',
-                        total: item?.total || '',
-                        unit: item?.unit?.name || '',
-                        incomingprice: item?.price?.incomingprice || '',
-                        incomingpriceuzs: item?.price?.incomingpriceuzs || '',
-                        sellingprice: item?.price?.sellingprice || '',
-                        sellingpriceuzs: item?.price?.sellingpriceuzs || '',
-                        tradeprice: item?.price?.tradeprice || '',
-                        tradepriceuzs: item?.price?.tradepriceuzs || '',
-                        minimumcount: item?.minimumcount || '',
                     }))
                     exportExcel(newData, fileName, exportHeader)
                 } else {

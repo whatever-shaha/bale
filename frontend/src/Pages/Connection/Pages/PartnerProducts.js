@@ -75,7 +75,7 @@ const PartnerProducts = () => {
     ]
 
     const exportData = () => {
-        let fileName = 'Maxsulotlar'
+        let fileName = 'Dukonlar-hamkorlar-hamkor-maxsulotlari'
         const exportHeader = [
             t('№'),
             t('Shtrix kodi'),
@@ -84,13 +84,8 @@ const PartnerProducts = () => {
             t('Mahsulot nomi'),
             t('Soni'),
             t("O'lchov birligi"),
-            t('Kelish narxi USD'),
-            t('Kelish narxi UZS'),
-            t('Sotish narxi USD'),
-            t('Sotish narxi UZS'),
-            'Optom narxi USD',
-            'Optom narxi UZS',
-            'Minimum qiymat',
+            'Narxi UZS',
+            'Narxi USD',
         ]
         const body = {
             partner,
@@ -111,13 +106,8 @@ const PartnerProducts = () => {
                         name: item?.productdata?.name || '',
                         total: item?.total || '',
                         unit: item?.unit?.name || '',
-                        incomingprice: item?.price?.incomingprice || '',
-                        incomingpriceuzs: item?.price?.incomingpriceuzs || '',
-                        sellingprice: item?.price?.sellingprice || '',
                         sellingpriceuzs: item?.price?.sellingpriceuzs || '',
-                        tradeprice: item?.price?.tradeprice || '',
-                        tradepriceuzs: item?.price?.tradepriceuzs || '',
-                        minimumcount: item?.minimumcount || '',
+                        sellingprice: item?.price?.sellingprice || '',      
                     }))
                     exportExcel(newData, fileName, exportHeader)
                 } else {
