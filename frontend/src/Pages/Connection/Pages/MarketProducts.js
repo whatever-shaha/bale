@@ -74,6 +74,7 @@ const MarketProducts = () => {
             title: t('Ruxsat'),
         },
     ]
+
     const exportData = () => {
         let fileName = 'Dukonlar-hamkorlar-maxsulotlar'
         const exportHeader = [

@@ -35,6 +35,7 @@ import {FilialShopDataIdTableRow} from './TableRows/FilialShopDataIdTablerow'
 import {CategoryReportTableRow} from './TableRows/CategoryReportTableRow'
 import {MarketProductsTableRow} from './TableRows/MarketProductsTableRow'
 import {PartnerProductsTableRow} from './TableRows/PartnerProductsTableRow'
+import {RegisterOrdersTableRow} from './TableRows/RegisterOrdersTableRow'
 function Table({
     page,
     data,
@@ -440,6 +441,15 @@ function Table({
             case 'partnerProducts':
                 return (
                     <PartnerProductsTableRow
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                    />
+            )
+            case 'registerOrder':
+                return (
+                    <RegisterOrdersTableRow
+                       currency={currency}
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
