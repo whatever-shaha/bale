@@ -107,7 +107,7 @@ const PartnerProducts = () => {
                         total: item?.total || '',
                         unit: item?.unit?.name || '',
                         sellingpriceuzs: item?.price?.sellingpriceuzs || '',
-                        sellingprice: item?.price?.sellingprice || '',      
+                        sellingprice: item?.price?.sellingprice || '',
                     }))
                     exportExcel(newData, fileName, exportHeader)
                 } else {
@@ -323,7 +323,7 @@ const PartnerProducts = () => {
                     <ExportBtn onClick={exportData} />
                 </div>
                 <h3 className={'text-blue-900 text-[xl] leading-[1.875rem]'}>
-                    {t('Maxsulotlar')}
+                    {t('Hamkor maxsulotlari')}
                 </h3>
                 {(filteredDataTotal !== 0 || totalSearched !== 0) && (
                     <Pagination
@@ -366,7 +366,7 @@ const PartnerProducts = () => {
                     <Table
                         currencyType={currencyType}
                         headers={headers}
-                        page={'marketProducts'}
+                        page={'partnerProducts'}
                         data={searchedData.length > 0 ? searchedData : data}
                         Sort={filterData}
                         sortItem={sorItem}
