@@ -72,9 +72,6 @@ const PartnerProducts = () => {
             title: t('Narxi USD'),
             filter: 'price.sellingprice',
         },
-        {
-            title: t('Ruxsat'),
-        },
     ]
 
     const exportData = () => {

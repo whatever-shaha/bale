@@ -37,6 +37,38 @@ const showProductToConnection = async (req, res) => {
   }
 };
 
+const showAllProductsToConnection = async (req, res) => {
+  try {
+    const { market, connectionMarket, add } = req.body;
+    const marketData = await Market.findById(market);
+    const marketDataConnection = await Market.findById(connectionMarket);
+    if (!marketData || !marketDataConnection) {
+      return res
+        .status(404)
+        .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
+    }
+    const products = await Product.find({ market });
+    for (const product of products) {
+      if (add) {
+        const checkProduct = product.connections.some(
+          (marketId) => marketId.toString() === connectionMarket
+        );
+        !checkProduct && product.connections.push(connectionMarket);
+        await product.save();
+      } else {
+        product.connections = product.connections.filter(
+          (marketId) => marketId.toString() !== connectionMarket
+        );
+        await product.save();
+      }
+    }
+
+    res.status(200).json({ message: "So'rov muvaffaqiyatli bajarildi" });
+  } catch (error) {
+    res.status(501).json({ error: error.message });
+  }
+};
+
 const getProductsByConnection = async (req, res) => {
   try {
     const { market, connectionMarket, search, countPage, currentPage } =
@@ -94,4 +126,8 @@ const getProductsByConnection = async (req, res) => {
   }
 };
 
-module.exports = { showProductToConnection, getProductsByConnection };
+module.exports = {
+  showProductToConnection,
+  getProductsByConnection,
+  showAllProductsToConnection,
+};

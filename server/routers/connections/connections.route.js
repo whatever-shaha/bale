@@ -44,6 +44,10 @@ router.post("/getproductsbyconnection", auth, (req, res) => {
   require("./products").getProductsByConnection(req, res);
 });
 
+router.post("/showallproduct", auth, (req, res) => {
+  require("./products").showAllProductsToConnection(req, res);
+});
+
 // Filialar
 router.post("/getfilials", auth, (req, res) => {
   require("./filials").getfilials(req, res);

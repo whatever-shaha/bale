@@ -60,18 +60,6 @@ const MarketProducts = () => {
         {title: t('Kodi'), filter: 'productdata.code'},
         {title: t('Nomi'), filter: 'productdata.name'},
         {
-            title: t('Soni'),
-            filter: 'total',
-        },
-        {
-            title: t('Narxi UZS'),
-            filter: 'price.sellingprice',
-        },
-        {
-            title: t('Narxi USD'),
-            filter: 'price.sellingprice',
-        },
-        {
             title: t('Ruxsat'),
         },
     ]
