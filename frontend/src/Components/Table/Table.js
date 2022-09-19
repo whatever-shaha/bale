@@ -35,45 +35,45 @@ import {FilialShopDataIdTableRow} from './TableRows/FilialShopDataIdTablerow'
 import {CategoryReportTableRow} from './TableRows/CategoryReportTableRow'
 
 function Table({
-                   page,
-                   data,
-                   headers,
-                   currentPage,
-                   countPage,
-                   Sort,
-                   Edit,
-                   Delete,
-                   currency,
-                   changeHandler,
-                   Print,
-                   inputValue,
-                   inputDisabled,
-                   Excel,
-                   editedIncoming,
-                   saveEditIncoming,
-                   sortItem,
-                   ReturnPayment,
-                   Save,
-                   onKeyUp,
-                   currencyType,
-                   type,
-                   Pay,
-                   isDisabled,
-                   reports,
-                   onClickTableRow,
-                   linkToSellerReports,
-                   sellers,
-                   addPlus,
-                   footer,
-                   increment,
-                   decrement,
-                   lowUnitpriceProducts,
-                   linkToSupplierReport,
-                   printedData,
-                   productminimumpage,
-                   handleDelete,
-                   wholeSale
-               }) {
+    page,
+    data,
+    headers,
+    currentPage,
+    countPage,
+    Sort,
+    Edit,
+    Delete,
+    currency,
+    changeHandler,
+    Print,
+    inputValue,
+    inputDisabled,
+    Excel,
+    editedIncoming,
+    saveEditIncoming,
+    sortItem,
+    ReturnPayment,
+    Save,
+    onKeyUp,
+    currencyType,
+    type,
+    Pay,
+    isDisabled,
+    reports,
+    onClickTableRow,
+    linkToSellerReports,
+    sellers,
+    addPlus,
+    footer,
+    increment,
+    decrement,
+    lowUnitpriceProducts,
+    linkToSupplierReport,
+    printedData,
+    productminimumpage,
+    handleDelete,
+    wholeSale,
+}) {
     const checkRows = () => {
         switch (page) {
             case 'product':
@@ -427,7 +427,13 @@ function Table({
             case 'categoryreport':
                 return <CategoryReportTableRow data={data} />
             default:
-                return ''
+                return (
+                    <tr>
+                        <td colSpan={7} className='text-black-500 py-2 pl-4'>
+                            Ushbu nomdagi javval mavjud emas
+                        </td>
+                    </tr>
+                )
         }
     }
 
@@ -447,7 +453,7 @@ function Table({
     return (
         <table className='overflow-x-auto w-full'>
             <thead className='rounded-t-lg sticky top-0'>
-            <Thead headers={headers} Sort={Sort} sortItem={sortItem} />
+                <Thead headers={headers} Sort={Sort} sortItem={sortItem} />
             </thead>
             <tbody>{checkRows()}</tbody>
             {footer && <tfoot>{checkFooters()}</tfoot>}

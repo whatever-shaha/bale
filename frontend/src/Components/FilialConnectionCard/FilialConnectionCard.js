@@ -46,7 +46,9 @@ const FilialConnectionCard = ({active, market}) => {
                         <Link to={'/dukonlar/hamkorlar/mahsulotlar'}>
                             <FilialButtons type={'product'} />
                         </Link>
-                        <Link to={'/dukonlar/hamkorlar/hamkormahsulotlari'}>
+                        <Link
+                            to={`/dukonlar/hamkorlar/hamkormahsulotlari/${market._id}`}
+                        >
                             <FilialButtons type={'selling'} />
                         </Link>
                         <Link to={'/dukonlar/hamkorlar/buyurtma'}>

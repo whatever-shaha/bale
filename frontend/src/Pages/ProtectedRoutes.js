@@ -208,7 +208,7 @@ const directorRoutes = [
         element: <MarketProducts />,
     },
     {
-        path: '/dukonlar/hamkorlar/hamkormahsulotlari',
+        path: '/dukonlar/hamkorlar/hamkormahsulotlari/:id',
         element: <PartnerProducts />,
     },
     {

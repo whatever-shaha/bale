@@ -780,6 +780,61 @@ module.exports.getProducts = async (req, res) => {
   }
 };
 
+module.exports.getPartnerProducts = async (req, res) => {
+  try {
+    const { market, currentPage, countPage, search, partner } = req.body;
+    const marke = await Market.findById(market);
+    if (!marke) {
+      return res
+        .status(401)
+        .json({ message: "Diqqat! Do'kon malumotlari topilmadi" });
+    }
+    const code = new RegExp(".*" + search ? search.code : "" + ".*", "i");
+    const name = new RegExp(".*" + search ? search.name : "" + ".*", "i");
+    const category = new RegExp(
+      ".*" + search ? search.category : "" + ".*",
+      "i"
+    );
+    const barcode = new RegExp(".*" + search ? search.barcode : "" + ".*", "i");
+
+    const products = await Product.find({
+      market: partner,
+      connections: market,
+    })
+      .sort({ code: 1 })
+      .select("total market category minimumcount connections")
+      .populate(
+        "price",
+        "incomingprice sellingprice incomingpriceuzs sellingpriceuzs tradeprice tradepriceuzs"
+      )
+      .populate({
+        path: "productdata",
+        select: "name code barcode",
+        match: { name: name, code: code },
+      })
+      .populate({
+        path: "category",
+        select: "name code",
+        match: { code: category },
+      })
+      .populate("unit", "name")
+      .then((products) =>
+        filter(
+          products,
+          (product) => product.productdata !== null && product.category !== null
+        )
+      );
+    const count = products.length;
+    const filtered = products.splice(currentPage * countPage, countPage);
+    res.status(201).json({
+      products: filtered,
+      count,
+    });
+  } catch (error) {
+    res.status(401).send(error);
+  }
+};
+
 //Product getallCategory
 module.exports.getCategory = async (req, res) => {
   try {

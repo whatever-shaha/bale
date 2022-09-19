@@ -24,6 +24,7 @@ import FilialDatasReducer from '../Pages/FilialExchanges/filialExchengesSlice.js
 import ExchangesDataIdReducer from '../Pages/ProductIdExchanges/productIdExchangesSlice.js'
 import CategoryReportReducer from '../Pages/CategoryReport/CategoryReportSlice.js'
 import ConnectionsReducer from '../Pages/Connection/connectionSlice.js'
+import PartnerProductsReducer from '../Pages/Connection/Pages/partnerProductSlice.js'
 
 export default configureStore({
     devTools: process.env.NODE_ENV === 'development',
@@ -53,5 +54,6 @@ export default configureStore({
         exchangesIdData: ExchangesDataIdReducer,
         categoryReport: CategoryReportReducer,
         connections: ConnectionsReducer,
+        partnerProducts: PartnerProductsReducer,
     },
 })
