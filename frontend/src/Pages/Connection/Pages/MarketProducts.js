@@ -4,7 +4,6 @@ import ExportBtn from '../../../Components/Buttons/ExportBtn.js'
 import Pagination from '../../../Components/Pagination/Pagination.js'
 import SearchForm from '../../../Components/SearchForm/SearchForm.js'
 import {useDispatch, useSelector} from 'react-redux'
-import Table from '../../../Components/Table/Table.js'
 import {
     clearSearchedProducts,
     getProducts,

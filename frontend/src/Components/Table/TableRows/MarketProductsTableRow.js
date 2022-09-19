@@ -1,8 +1,7 @@
 import React from 'react'
-import TableBtn from '../../Buttons/TableBtn'
 import {map} from 'lodash'
-
-export const MarketProductsTableRow = ({data, currentPage, countPage}) => {
+import Checkbox from '../../Checkbox/Checkbox'
+export const MarketProductsTableRow = ({data, currentPage, countPage, onChange,value}) => {
 
     return (
         <>
@@ -16,11 +15,9 @@ export const MarketProductsTableRow = ({data, currentPage, countPage}) => {
                     <td className='td text-center'>{product?.productdata?.code}</td>
                     <td className='td text-left'>{product?.productdata?.name}</td>
                     <td className='td'>
-                    <div className='flex items-center justify-center'>
-                         <TableBtn
-                                type={'marketProduct'}
-                            />
-                    </div>   
+                     <div className='flex items-center justify-center'>
+                        <Checkbox onChange={onChange} value={value}/>
+                    </div> 
                     </td>
                 </tr>
             ))}
