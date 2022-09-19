@@ -14,7 +14,7 @@ export const PartnerProductsTableRow = ({data, currentPage, countPage}) => {
                     <td className='td text-center'>{product?.category?.code}</td>
                     <td className='td text-center'>{product?.productdata?.code}</td>
                     <td className='td text-left'>{product?.productdata?.name}</td>
-                    <td className='td text-end'>{product?.total}</td>
+                    <td className='td text-end'>{product?.total} {product?.unit?.name}</td>
                     <td className='td text-end'>{product?.price?.sellingpriceuzs}</td>
                     <td className='td text-end'>{product?.price?.sellingprice}</td>
                 </tr>
