@@ -18,7 +18,6 @@ import Spinner from '../../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../../Components/NotFind/NotFind.js'
 import Table from '../../../Components/Table/Table.js'
 import SmallLoader from '../../../Components/Spinner/SmallLoader.js'
-
 const MarketProducts = () => {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()

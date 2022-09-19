@@ -7,7 +7,7 @@ import {
     IoPrint,
     IoSave,
     IoSwapHorizontal,
-    IoTrashOutline
+    IoTrashOutline,
 } from 'react-icons/io5'
 import {SiMicrosoftexcel} from 'react-icons/si'
 import {FaMoneyBill} from 'react-icons/fa'
