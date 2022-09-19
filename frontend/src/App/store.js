@@ -23,7 +23,7 @@ import exchangesReducer from '../Pages/ProductExchanges/productExchangesSlice.js
 import FilialDatasReducer from '../Pages/FilialExchanges/filialExchengesSlice.js'
 import ExchangesDataIdReducer from '../Pages/ProductIdExchanges/productIdExchangesSlice.js'
 import CategoryReportReducer from '../Pages/CategoryReport/CategoryReportSlice.js'
-import ConnectionsReducer from '../Pages/MarketConnection/connectionSlice.js'
+import ConnectionsReducer from '../Pages/Connection/connectionSlice.js'
 
 export default configureStore({
     devTools: process.env.NODE_ENV === 'development',

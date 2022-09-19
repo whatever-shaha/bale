@@ -47,7 +47,9 @@ const ProductIdExchanges = lazy(() =>
 )
 const SupplierReport = lazy(() => import('./SupplierPage/SupplierReport.js'))
 const CategoryReport = lazy(() => import('./CategoryReport/CategoryReport.js'))
-const Connection = lazy(() => import('./MarketConnection/Connection.js'))
+const Connection = lazy(() => import('./Connection/Connection.js'))
+const MarketProducts = lazy(() => import('./Connection/Pages/MarketProducts'))
+const PartnerProducts = lazy(() => import('./Connection/Pages/PartnerProducts'))
 // <-- pages
 
 const directorRoutes = [
@@ -203,11 +205,11 @@ const directorRoutes = [
     },
     {
         path: '/dukonlar/hamkorlar/mahsulotlar',
-        element: <div>Mahsulotlar</div>,
+        element: <MarketProducts />,
     },
     {
         path: '/dukonlar/hamkorlar/hamkormahsulotlari',
-        element: <div>hamkormahsulotlari</div>,
+        element: <PartnerProducts />,
     },
     {
         path: '/dukonlar/hamkorlar/buyurtma',
