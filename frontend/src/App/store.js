@@ -25,6 +25,7 @@ import ExchangesDataIdReducer from '../Pages/ProductIdExchanges/productIdExchang
 import CategoryReportReducer from '../Pages/CategoryReport/CategoryReportSlice.js'
 import ConnectionsReducer from '../Pages/Connection/connectionSlice.js'
 import PartnerProductsReducer from '../Pages/Connection/Pages/partnerProductSlice.js'
+import RegisterOrdersReducer from '../Pages/Orders/SendingOrders/Slices/registerOrdersSlice.js'
 
 export default configureStore({
     devTools: process.env.NODE_ENV === 'development',
@@ -55,5 +56,6 @@ export default configureStore({
         categoryReport: CategoryReportReducer,
         connections: ConnectionsReducer,
         partnerProducts: PartnerProductsReducer,
+        registerOrders: RegisterOrdersReducer,
     },
 })

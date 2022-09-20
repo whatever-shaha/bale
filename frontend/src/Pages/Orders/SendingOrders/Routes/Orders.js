@@ -1,80 +1,91 @@
 import React from 'react'
-import FieldContainer from '../../../../Components/FieldContainer/FieldContainer'
 import Table from '../../../../Components/Table/Table'
 import {useSelector} from 'react-redux'
-
+import Pagination from '../../../../Components/Pagination/Pagination'
+import SearchForm from '../../../../Components/SearchForm/SearchForm'
 function Orders() {
-
     const {currencyType} = useSelector((state) => state.currency)
 
     const data = [
         {
-            code : '1010',
-            productName : 'Balgarka drel',
-            productCount : 20,
-            productUnit : 'ta',
-            productPriceUZS : 300000,
-            productPrice : 30,
+            shopName: 'Alo24',
+            inn: '123456789',
+            id: 'abs123',
+            productType: '4',
+            productNumber: 5,
+            productUnitname: 'ta',
+            totalPriceUZS: 250000,
+            totalPrice: 25,
+            status: '',
         },
         {
-            code : '1010',
-            productName : 'Balgarka drel',
-            productCount : 20,
-            productUnit : 'ta',
-            productPriceUZS : 300000,
-            productPrice : 30,
+            shopName: 'Alo24',
+            inn: '123456789',
+            id: 'abs123',
+            productType: '4',
+            productNumber: 5,
+            productUnitname: 'ta',
+            totalPriceUZS: 250000,
+            totalPrice: 25,
+            status: '',
         },
         {
-            code : '1010',
-            productName : 'Balgarka drel',
-            productCount : 20,
-            productUnit : 'ta',
-            productPriceUZS : 300000,
-            productPrice : 30,
+            shopName: 'Alo24',
+            inn: '123456789',
+            id: 'abs123',
+            productType: '4',
+            productNumber: 5,
+            productUnitname: 'ta',
+            totalPriceUZS: 250000,
+            totalPrice: 25,
+            status: '',
         },
     ]
+
     const headers = [
-        {title: '№', styles: 'w-[10%]'},
+        {title: '№'},
         {
             filter: '',
-            title: "Maxsulot kodi",
-            styles: 'w-[10%]'
+            title: "Do'kon nomi",
         },
         {
-            title: 'Maxsulot nomi',
-            filter: 'name',
+            title: 'INN',
+            filter: '',
         },
-        {title: 'Maxsulot soni', filter: 'count',styles: 'w-[15%]'},
-        {title: 'Maxsulot narxi', filter: 'price',styles: 'w-[15%]'},
+        {title: 'ID', filter: ''},
+        {title: 'Maxsulot turi', filter: ''},
         {
-            title: 'Soni', filter: '' ,styles: 'w-[15%]'
+            title: 'Maxsukot soni',
+            filter: '',
         },
         {
-            title: '',
-            filter: '', 
-            styles: 'w-[10%]'  
-        }
+            title: 'Umumiy narxi',
+            filter: '',
+        },
+        {
+            title: 'Holati',
+            filter: '',
+        },
     ]
+
     return (
-        <section >
-            <div className='mainPadding'>
-                <h2 className='pb-[1.25rem] text-[1.25rem]'>Alo24 Amerika Filiali</h2>
-                <FieldContainer
-                    select={true}
-                    placeholder={'misol: kompyuter'}
-                    value={''}
-                    label={'Maxsulotlar'}
-                    onChange={() => {}}
-                    options={[]}
-                />
+        <section>
+            <div className='pagination mainPadding'>
+                <p className='flex items-center'>Ro'yxatlar</p>
+                <Pagination />
             </div>
+            <SearchForm
+                filterBy={['total', 'startDate', 'endDate', 'id', 'marketName']}
+            />
             <div className='tableContainerPadding'>
-                    <Table
-                        page='orderProducts'
-                         data={data}
-                         headers={headers}
-                         currency={currencyType}
-                    />
+                <Table
+                    page='registerOrder'
+                    currentPage={''}
+                    countPage={''}
+                    data={data}
+                    headers={headers}
+                    currency={currencyType}
+                />
             </div>
         </section>
     )

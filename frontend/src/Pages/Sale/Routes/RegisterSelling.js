@@ -1191,8 +1191,8 @@ const RegisterSelling = () => {
                 }
             })
         market &&
-            socket.on('error', ({id, err}) => {
-                id === market._id && universalToast(err.message, 'error')
+            socket.on('error', ({id, message}) => {
+                id === market._id && universalToast(message, 'error')
             })
     }, [market, dispatch, lastPayments])
     useEffect(() => {

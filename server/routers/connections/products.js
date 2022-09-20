@@ -1,4 +1,5 @@
 const { filter } = require("lodash");
+const { Category } = require("../../models/Products/Category.js");
 const { Market, Product } = require("../constants").models;
 
 const showProductToConnection = async (req, res) => {
@@ -26,11 +27,17 @@ const showProductToConnection = async (req, res) => {
       );
       !checkProduct && product.connections.push(connectionMarket);
       await product.save();
+      await Category.findByIdAndUpdate(product.category._id, {
+        $push: { connections: connectionMarket },
+      });
     } else {
       product.connections = product.connections.filter(
         (marketId) => marketId.toString() !== connectionMarket
       );
       await product.save();
+      await Category.findByIdAndUpdate(product.category._id, {
+        $pull: { connections: connectionMarket },
+      });
     }
 
     res.status(200).json(product);
@@ -62,6 +69,21 @@ const showAllProductsToConnection = async (req, res) => {
           );
         }
         product.save();
+      });
+    });
+    await Category.find({ market }).then((categorys) => {
+      categorys.forEach((category) => {
+        if (add) {
+          const checkCategory = category.connections.some(
+            (marketId) => marketId.toString() === connectionMarket
+          );
+          !checkCategory && category.connections.push(connectionMarket);
+        } else {
+          category.connections = category.connections.filter(
+            (marketId) => marketId.toString() !== connectionMarket
+          );
+        }
+        category.save();
       });
     });
 

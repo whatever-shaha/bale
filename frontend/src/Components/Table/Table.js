@@ -446,23 +446,26 @@ function Table({
                         currentPage={currentPage}
                         countPage={countPage}
                     />
-            )
+                )
             case 'registerOrder':
                 return (
                     <RegisterOrdersTableRow
-                       currency={currency}
-                        data={data}
-                        currentPage={currentPage}
-                        countPage={countPage}
-                    />
-            )
-            case 'orderProducts':
-                return (
-                    <OrderProductsTableRow
                         currency={currency}
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
+                    />
+                )
+            case 'orderProducts':
+                return (
+                    <OrderProductsTableRow
+                        increment={increment}
+                        decrement={decrement}
+                        currency={currency}
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                        handleDelete={handleDelete}
                     />
                 )
             default:

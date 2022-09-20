@@ -50,15 +50,29 @@ const CategoryReport = lazy(() => import('./CategoryReport/CategoryReport.js'))
 const Connection = lazy(() => import('./Connection/Connection.js'))
 const MarketProducts = lazy(() => import('./Connection/Pages/MarketProducts'))
 const PartnerProducts = lazy(() => import('./Connection/Pages/PartnerProducts'))
-const IncomingOrders = lazy(() => import('./Orders/IncomingOrders/IncomingOrders.js'))
-const SendingOrders = lazy(() => import('./Orders/SendingOrders/SendingOrders.js'))
+const IncomingOrders = lazy(() =>
+    import('./Orders/IncomingOrders/IncomingOrders.js')
+)
+const SendingOrders = lazy(() =>
+    import('./Orders/SendingOrders/SendingOrders.js')
+)
 const Orders = lazy(() => import('./Orders/IncomingOrders/Routes/Orders.js'))
-const SavedOrders = lazy(() => import('./Orders/IncomingOrders/Routes/SavedOrders'))
-const RegisterOrders = lazy(() => import('./Orders/IncomingOrders/Routes/RegisterOrders'))
+const SavedOrders = lazy(() =>
+    import('./Orders/IncomingOrders/Routes/SavedOrders')
+)
+const RegisterOrders = lazy(() =>
+    import('./Orders/IncomingOrders/Routes/RegisterOrders')
+)
 
-const OrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/Orders.js'))
-const SavedOrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/SavedOrders'))
-const RegisterOrdersSend = lazy(() => import('./Orders/SendingOrders/Routes/RegisterOrders'))
+const OrdersSend = lazy(() =>
+    import('./Orders/SendingOrders/Routes/RegisterOrders.js')
+)
+const SavedOrdersSend = lazy(() =>
+    import('./Orders/SendingOrders/Routes/SavedOrders')
+)
+const RegisterOrdersSend = lazy(() =>
+    import('./Orders/SendingOrders/Routes/Orders.js')
+)
 
 // <-- pages
 

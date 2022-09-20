@@ -79,12 +79,13 @@ const getPartnerProducts = async ({ socket, market, partner }) => {
       });
     }
     const categories = await Category.find(
-      { market: partner },
+      { market: partner, connections: market },
+
       { timestamp: 1, code: 1, name: 1, products: 1 }
     )
       .sort({ code: 1 })
       .select("_id");
-
+    socket.emit("partnerCategories", { id: market, categories });
     for (const category of categories) {
       const products = await Product.find(
         { market: partner, category, connections: market },
@@ -99,8 +100,9 @@ const getPartnerProducts = async ({ socket, market, partner }) => {
         )
         .populate("category", "name code")
         .populate("unit", "name");
-      socket.emit("getPartnerProducts", { id: market, products });
+      socket.emit("setPartnerProducts", { id: market, products });
     }
+    socket.emit("partnerCategories", { id: market, categories });
   } catch (error) {
     return socket.emit("error", {
       id: market,
