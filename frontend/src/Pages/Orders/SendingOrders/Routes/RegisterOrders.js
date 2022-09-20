@@ -43,6 +43,31 @@ function RegisterOrders() {
     const [currentPartner, setCurrentPartner] = useState(null)
     const [filteredCategories, setFilteredCategories] =
         useState(categoriesPartner)
+    const headers = [
+        {title: '№', styles: 'w-[10%]'},
+        {
+            filter: '',
+            title: 'Maxsulot kodi',
+            styles: 'w-[10%]',
+        },
+        {
+            title: 'Maxsulot nomi',
+            filter: 'name',
+        },
+        {title: 'Maxsulot soni', filter: 'count', styles: 'w-[15%]'},
+        {title: 'Maxsulot narxi', filter: 'price', styles: 'w-[15%]'},
+        {
+            title: 'Soni',
+            filter: '',
+            styles: 'w-[15%]',
+        },
+        {title: 'Jami'},
+        {
+            title: '',
+            filter: '',
+            styles: 'w-[10%]',
+        },
+    ]
     const [filteredProducts, setFilteredProducts] = useState([])
     const [activeCategory, setActiveCategory] = useState(null)
     const [searchCategory, setSearchCategory] = useState('')
@@ -229,32 +254,6 @@ function RegisterOrders() {
             universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
         }
     }
-
-    const headers = [
-        {title: '№', styles: 'w-[10%]'},
-        {
-            filter: '',
-            title: 'Maxsulot kodi',
-            styles: 'w-[10%]',
-        },
-        {
-            title: 'Maxsulot nomi',
-            filter: 'name',
-        },
-        {title: 'Maxsulot soni', filter: 'count', styles: 'w-[15%]'},
-        {title: 'Maxsulot narxi', filter: 'price', styles: 'w-[15%]'},
-        {
-            title: 'Soni',
-            filter: '',
-            styles: 'w-[15%]',
-        },
-        {title: 'Jami'},
-        {
-            title: '',
-            filter: '',
-            styles: 'w-[10%]',
-        },
-    ]
 
     useEffect(() => {
         let allProductsReducer = []

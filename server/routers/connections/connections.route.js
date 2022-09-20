@@ -52,6 +52,11 @@ router.post("/getcheckshowall", auth, (req, res) => {
   require("./products").getCheckShowAll(req, res);
 });
 
+// Buyurtmalar
+router.post("/registerorder", auth, (req, res) => {
+  require("./orders").registerOrder(req, res);
+});
+
 // Saqlangan buyurtmalar
 router.post("/createtemporary", auth, (req, res) => {
   require("./orders").registerTemporaryOrder(req, res);

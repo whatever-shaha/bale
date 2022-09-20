@@ -1,6 +1,23 @@
 const { Market, Connection, TemporaryOrders } =
   require("../constants.js").models;
 
+// BUyurtma berish
+const registerOrder = async (req, res) => {
+  try {
+    const { market, orderProducts } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+
+    console.log(orderProducts);
+    res.status(200).json({ message: "Buyurtma muvaffaqqiyatli yuborildi!" });
+  } catch (error) {
+    return res.status(error.statusCode).json({ message: error.message });
+  }
+};
+
+// Vaqtincha saqlangan buyurtmalar
 const registerTemporaryOrder = async (req, res) => {
   try {
     const { market, temporary } = req.body;
@@ -55,6 +72,7 @@ const deleteTemporaryOrders = async (req, res) => {
 };
 
 module.exports = {
+  registerOrder,
   registerTemporaryOrder,
   getTemporaryOrders,
   deleteTemporaryOrders,
