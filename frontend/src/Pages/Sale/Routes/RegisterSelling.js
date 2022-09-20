@@ -548,13 +548,14 @@ const RegisterSelling = () => {
                         unitpriceuzs:
                             product.tradepriceuzs || product.unitpriceuzs,
                     }
-                    prev.tradeprice && delete prev.tradeprice
-                    prev.tradepriceuzs && delete prev.tradepriceuzs
+                    prev?.tradeprice && delete prev?.tradeprice
+                    prev?.tradepriceuzs && delete prev?.tradepriceuzs
                     return prev
                 } else {
-                    product.tradeprice && delete product.tradeprice
-                    product.tradepriceuzs && delete product.tradepriceuzs
-                    return product
+                    const prev = {...product}
+                    prev?.tradeprice && delete prev?.tradeprice
+                    prev?.tradepriceuzs && delete prev?.tradepriceuzs
+                    return prev
                 }
             }),
             client: {
