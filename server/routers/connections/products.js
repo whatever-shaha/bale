@@ -49,21 +49,21 @@ const showAllProductsToConnection = async (req, res) => {
         .status(404)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
-    const products = await Product.find({ market });
-    for (const product of products) {
-      if (add) {
-        const checkProduct = product.connections.some(
-          (marketId) => marketId.toString() === connectionMarket
-        );
-        !checkProduct && product.connections.push(connectionMarket);
-        await product.save();
-      } else {
-        product.connections = product.connections.filter(
-          (marketId) => marketId.toString() !== connectionMarket
-        );
-        await product.save();
-      }
-    }
+    await Product.find({ market }).then((products) => {
+      products.forEach((product) => {
+        if (add) {
+          const checkProduct = product.connections.some(
+            (marketId) => marketId.toString() === connectionMarket
+          );
+          !checkProduct && product.connections.push(connectionMarket);
+        } else {
+          product.connections = product.connections.filter(
+            (marketId) => marketId.toString() !== connectionMarket
+          );
+        }
+        product.save();
+      });
+    });
 
     res.status(200).json({ message: "So'rov muvaffaqiyatli bajarildi" });
   } catch (error) {
@@ -81,12 +81,14 @@ const getCheckShowAll = async (req, res) => {
         .status(404)
         .json({ message: "Diqqat! Do'kon ma'lumotlari topilmadi" });
     }
-    const products = await Product.find({ market });
-    const checkProducts = products.every((product) =>
-      product.connections.some(
-        (connection) => connection.toString() === connectionMarket
-      )
-    );
+    const checkProducts = await Product.find({ market }).then((products) => {
+      const check = products.every((product) =>
+        product.connections.some(
+          (marketId) => marketId.toString() === connectionMarket
+        )
+      );
+      return check;
+    });
 
     res.status(200).json(checkProducts);
   } catch (error) {
