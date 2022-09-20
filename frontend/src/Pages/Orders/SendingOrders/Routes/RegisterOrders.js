@@ -13,9 +13,7 @@ import {getConnectionMarkets} from '../../../Connection/connectionSlice.js'
 import socket from '../../../../Config/socket.js'
 import {
     universalToast,
-    warningCountSellPayment,
     warningCurrencyRate,
-    warningLessSellPayment,
     warningSaleProductsEmpty,
 } from '../../../../Components/ToastMessages/ToastMessages.js'
 import {
@@ -24,6 +22,11 @@ import {
 } from '../Slices/registerOrdersSlice.js'
 import {roundUsd, roundUzs} from '../../../../App/globalFunctions.js'
 import UniversalModal from '../../../../Components/Modal/UniversalModal.js'
+import {useNavigate} from 'react-router-dom'
+import {
+    createTemporaryOrder,
+    deleteSavedOrder,
+} from '../Slices/savedOrdersSlice.js'
 
 function RegisterOrders() {
     const {t} = useTranslation(['common'])
@@ -35,6 +38,7 @@ function RegisterOrders() {
         (state) => state.registerOrders
     )
 
+    const navigate = useNavigate()
     const [partners, setPartners] = useState()
     const [currentPartner, setCurrentPartner] = useState(null)
     const [filteredCategories, setFilteredCategories] =
@@ -48,6 +52,7 @@ function RegisterOrders() {
     const [modalVisible, setModalVisible] = useState(false)
     const [totalOrderPrice, setTotalOrderPrice] = useState(0)
     const [totalOrderPriceUzs, setTotalOrderPriceUzs] = useState(0)
+    const [temporary, setTemporary] = useState(null)
 
     const handleSearchCategory = (e) => {
         const str = e.target.value
@@ -183,6 +188,48 @@ function RegisterOrders() {
             !currency ? warningCurrencyRate() : warningSaleProductsEmpty()
         }
     }
+
+    const clearAll = () => {
+        setTableProducts([])
+        setTotalOrderPrice(0)
+        setTotalOrderPriceUzs(0)
+        setModalVisible(false)
+        setModalBody('')
+    }
+
+    const handleClickSave = () => {
+        if (tableProducts.length > 0) {
+            const all = tableProducts.reduce(
+                (acc, cur) => roundUsd(acc + cur.totalprice),
+                0
+            )
+            const allUzs = tableProducts.reduce(
+                (acc, cur) => roundUzs(acc + cur.totalpriceuzs),
+                0
+            )
+            const body = {
+                temporary: {
+                    partner: currentPartner,
+                    tableProducts,
+                    totalPrice: all,
+                    totalPriceUzs: allUzs,
+                },
+            }
+            dispatch(createTemporaryOrder(body)).then(({error}) => {
+                if (!error) {
+                    clearAll()
+                    navigate('/dukonlar/buyurtma_berish/saqlanganlar')
+                }
+            })
+            if (temporary) {
+                dispatch(deleteSavedOrder({_id: temporary._id}))
+                setTemporary(null)
+            }
+        } else {
+            universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
+        }
+    }
+
     const headers = [
         {title: '№', styles: 'w-[10%]'},
         {
@@ -270,7 +317,7 @@ function RegisterOrders() {
     useEffect(() => {
         const partners = map(connections, (connection) => {
             const val = {
-                label: connection.name,
+                label: connection?.name + ' - ' + connection?.inn,
                 value: connection._id,
             }
             return val
@@ -374,7 +421,7 @@ function RegisterOrders() {
                     {
                         <button
                             type={'button'}
-                            // onClick={handleClickSave}
+                            onClick={handleClickSave}
                             className={'register-selling-right-deny-btn'}
                         >
                             <IoAttach size={'1.5rem'} />

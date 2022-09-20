@@ -23,8 +23,8 @@ export const OrderProductsTableRow = ({
                     </td>
                     <td className='td text-end'>
                         {currency === 'UZS'
-                            ? item?.unitpriceuzs.toLocaleString('ru-Ru')
-                            : item?.unitprice.toLocaleString('ru-Ru')}{' '}
+                            ? item?.unitpriceuzs?.toLocaleString('ru-Ru')
+                            : item?.unitprice?.toLocaleString('ru-Ru')}{' '}
                         {currency}
                     </td>
                     <td className='text-right td'>
@@ -54,8 +54,8 @@ export const OrderProductsTableRow = ({
                     </td>
                     <td className='td text-end'>
                         {currency === 'UZS'
-                            ? item?.totalpriceuzs.toLocaleString('ru-Ru')
-                            : item?.totalprice.toLocaleString('ru-Ru')}{' '}
+                            ? item?.totalpriceuzs?.toLocaleString('ru-Ru')
+                            : item?.totalprice?.toLocaleString('ru-Ru')}{' '}
                         {currency}
                     </td>
                     <td className='td'>

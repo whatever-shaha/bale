@@ -26,6 +26,7 @@ import CategoryReportReducer from '../Pages/CategoryReport/CategoryReportSlice.j
 import ConnectionsReducer from '../Pages/Connection/connectionSlice.js'
 import PartnerProductsReducer from '../Pages/Connection/Pages/partnerProductSlice.js'
 import RegisterOrdersReducer from '../Pages/Orders/SendingOrders/Slices/registerOrdersSlice.js'
+import SavedOrdersReducer from '../Pages/Orders/SendingOrders/Slices/savedOrdersSlice.js'
 
 export default configureStore({
     devTools: process.env.NODE_ENV === 'development',
@@ -57,5 +58,6 @@ export default configureStore({
         connections: ConnectionsReducer,
         partnerProducts: PartnerProductsReducer,
         registerOrders: RegisterOrdersReducer,
+        savedOrders: SavedOrdersReducer,
     },
 })

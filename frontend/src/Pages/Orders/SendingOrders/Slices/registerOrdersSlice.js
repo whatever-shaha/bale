@@ -5,6 +5,7 @@ const registerOrdersSlice = createSlice({
     initialState: {
         allProductsPartner: [],
         categoriesPartner: [],
+        loading: false,
     },
     reducers: {
         setAllProductsPartner: (state, {payload}) => {

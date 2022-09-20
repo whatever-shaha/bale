@@ -52,6 +52,19 @@ router.post("/getcheckshowall", auth, (req, res) => {
   require("./products").getCheckShowAll(req, res);
 });
 
+// Saqlangan buyurtmalar
+router.post("/createtemporary", auth, (req, res) => {
+  require("./orders").registerTemporaryOrder(req, res);
+});
+
+router.post("/gettemporaries", auth, (req, res) => {
+  require("./orders").getTemporaryOrders(req, res);
+});
+
+router.post("/deletetemporary", auth, (req, res) => {
+  require("./orders").deleteTemporaryOrders(req, res);
+});
+
 // Filialar
 router.post("/getfilials", auth, (req, res) => {
   require("./filials").getfilials(req, res);
