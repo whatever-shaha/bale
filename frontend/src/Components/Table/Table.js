@@ -37,6 +37,7 @@ import {MarketProductsTableRow} from './TableRows/MarketProductsTableRow'
 import {PartnerProductsTableRow} from './TableRows/PartnerProductsTableRow'
 import {RegisterOrdersTableRow} from './TableRows/RegisterOrdersTableRow'
 import {OrderProductsTableRow} from './TableRows/OrderProductsTableRow'
+import {SavedOrdersTableRow} from './TableRows/SavedOrdersTableRow.js'
 function Table({
     page,
     data,
@@ -468,6 +469,14 @@ function Table({
                         handleDelete={handleDelete}
                     />
                 )
+                case 'savedOrders':
+                    return (
+                        <SavedOrdersTableRow
+                            data={data}
+                            currentPage={currentPage}
+                            countPage={countPage}
+                        />
+            )    
             default:
                 return (
                     <tr>
