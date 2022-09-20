@@ -172,7 +172,6 @@ function ProductIdExchanges({currency}) {
             universalToast("Jadvalda ma'lumot mavjud emas !", 'warning')
         }
     }
-    console.log('salom')
     useEffect(() => {
         const body = {
             currentPage: 0,

@@ -3,7 +3,6 @@ const Joi = require("joi");
 
 const orderproduct = new Schema(
   {
-    id: { type: String, required: true },
     sender: { type: Schema.Types.ObjectId, ref: "Market", required: true },
     market: { type: Schema.Types.ObjectId, ref: "Market", required: true },
     product: { type: Schema.Types.ObjectId, ref: "Product" },
@@ -30,16 +29,16 @@ const orderproduct = new Schema(
 function validateOrderProduct(orderproduct) {
   const schema = Joi.object({
     sender: Joi.string().required(),
-    market: Joi.string().required(),
-    product: Joi.string().required(),
+    product: Joi.object().required(),
     productdata: Joi.string().required(),
     category: Joi.string().required(),
-    unit: Joi.string().required(),
-    pieces: Joi.object(),
-    unitprice: Joi.number(),
-    unitpriceuzs: Joi.number(),
-    totalprice: Joi.number(),
-    totalpriceuzs: Joi.number(),
+    total: Joi.number().required(),
+    unit: Joi.object().required(),
+    pieces: Joi.number().required(),
+    unitprice: Joi.number().required(),
+    unitpriceuzs: Joi.number().required(),
+    totalprice: Joi.number().required(),
+    totalpriceuzs: Joi.number().required(),
   });
 
   return schema.validate(orderproduct);

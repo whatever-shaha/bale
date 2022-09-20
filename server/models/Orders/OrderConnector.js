@@ -1,6 +1,6 @@
 const { Schema, model } = require("mongoose");
 
-const order = new Schema(
+const orderConnector = new Schema(
   {
     id: { type: String, required: true },
     sender: { type: Schema.Types.ObjectId, ref: "Market", required: true },
@@ -12,14 +12,17 @@ const order = new Schema(
       type: String,
       required: true,
     },
-    positions: [
-      "received",
-      "accepted",
-      "canceled",
-      "send",
-      "delivered",
-      "completed",
-    ],
+    positions: {
+      type: Array,
+      default: [
+        "received",
+        "accepted",
+        "canceled",
+        "send",
+        "delivered",
+        "completed",
+      ],
+    },
     isArchive: { type: Boolean, default: false },
   },
   {
@@ -27,4 +30,4 @@ const order = new Schema(
   }
 );
 
-module.exports.Order = model("Order", order);
+module.exports.OrderConnector = model("OrderConnector", orderConnector);

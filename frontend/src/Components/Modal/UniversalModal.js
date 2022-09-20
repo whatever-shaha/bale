@@ -49,6 +49,7 @@ function UniversalModal({
     incomingRequests,
     handleAcceptRequest,
     handleRejectRequest,
+    order,
 }) {
     const {t} = useTranslation(['common'])
 
@@ -129,6 +130,8 @@ function UniversalModal({
                 return <Check returned={false} product={product} />
             case 'checkSellReturn':
                 return <Check returned={true} product={product} />
+            case 'checkOrder':
+                return <Check isOrder={true} order={order} />
             case 'checkPayment':
                 return <Check payment={payment} isPayment={true} />
             case 'allChecks':

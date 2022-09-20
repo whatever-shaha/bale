@@ -17,6 +17,7 @@ import {
     warningSaleProductsEmpty,
 } from '../../../../Components/ToastMessages/ToastMessages.js'
 import {
+    createOrder,
     setAllProductsPartner,
     setCategoriesPartner,
 } from '../Slices/registerOrdersSlice.js'
@@ -27,6 +28,7 @@ import {
     createTemporaryOrder,
     deleteSavedOrder,
 } from '../Slices/savedOrdersSlice.js'
+import {deleteSavedPayment} from '../../../Sale/Slices/savedSellingsSlice.js'
 
 function RegisterOrders() {
     const {t} = useTranslation(['common'])
@@ -78,6 +80,8 @@ function RegisterOrders() {
     const [totalOrderPrice, setTotalOrderPrice] = useState(0)
     const [totalOrderPriceUzs, setTotalOrderPriceUzs] = useState(0)
     const [temporary, setTemporary] = useState(null)
+    const [modalData, setModalData] = useState(null)
+    const [sendingOrder, setSendingOrder] = useState(null)
 
     const handleSearchCategory = (e) => {
         const str = e.target.value
@@ -118,7 +122,6 @@ function RegisterOrders() {
             // if (product.total === 0) return warningCountSellPayment()
             const currentProduct = {
                 sender: currentPartner.value,
-                market: market._id,
                 product: {
                     _id: product._id,
                     code: product.productdata.code,
@@ -218,8 +221,7 @@ function RegisterOrders() {
         setTableProducts([])
         setTotalOrderPrice(0)
         setTotalOrderPriceUzs(0)
-        setModalVisible(false)
-        setModalBody('')
+        setCurrentPartner(null)
     }
 
     const handleClickSave = () => {
@@ -247,9 +249,45 @@ function RegisterOrders() {
                 }
             })
             if (temporary) {
-                dispatch(deleteSavedOrder({_id: temporary._id}))
+                dispatch(deleteSavedOrder({temporaryId: temporary._id}))
                 setTemporary(null)
             }
+        } else {
+            universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
+        }
+    }
+
+    const handleCreateOrder = () => {
+        if (tableProducts.length > 0) {
+            const all = tableProducts.reduce(
+                (acc, cur) => roundUsd(acc + cur.totalprice),
+                0
+            )
+            const allUzs = tableProducts.reduce(
+                (acc, cur) => roundUzs(acc + cur.totalpriceuzs),
+                0
+            )
+            const body = {
+                partner: currentPartner.value,
+                products: tableProducts,
+                totalprice: all,
+                totalpriceuzs: allUzs,
+            }
+            dispatch(createOrder(body)).then(({error, payload}) => {
+                if (!error) {
+                    setModalData(payload)
+                    setTimeout(() => {
+                        setModalBody('checkOrder')
+                        setModalVisible(true)
+                        setSendingOrder(payload)
+                        clearAll()
+                    }, 500)
+                    if (temporary) {
+                        dispatch(deleteSavedOrder({temporaryId: temporary._id}))
+                        setTemporary(null)
+                    }
+                }
+            })
         } else {
             universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
         }
@@ -334,6 +372,8 @@ function RegisterOrders() {
                         : ''
                 }
                 toggleModal={handleCloseModal}
+                approveFunction={handleCreateOrder}
+                order={sendingOrder}
             />
             <div className='flex flex-col grow gap-[1.25rem] overflow-auto'>
                 <div className='mainPadding flex flex gap-[1.25rem]'>

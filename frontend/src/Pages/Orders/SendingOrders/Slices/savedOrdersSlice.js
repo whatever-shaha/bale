@@ -1,9 +1,6 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import Api from '../../../../Config/Api.js'
-import {
-    successDeleteTemporary,
-    universalToast,
-} from '../../../../Components/ToastMessages/ToastMessages.js'
+import {universalToast} from '../../../../Components/ToastMessages/ToastMessages.js'
 
 export const createTemporaryOrder = createAsyncThunk(
     'savedOrders/createTemporary',

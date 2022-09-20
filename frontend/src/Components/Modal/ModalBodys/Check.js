@@ -8,8 +8,10 @@ import {PaymentCheck} from '../../SaleCheck/PaymentCheck.js'
 import {SaleCheckPos} from '../../SaleCheck/SaleCheckPos.js'
 import {SaleCheckPosReturn} from '../../SaleCheck/SaleCheckPosReturn.js'
 import {PaymentCheckPos} from '../../SaleCheck/PaymentCheckPos.js'
+import {OrderCheck} from '../../OrdersCheck/OrderCheck.js'
+import {OrderCheckPos} from '../../OrdersCheck/OrderCheckPos.js'
 
-function Check({product, returned, isPayment, payment}) {
+function Check({product, returned, isPayment, payment, isOrder, order}) {
     const [loadContent, setLoadContent] = useState(false)
     const saleCheckRef = useRef(null)
     const saleCheckRefPosPrinter = useRef(null)
@@ -68,6 +70,8 @@ function Check({product, returned, isPayment, payment}) {
                     <SaleCheckReturn product={product} ref={saleCheckRef} />
                 ) : isPayment ? (
                     <PaymentCheck payment={payment} ref={saleCheckRef} />
+                ) : isOrder ? (
+                    <OrderCheck ref={saleCheckRef} order={order} />
                 ) : (
                     <SaleCheck product={product} ref={saleCheckRef} />
                 )}
@@ -84,6 +88,13 @@ function Check({product, returned, isPayment, payment}) {
                         <PaymentCheckPos
                             payment={payment}
                             ref={saleCheckRefPosPrinter}
+                        />
+                    </div>
+                ) : isOrder ? (
+                    <div className='hidden'>
+                        <OrderCheckPos
+                            ref={saleCheckRefPosPrinter}
+                            order={order}
                         />
                     </div>
                 ) : (
