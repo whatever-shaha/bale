@@ -2,8 +2,9 @@ const { Market, Connection, TemporaryOrders, OrderProduct, OrderConnector } =
   require("../constants.js").models;
 
 const { validateOrderProduct } = require("../constants.js").validators;
-const { map } = require("lodash");
-// BUyurtma berish
+const { map, filter } = require("lodash");
+
+// Buyurtma berish
 const registerOrder = async (req, res) => {
   try {
     const { market, products, partner, totalprice, totalpriceuzs } = req.body;
@@ -76,6 +77,62 @@ const registerOrder = async (req, res) => {
   }
 };
 
+const getOrders = async (req, res) => {
+  try {
+    const { market, countPage, currentPage, search, startDate, endDate } =
+      req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+
+    const id = new RegExp(
+      ".*" + search ? search.id.toString() : "" + ".*",
+      "i"
+    );
+    const name = new RegExp(
+      ".*" + search ? search.name.toString() : "" + ".*",
+      "i"
+    );
+    const inn = new RegExp(
+      ".*" + search ? search.inn.toString() : "" + ".*",
+      "i"
+    );
+    const orders = await OrderConnector.find({
+      market,
+      id: id,
+      createdAt: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    })
+      .select(
+        "products id position createdAt totalprice totalpriceuzs position"
+      )
+      .populate({
+        path: "products",
+        populate: { path: "productdata", select: "name code" },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
+        match: { name: name },
+      })
+      .populate({
+        path: "products",
+        populate: { path: "category", select: "name code" },
+      });
+    const filteredOrders = filter(orders, (order) => order.sender !== null);
+    const count = filteredOrders.length;
+    res.status(200).json({
+      orders: filteredOrders.splice(currentPage * countPage, countPage),
+      count,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 // Vaqtincha saqlangan buyurtmalar
 const registerTemporaryOrder = async (req, res) => {
   try {
@@ -131,6 +188,7 @@ const deleteTemporaryOrders = async (req, res) => {
 };
 
 module.exports = {
+  getOrders,
   registerOrder,
   registerTemporaryOrder,
   getTemporaryOrders,

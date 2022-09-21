@@ -45,13 +45,13 @@ function SearchForm({
     filterByDirectorNameWhenPressEnter,
     searchByMarketName,
     filterByMarketName,
-    filterByMarketNameWhenPressEnter,
     searchBySellerName,
     filterBySellerName,
     filterBySellerNameWhenPressEnter,
     searchByMarketInn,
     filterByMarketInn,
     filterByMarketInnWhenPressEnter,
+    filterByMarketNameWhenPressEnter,
 }) {
     const {t} = useTranslation(['common'])
     const chooseComponent = (key) => {
