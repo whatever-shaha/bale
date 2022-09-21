@@ -1,13 +1,12 @@
 const { Market, Connection, TemporaryOrders, OrderProduct, OrderConnector } =
   require("../constants.js").models;
-
 const { validateOrderProduct } = require("../constants.js").validators;
 const { map, filter } = require("lodash");
 
 // Buyurtma berish
 const registerOrder = async (req, res) => {
   try {
-    const { market, products, partner, totalprice, totalpriceuzs } = req.body;
+    const { market, products, partner } = req.body;
     const marketData = await Market.findById(market);
     if (!marketData) {
       return res.status(400).json({ message: "Do'kon ma'lumotlari topilmadi" });
@@ -106,6 +105,7 @@ const getOrders = async (req, res) => {
         $lt: endDate,
       },
     })
+      .sort({ createdAt: -1 })
       .select(
         "products id position createdAt totalprice totalpriceuzs position"
       )
@@ -159,13 +159,15 @@ const getTemporaryOrders = async (req, res) => {
     if (!marketData) {
       return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
     }
-    const temporaryOrders = await TemporaryOrders.find({ market });
+    const temporaryOrders = await TemporaryOrders.find({ market }).sort({
+      createdAt: -1,
+    });
     if (!temporaryOrders) {
       return res
         .status(404)
         .json({ message: "Saqlangan buyurtmalar topilmadi" });
     }
-    res.status(200).json({ temporaryOrders });
+    res.status(200).json(temporaryOrders);
   } catch (error) {
     return res.status(400).json({ message: error.message });
   }

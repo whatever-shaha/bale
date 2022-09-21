@@ -23,7 +23,7 @@ import {
 } from '../Slices/registerOrdersSlice.js'
 import {roundUsd, roundUzs} from '../../../../App/globalFunctions.js'
 import UniversalModal from '../../../../Components/Modal/UniversalModal.js'
-import {useNavigate} from 'react-router-dom'
+import {useLocation, useNavigate} from 'react-router-dom'
 import {
     createTemporaryOrder,
     deleteSavedOrder,
@@ -33,6 +33,8 @@ import {deleteSavedPayment} from '../../../Sale/Slices/savedSellingsSlice.js'
 function RegisterOrders() {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
+    const location = useLocation()
+    const navigate = useNavigate()
     const {currencyType, currency} = useSelector((state) => state.currency)
     const {connections, loading} = useSelector((state) => state.connections)
     const {market} = useSelector((state) => state.login)
@@ -40,7 +42,6 @@ function RegisterOrders() {
         (state) => state.registerOrders
     )
 
-    const navigate = useNavigate()
     const [partners, setPartners] = useState()
     const [currentPartner, setCurrentPartner] = useState(null)
     const [filteredCategories, setFilteredCategories] =
@@ -361,6 +362,15 @@ function RegisterOrders() {
         })
         setPartners(partners)
     }, [connections])
+    useEffect(() => {
+        const data = location.state
+        if (data && data.temporary) {
+            setTemporary(data)
+            setTableProducts(data?.temporary.tableProducts)
+            setCurrentPartner(data?.temporary?.partner)
+        }
+        window.history.replaceState({}, document.title)
+    }, [location.state])
     return (
         <section className={'flex grow relative overflow-auto'}>
             <UniversalModal

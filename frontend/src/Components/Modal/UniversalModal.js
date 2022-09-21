@@ -18,6 +18,7 @@ import {SavedIncomingsCheck} from '../SaleCheck/SavedIncomingsCheck.js'
 import RequestConnection from './ModalBodys/RequestConnection.js'
 import RequestApplication from './ModalBodys/ReuqestApplication.js'
 import SendingApplication from './ModalBodys/SendingApplication.js'
+import {SavedOrdersCheck} from '../OrdersCheck/SavedOrdersCheck.js'
 function UniversalModal({
     isOpen,
     toggleModal,
@@ -148,6 +149,8 @@ function UniversalModal({
                 )
             case 'savedsalescheck':
                 return <SavedSalesCheck product={printedSelling} />
+            case 'savedorderscheck':
+                return <SavedOrdersCheck order={order} />
             case 'savedincomingscheck':
                 return <SavedIncomingsCheck incomings={printedIncomings} />
             case 'totalReport':

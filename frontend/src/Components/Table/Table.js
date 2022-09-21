@@ -469,14 +469,16 @@ function Table({
                         handleDelete={handleDelete}
                     />
                 )
-                case 'savedOrders':
-                    return (
-                        <SavedOrdersTableRow
-                            data={data}
-                            currentPage={currentPage}
-                            countPage={countPage}
-                        />
-            )    
+            case 'savedOrders':
+                return (
+                    <SavedOrdersTableRow
+                        Delete={Delete}
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                        handlePrint={Print}
+                    />
+                )
             default:
                 return (
                     <tr>

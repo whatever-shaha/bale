@@ -22,8 +22,8 @@ function Orders() {
     const dispatch = useDispatch()
     const headers = [
         {title: '№'},
+        {title: 'Sana'},
         {
-            filter: '',
             title: "Do'kon nomi",
         },
         {
