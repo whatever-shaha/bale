@@ -32,10 +32,10 @@ function Check({product, returned, isPayment, payment, isOrder, order}) {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [saleCheckRef.current])
 
-    const reactToPrintContentPosPrinter = React.useCallback(() => {
-        return saleCheckRefPosPrinter.current
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [saleCheckRef.current])
+    // const reactToPrintContentPosPrinter = React.useCallback(() => {
+    //     return saleCheckRefPosPrinter.current
+    //     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // }, [saleCheckRef.current])
     const print = useReactToPrint({
         content: reactToPrintContent,
         documentTitle: 'Sale Check',
@@ -43,12 +43,12 @@ function Check({product, returned, isPayment, payment, isOrder, order}) {
         removeAfterPrint: true,
     })
 
-    const printPosPrinter = useReactToPrint({
-        content: reactToPrintContentPosPrinter,
-        documentTitle: 'Sale CheckPosPrinter',
-        onBeforeGetContent: handleOnBeforeGetContent,
-        removeAfterPrint: true,
-    })
+    // const printPosPrinter = useReactToPrint({
+    //     content: reactToPrintContentPosPrinter,
+    //     documentTitle: 'Sale CheckPosPrinter',
+    //     onBeforeGetContent: handleOnBeforeGetContent,
+    //     removeAfterPrint: true,
+    // })
     useEffect(() => {
         if (
             loadContent &&
@@ -108,7 +108,7 @@ function Check({product, returned, isPayment, payment, isOrder, order}) {
             </div>
             <div className='w-[27cm] flex justify-between items-center mt-6'>
                 <PrintBtn onClick={print} isDisabled={loadContent} />
-                <PrintBtn onClick={printPosPrinter} isDisabled={loadContent} />
+                {/*<PrintBtn onClick={printPosPrinter} isDisabled={loadContent} />*/}
             </div>
         </section>
     )

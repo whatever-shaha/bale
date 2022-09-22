@@ -455,6 +455,7 @@ function Table({
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}
+                        Print={Print}
                     />
                 )
             case 'orderProducts':

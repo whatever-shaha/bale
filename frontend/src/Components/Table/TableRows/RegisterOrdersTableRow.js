@@ -3,12 +3,14 @@ import {map} from 'lodash'
 import TableBtn from '../../Buttons/TableBtn.js'
 import {useNavigate} from 'react-router-dom'
 import {IoCloseCircleOutline} from 'react-icons/io5'
+import SelectTable from '../../SelectTable/SelectTable.js'
 
 export const RegisterOrdersTableRow = ({
     data,
     currentPage,
     countPage,
     currency,
+    Print,
 }) => {
     const navigate = useNavigate()
     const linkToSale = (order) => {
@@ -16,6 +18,7 @@ export const RegisterOrdersTableRow = ({
             state: {order: {...order}},
         })
     }
+    const options = [{label: 'salom', value: 'salom'}]
     return (
         <>
             {map(data, (item, index) => (
@@ -45,6 +48,11 @@ export const RegisterOrdersTableRow = ({
                     </td>
                     <td className='td text-center'>
                         <div className='flex items-center justify-center gap-[0.625rem]'>
+                            <TableBtn
+                                type={'print'}
+                                bgcolor={'bg-primary-800'}
+                                onClick={() => Print(item)}
+                            />
                             {item?.position === 'requested' ? (
                                 <TableBtn
                                     type={'edit'}
@@ -56,7 +64,9 @@ export const RegisterOrdersTableRow = ({
                             )}
                         </div>
                     </td>
-                    <td className='td text-end'>{item?.status}</td>
+                    <td className='td text-end'>
+                        <SelectTable onSelect={() => {}} options={options} />
+                    </td>
                 </tr>
             ))}
         </>

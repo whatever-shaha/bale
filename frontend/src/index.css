@@ -721,19 +721,19 @@
         @apply text-[1rem] font-[300] text-black-700 w-full flex items-center justify-between;
     }
     .request-application-ul {
-        @apply flex justify-between border-b border-b-primary-900 pb-[0.5rem] mb-[1rem] items-center
+        @apply flex justify-between border-b border-b-primary-900 pb-[0.5rem] mb-[1rem] items-center;
     }
     .request-application-ul-li {
-        @apply text-[0.75rem] text-black-700 pb-[8px]
+        @apply text-[0.75rem] text-black-700 pb-[8px];
     }
-    .request-application-li-p{
-        @apply text-[1rem] text-black-900 flex items-center gap-[5px]
+    .request-application-li-p {
+        @apply text-[1rem] text-black-900 flex items-center gap-[5px];
     }
-    .request-application-delete-icon{
-        @apply w-[22px] h-[22px] rounded-full bg-error-700 flex justify-center items-center text-white-900 hover:bg-error-800 duration-200 cursor-pointer
+    .request-application-delete-icon {
+        @apply w-[22px] h-[22px] rounded-full bg-error-700 flex justify-center items-center text-white-900 hover:bg-error-800 duration-200 cursor-pointer;
     }
-    .request-application-cancel-icon{
-        @apply text-success-700 hover:text-success-800 duration-200
+    .request-application-cancel-icon {
+        @apply text-success-700 hover:text-success-800 duration-200;
     }
     /* product exchanges style */
 }
