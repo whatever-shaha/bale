@@ -17,10 +17,11 @@ const orderConnector = new Schema(
       default: [
         "requested",
         "accepted",
-        "canceled",
+        "rejected",
         "send",
         "delivered",
-        "completed",
+        "completedcustomer",
+        "completedsender",
       ],
     },
     isArchive: { type: Boolean, default: false },

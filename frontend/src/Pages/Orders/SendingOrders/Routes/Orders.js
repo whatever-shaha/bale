@@ -191,7 +191,7 @@ function Orders() {
                     filterByMarketNameAndInnWhenPressEnter
                 }
             />
-            <div className='tableContainerPadding'>
+            <div className='tablePadding'>
                 {loading ? (
                     <Spinner />
                 ) : data.length === 0 && searchedData.length === 0 ? (

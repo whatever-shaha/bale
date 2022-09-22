@@ -2,7 +2,11 @@ import React from 'react'
 import {map} from 'lodash'
 import TableBtn from '../../Buttons/TableBtn.js'
 import {useNavigate} from 'react-router-dom'
-import {IoCloseCircleOutline} from 'react-icons/io5'
+import {
+    IoCheckmarkCircleSharp,
+    IoCloseCircleSharp,
+    IoHourglass,
+} from 'react-icons/io5'
 import SelectTable from '../../SelectTable/SelectTable.js'
 
 export const RegisterOrdersTableRow = ({
@@ -18,7 +22,68 @@ export const RegisterOrdersTableRow = ({
             state: {order: {...order}},
         })
     }
-    const options = [{label: 'salom', value: 'salom'}]
+    const positions = [
+        {name: "so'ralgan", position: 'requested'},
+        {name: 'tasdiqlangan', position: 'accepted'},
+        {name: "jo'natilgan", position: 'send'},
+        {name: 'qabul qilish', position: 'delivered'},
+        {name: 'yakunlangan', position: 'completed'},
+    ]
+
+    const createOptions = (currentPosition) => {
+        let hasEqual = false
+        const checkPosition = ({position, currentPosition, index}) => {
+            if (position.position === currentPosition) {
+                hasEqual = true
+            }
+            return {
+                label: (
+                    <span className='flex'>
+                        {position.position === currentPosition || !hasEqual ? (
+                            <IoCheckmarkCircleSharp size={17} color={'green'} />
+                        ) : (
+                            <IoHourglass size={17} color='#F89009' />
+                        )}
+                        <span className='pl-2'>{position.name}</span>
+                    </span>
+                ),
+                value: currentPosition,
+                isDisabled:
+                    index === 0
+                        ? true
+                        : !(
+                              (positions[index - 1].position === 'send' &&
+                                  currentPosition === 'send') ||
+                              (currentPosition === 'delivered' &&
+                                  positions[index].position === 'delivered')
+                          ),
+            }
+        }
+        return map(positions, (position, index) =>
+            checkPosition({position, currentPosition, index})
+        )
+    }
+    const createValue = (currentPosition) => {
+        const check = currentPosition === 'rejected'
+        const val = positions.find((pos) => pos.position === currentPosition)
+        return {
+            value: val?.position,
+            label: (
+                <span className='flex'>
+                    {check ? (
+                        <IoCloseCircleSharp size={17} color={'red'} />
+                    ) : (
+                        <IoCheckmarkCircleSharp size={17} color='green' />
+                    )}{' '}
+                    <span className='pl-2'>
+                        {check ? 'red etilgan' : val?.name}
+                    </span>
+                </span>
+            ),
+            isDisabled: true,
+        }
+    }
+
     return (
         <>
             {map(data, (item, index) => (
@@ -53,19 +118,25 @@ export const RegisterOrdersTableRow = ({
                                 bgcolor={'bg-primary-800'}
                                 onClick={() => Print(item)}
                             />
-                            {item?.position === 'requested' ? (
+                            {
                                 <TableBtn
                                     type={'edit'}
                                     bgcolor={'bg-warning-500'}
                                     onClick={() => linkToSale(item)}
+                                    isDisabled={item?.position !== 'requested'}
                                 />
-                            ) : (
-                                <IoCloseCircleOutline color='red ' size={22} />
-                            )}
+                            }
                         </div>
                     </td>
-                    <td className='td text-end'>
-                        <SelectTable onSelect={() => {}} options={options} />
+                    <td className='td border-r-0'>
+                        <SelectTable
+                            onSelect={() => {}}
+                            options={
+                                item?.position !== 'rejected' &&
+                                createOptions(item.position)
+                            }
+                            defaultValue={createValue(item.position)}
+                        />
                     </td>
                 </tr>
             ))}
