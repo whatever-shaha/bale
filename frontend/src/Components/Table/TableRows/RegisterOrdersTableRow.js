@@ -48,15 +48,14 @@ export const RegisterOrdersTableRow = ({
                     </span>
                 ),
                 value: currentPosition,
-                isDisabled:
-                    index === 0
-                        ? true
-                        : !(
-                              (positions[index - 1].position === 'send' &&
-                                  currentPosition === 'send') ||
-                              (currentPosition === 'delivered' &&
-                                  positions[index].position === 'delivered')
-                          ),
+                isDisabled: !(
+                    (currentPosition === 'requested' && index === 0) ||
+                    (index !== 0 &&
+                        ((positions[index - 1].position === 'send' &&
+                            currentPosition === 'delivered') ||
+                            (currentPosition === 'delivered' &&
+                                position === 'delivered')))
+                ),
             }
         }
         return map(positions, (position, index) =>
@@ -83,6 +82,10 @@ export const RegisterOrdersTableRow = ({
             isDisabled: true,
         }
     }
+    const handleChange = (e, order) => {
+        console.log('salom')
+        e.value === 'requested' && linkToSale(order)
+    }
 
     return (
         <>
@@ -105,7 +108,7 @@ export const RegisterOrdersTableRow = ({
                     <td className='td text-start'>{item?.sender?.inn}</td>
                     <td className='td text-end'>{item?.id}</td>
                     <td className='td text-end'>{item?.products?.length}</td>
-                    <td className='td text-end'>
+                    <td className='td text-end font-bold'>
                         {currency === 'UZS'
                             ? item?.totalpriceuzs?.toLocaleString('ru-Ru')
                             : item?.totalprice?.toLocaleString('ru-Ru')}{' '}
@@ -130,12 +133,12 @@ export const RegisterOrdersTableRow = ({
                     </td>
                     <td className='td border-r-0'>
                         <SelectTable
-                            onSelect={() => {}}
                             options={
                                 item?.position !== 'rejected' &&
                                 createOptions(item.position)
                             }
                             defaultValue={createValue(item.position)}
+                            onSelect={(e) => handleChange(e, item)}
                         />
                     </td>
                 </tr>
