@@ -36,6 +36,7 @@ function Orders() {
             title: 'Umumiy narxi',
             filter: '',
         },
+        {title: 'Tahrirlash'},
         {
             title: 'Holati',
             filter: '',

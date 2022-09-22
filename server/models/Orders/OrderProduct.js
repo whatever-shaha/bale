@@ -6,9 +6,6 @@ const orderproduct = new Schema(
     sender: { type: Schema.Types.ObjectId, ref: "Market", required: true },
     market: { type: Schema.Types.ObjectId, ref: "Market", required: true },
     product: { type: Schema.Types.ObjectId, ref: "Product" },
-    productdata: { type: Schema.Types.ObjectId, ref: "ProductData" },
-    category: { type: Schema.Types.ObjectId, ref: "Category" },
-    unit: { type: Schema.Types.ObjectId, ref: "Unit" },
     pieces: {
       recived: { type: Number, default: 0 },
       send: { type: Number, default: 0 },

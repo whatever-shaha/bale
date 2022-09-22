@@ -20,6 +20,7 @@ import {
     createOrder,
     setAllProductsPartner,
     setCategoriesPartner,
+    updateOrder,
 } from '../Slices/registerOrdersSlice.js'
 import {roundUsd, roundUzs} from '../../../../App/globalFunctions.js'
 import UniversalModal from '../../../../Components/Modal/UniversalModal.js'
@@ -28,7 +29,6 @@ import {
     createTemporaryOrder,
     deleteSavedOrder,
 } from '../Slices/savedOrdersSlice.js'
-import {deleteSavedPayment} from '../../../Sale/Slices/savedSellingsSlice.js'
 
 function RegisterOrders() {
     const {t} = useTranslation(['common'])
@@ -75,14 +75,11 @@ function RegisterOrders() {
     const [activeCategory, setActiveCategory] = useState(null)
     const [searchCategory, setSearchCategory] = useState('')
     const [tableProducts, setTableProducts] = useState([])
-    const [selectedProduct, setSelectedProduct] = useState('')
     const [modalBody, setModalBody] = useState('')
     const [modalVisible, setModalVisible] = useState(false)
-    const [totalOrderPrice, setTotalOrderPrice] = useState(0)
-    const [totalOrderPriceUzs, setTotalOrderPriceUzs] = useState(0)
     const [temporary, setTemporary] = useState(null)
-    const [modalData, setModalData] = useState(null)
     const [sendingOrder, setSendingOrder] = useState(null)
+    const [editOrder, setEditOrder] = useState(null)
 
     const handleSearchCategory = (e) => {
         const str = e.target.value
@@ -114,12 +111,12 @@ function RegisterOrders() {
             : filter(tableProducts, (obj) => obj.product._id === option.value)
                   .length > 0
         if (!hasProduct) {
-            !option.barcode && setSelectedProduct(option)
             const product = option.barcode
                 ? allProductsPartner.find(
                       (obj) => obj.productdata.barcode === option.barcode
                   )
                 : allProductsPartner.find((obj) => obj._id === option.value)
+
             // if (product.total === 0) return warningCountSellPayment()
             const currentProduct = {
                 sender: currentPartner.value,
@@ -140,7 +137,6 @@ function RegisterOrders() {
                 unit: product.unit,
             }
             setTableProducts([...tableProducts, currentProduct])
-            setSelectedProduct('')
         } else {
             universalToast(t("Maxsulot ro'yxatda mavjud !"), 'error')
         }
@@ -201,16 +197,6 @@ function RegisterOrders() {
     }
     const handleClickOrder = () => {
         if (tableProducts.length) {
-            const all = tableProducts.reduce(
-                (acc, cur) => roundUsd(acc + cur.totalprice),
-                0
-            )
-            const allUzs = tableProducts.reduce(
-                (acc, cur) => roundUzs(acc + cur.totalpriceuzs),
-                0
-            )
-            setTotalOrderPrice(all)
-            setTotalOrderPriceUzs(allUzs)
             setModalVisible(true)
             setModalBody('complete')
         } else {
@@ -220,8 +206,6 @@ function RegisterOrders() {
 
     const clearAll = () => {
         setTableProducts([])
-        setTotalOrderPrice(0)
-        setTotalOrderPriceUzs(0)
         setCurrentPartner(null)
     }
 
@@ -260,35 +244,30 @@ function RegisterOrders() {
 
     const handleCreateOrder = () => {
         if (tableProducts.length > 0) {
-            const all = tableProducts.reduce(
-                (acc, cur) => roundUsd(acc + cur.totalprice),
-                0
-            )
-            const allUzs = tableProducts.reduce(
-                (acc, cur) => roundUzs(acc + cur.totalpriceuzs),
-                0
-            )
             const body = {
                 partner: currentPartner.value,
                 products: tableProducts,
-                totalprice: all,
-                totalpriceuzs: allUzs,
+                orderId: editOrder ? editOrder._id : null,
             }
-            dispatch(createOrder(body)).then(({error, payload}) => {
-                if (!error) {
-                    setModalData(payload)
-                    setTimeout(() => {
-                        setModalBody('checkOrder')
-                        setModalVisible(true)
+            dispatch(editOrder ? updateOrder(body) : createOrder(body)).then(
+                ({error, payload}) => {
+                    if (!error) {
+                        editOrder && setEditOrder(null)
                         setSendingOrder(payload)
-                        clearAll()
-                    }, 500)
-                    if (temporary) {
-                        dispatch(deleteSavedOrder({temporaryId: temporary._id}))
-                        setTemporary(null)
+                        setTimeout(() => {
+                            setModalBody('checkOrder')
+                            setModalVisible(true)
+                            clearAll()
+                        }, 500)
+                        if (temporary) {
+                            dispatch(
+                                deleteSavedOrder({temporaryId: temporary._id})
+                            )
+                            setTemporary(null)
+                        }
                     }
                 }
-            })
+            )
         } else {
             universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
         }
@@ -369,8 +348,37 @@ function RegisterOrders() {
             setTableProducts(data?.temporary.tableProducts)
             setCurrentPartner(data?.temporary?.partner)
         }
+        if (data && data.order) {
+            setEditOrder(data.order)
+            setCurrentPartner({
+                label: data.order.sender.name + ' - ' + data.order.sender.inn,
+                value: data.order.sender._id,
+            })
+            const products = map(data.order.products, (product) => {
+                return {
+                    sender: product.sender,
+                    product: {
+                        _id: product.product?._id,
+                        code: product.product?.productdata?.code,
+                        name: product.product?.productdata?.name,
+                        barcode: product.product?.productdata?.barcode,
+                    },
+                    productdata: product.product?.productdata._id,
+                    category: product.product?.category._id,
+                    totalprice: product.totalprice,
+                    totalpriceuzs: product.totalpriceuzs,
+                    pieces: product.pieces.recived,
+                    total: product.product?.total,
+                    unitprice: product.unitprice,
+                    unitpriceuzs: product.unitpriceuzs,
+                    unit: product.product?.unit,
+                }
+            })
+            setTableProducts(products)
+        }
         window.history.replaceState({}, document.title)
     }, [location.state])
+
     return (
         <section className={'flex grow relative overflow-auto'}>
             <UniversalModal

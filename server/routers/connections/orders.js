@@ -11,7 +11,6 @@ const registerOrder = async (req, res) => {
     if (!marketData) {
       return res.status(400).json({ message: "Do'kon ma'lumotlari topilmadi" });
     }
-
     map(products, (product) => {
       const { error } = validateOrderProduct(product);
       if (error) {
@@ -27,10 +26,7 @@ const registerOrder = async (req, res) => {
       const orderProduct = new OrderProduct({
         sender: product.sender,
         market,
-        product: product._id,
-        productdata: product.productdata,
-        category: product.category,
-        unit: product.unit._id,
+        product: product.product._id,
         pieces: { recived: product.pieces },
         unitprice: product.unitprice,
         unitpriceuzs: product.unitpriceuzs,
@@ -50,7 +46,7 @@ const registerOrder = async (req, res) => {
       market,
       sender: partner,
       products: newProducts,
-      position: "received",
+      position: "requested",
       totalprice: totalPrice,
       totalpriceuzs: totalPriceUzs,
     });
@@ -59,15 +55,81 @@ const registerOrder = async (req, res) => {
       .select("products id position createdAt totalprice totalpriceuzs")
       .populate({
         path: "products",
-        populate: { path: "productdata", select: "name code" },
+        populate: {
+          path: "product",
+          select: "name code",
+          populate: { path: "productdata category unit", select: "name code" },
+        },
       })
       .populate({
         path: "sender",
         select: "name inn",
-      })
+      });
+
+    res.status(200).json(order);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const updateOrder = async (req, res) => {
+  try {
+    const { market, products, orderId } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(400).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+    map(products, (product) => {
+      const { error } = validateOrderProduct(product);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+    });
+
+    const orderData = await OrderConnector.findById(orderId);
+    map(orderData.products, async (product) => {
+      await OrderProduct.findByIdAndDelete(product);
+    });
+
+    let newProducts = [];
+    let totalPrice = 0;
+    let totalPriceUzs = 0;
+
+    for (const product of products) {
+      const orderProduct = new OrderProduct({
+        sender: product.sender,
+        market,
+        product: product.product._id,
+        pieces: { recived: product.pieces },
+        unitprice: product.unitprice,
+        unitpriceuzs: product.unitpriceuzs,
+        totalprice: product.totalprice,
+        totalpriceuzs: product.totalpriceuzs,
+      });
+      await orderProduct.save();
+      totalPrice += orderProduct.totalprice;
+      totalPriceUzs += orderProduct.totalpriceuzs;
+      newProducts.push(orderProduct._id);
+    }
+
+    orderData.products = newProducts;
+    orderData.totalprice = totalPrice;
+    orderData.totalpriceuzs = totalPriceUzs;
+
+    await orderData.save();
+    const order = await OrderConnector.findById(orderId)
+      .select("products id position createdAt totalprice totalpriceuzs")
       .populate({
         path: "products",
-        populate: { path: "category", select: "name code" },
+        populate: {
+          path: "product",
+          select: "name code",
+          populate: { path: "productdata category unit", select: "name code" },
+        },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
       });
 
     res.status(200).json(order);
@@ -111,16 +173,18 @@ const getOrders = async (req, res) => {
       )
       .populate({
         path: "products",
-        populate: { path: "productdata", select: "name code" },
+        populate: {
+          path: "product",
+          populate: {
+            path: "category productdata unit total price",
+            select: "name code sellingprice",
+          },
+        },
       })
       .populate({
         path: "sender",
         select: "name inn",
         match: { name: name },
-      })
-      .populate({
-        path: "products",
-        populate: { path: "category", select: "name code" },
       });
     const filteredOrders = filter(orders, (order) => order.sender !== null);
     const count = filteredOrders.length;
@@ -190,8 +254,9 @@ const deleteTemporaryOrders = async (req, res) => {
 };
 
 module.exports = {
-  getOrders,
   registerOrder,
+  updateOrder,
+  getOrders,
   registerTemporaryOrder,
   getTemporaryOrders,
   deleteTemporaryOrders,

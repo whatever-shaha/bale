@@ -1,5 +1,8 @@
 import React from 'react'
-import {map, reduce} from 'lodash'
+import {map} from 'lodash'
+import TableBtn from '../../Buttons/TableBtn.js'
+import {useNavigate} from 'react-router-dom'
+import {IoCloseCircleOutline} from 'react-icons/io5'
 
 export const RegisterOrdersTableRow = ({
     data,
@@ -7,6 +10,12 @@ export const RegisterOrdersTableRow = ({
     countPage,
     currency,
 }) => {
+    const navigate = useNavigate()
+    const linkToSale = (order) => {
+        navigate('/dukonlar/buyurtma_berish/buyurtmalar', {
+            state: {order: {...order}},
+        })
+    }
     return (
         <>
             {map(data, (item, index) => (
@@ -33,6 +42,19 @@ export const RegisterOrdersTableRow = ({
                             ? item?.totalpriceuzs?.toLocaleString('ru-Ru')
                             : item?.totalprice?.toLocaleString('ru-Ru')}{' '}
                         {currency}
+                    </td>
+                    <td className='td text-center'>
+                        <div className='flex items-center justify-center gap-[0.625rem]'>
+                            {item?.position === 'requested' ? (
+                                <TableBtn
+                                    type={'edit'}
+                                    bgcolor={'bg-warning-500'}
+                                    onClick={() => linkToSale(item)}
+                                />
+                            ) : (
+                                <IoCloseCircleOutline color='red ' size={22} />
+                            )}
+                        </div>
                     </td>
                     <td className='td text-end'>{item?.status}</td>
                 </tr>

@@ -40,8 +40,9 @@ export const OrderCheckPos = forwardRef((props, ref) => {
                 return (
                     <div key={uniqueId('sale-check-pos')}>
                         <div className='text-[7pt] font-bold'>
-                            {index + 1}. {item?.category?.code}{' '}
-                            {item?.productdata?.code} {item?.productdata?.name}
+                            {index + 1}. {item?.product?.category?.code}{' '}
+                            {item?.product?.productdata?.code}{' '}
+                            {item?.product?.productdata?.name}
                         </div>
                         <div className='flex justify-between text-[7pt]'>
                             <span>

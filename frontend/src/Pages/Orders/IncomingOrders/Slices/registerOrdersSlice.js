@@ -14,18 +14,6 @@ export const createOrder = createAsyncThunk(
     }
 )
 
-export const updateOrder = createAsyncThunk(
-    'createOrder/updateOrder',
-    async (body = {}, {rejectWithValue}) => {
-        try {
-            const {data} = await Api.post('/connections/updateorder', body)
-            return data
-        } catch (error) {
-            return rejectWithValue(error)
-        }
-    }
-)
-
 const registerOrdersSlice = createSlice({
     name: 'registerOrders',
     initialState: {
@@ -51,17 +39,6 @@ const registerOrdersSlice = createSlice({
             state.loading = false
         },
         [createOrder.rejected]: (state, {payload}) => {
-            universalToast(payload, 'error')
-            state.loading = false
-        },
-        [updateOrder.pending]: (state) => {
-            state.loading = true
-        },
-        [updateOrder.fulfilled]: (state, {payload}) => {
-            state.lastOrder = payload
-            state.loading = false
-        },
-        [updateOrder.rejected]: (state, {payload}) => {
             universalToast(payload, 'error')
             state.loading = false
         },

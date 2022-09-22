@@ -63,16 +63,16 @@ export const OrderCheck = forwardRef((props, ref) => {
                                         {index + 1}
                                     </td>
                                     <td className='check-table-body text-center'>
-                                        {item?.category?.code}
+                                        {item?.product?.category?.code}
                                     </td>
                                     <td className='check-table-body text-center'>
-                                        {item?.productdata?.code}
+                                        {item?.product?.productdata?.code}
                                     </td>
                                     <td className='check-table-body text-start'>
-                                        {item?.productdata?.name}
+                                        {item?.product?.productdata?.name}
                                     </td>
                                     <td className='check-table-body'>
-                                        {item?.pieces.recived}
+                                        {item?.pieces?.recived}
                                     </td>
                                     <td className='check-table-body'>
                                         {currencyType === 'USD'

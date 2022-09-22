@@ -57,6 +57,10 @@ router.post("/registerorder", auth, (req, res) => {
   require("./orders").registerOrder(req, res);
 });
 
+router.post("/updateorder", auth, (req, res) => {
+  require("./orders").updateOrder(req, res);
+});
+
 router.post("/getorders", auth, (req, res) => {
   require("./orders").getOrders(req, res);
 });

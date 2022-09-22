@@ -245,7 +245,7 @@ const directorRoutes = [
         subRoutes: [
             {
                 path: 'buyurtmalar',
-                element: <Orders />,
+                element: <RegisterOrders />,
             },
             {
                 path: 'saqlanganlar',
@@ -253,7 +253,7 @@ const directorRoutes = [
             },
             {
                 path: 'ruyxat',
-                element: <RegisterOrders />,
+                element: <Orders />,
             },
         ],
     },

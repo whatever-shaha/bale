@@ -3,10 +3,13 @@ import Api from '../../../../Config/Api.js'
 import {universalToast} from '../../../../Components/ToastMessages/ToastMessages.js'
 
 export const getOrders = createAsyncThunk(
-    'ordersList/createOrder',
+    'incomingOrdersList/createOrder',
     async (body = {}, {rejectWithValue}) => {
         try {
-            const {data} = await Api.post('/connections/getorders', body)
+            const {data} = await Api.post(
+                '/connections/getincomingorders',
+                body
+            )
             return data
         } catch (error) {
             return rejectWithValue(error)
@@ -15,10 +18,13 @@ export const getOrders = createAsyncThunk(
 )
 
 export const getOrdersByFilter = createAsyncThunk(
-    'ordersList/searchOrders',
+    'incomingOrdersList/searchOrders',
     async (body = {}, {rejectWithValue}) => {
         try {
-            const {data} = await Api.post('/connections/getorders', body)
+            const {data} = await Api.post(
+                '/connections/getincomingorders',
+                body
+            )
             return data
         } catch (error) {
             return rejectWithValue(error)
@@ -26,8 +32,8 @@ export const getOrdersByFilter = createAsyncThunk(
     }
 )
 
-const ordersSlice = createSlice({
-    name: 'ordersList',
+const incomingOrdersSlice = createSlice({
+    name: 'incomingOrdersList',
     initialState: {
         orders: [],
         searchedOrders: [],
@@ -69,5 +75,5 @@ const ordersSlice = createSlice({
     },
 })
 
-export const {clearSearchedOrders} = ordersSlice.actions
-export default ordersSlice.reducer
+export const {clearSearchedOrders} = incomingOrdersSlice.actions
+export default incomingOrdersSlice.reducer

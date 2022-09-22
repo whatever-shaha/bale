@@ -15,7 +15,7 @@ const orderConnector = new Schema(
     positions: {
       type: Array,
       default: [
-        "received",
+        "requested",
         "accepted",
         "canceled",
         "send",
