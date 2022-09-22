@@ -197,6 +197,98 @@ const getOrders = async (req, res) => {
   }
 };
 
+// Buyurtma olish
+const getIncomingOrders = async (req, res) => {
+  try {
+    const { market, countPage, currentPage, search, startDate, endDate } =
+      req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+
+    const id = new RegExp(
+      ".*" + search ? search.id.toString() : "" + ".*",
+      "i"
+    );
+    const name = new RegExp(
+      ".*" + search ? search.name.toString() : "" + ".*",
+      "i"
+    );
+    const inn = new RegExp(
+      ".*" + search ? search.inn.toString() : "" + ".*",
+      "i"
+    );
+    const orders = await OrderConnector.find({
+      sender: market,
+      id: id,
+      createdAt: {
+        $gte: startDate,
+        $lt: endDate,
+      },
+    })
+      .sort({ createdAt: -1 })
+      .select(
+        "products id position createdAt totalprice totalpriceuzs position"
+      )
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          populate: {
+            path: "category productdata unit total price",
+            select: "name code sellingprice",
+          },
+        },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
+        match: { name: name },
+      });
+    const filteredOrders = filter(orders, (order) => order.sender !== null);
+    const count = filteredOrders.length;
+    res.status(200).json({
+      orders: filteredOrders.splice(currentPage * countPage, countPage),
+      count,
+    });
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const updateOrderPosition = async (req, res) => {
+  try {
+    const { market, orderId, position } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+    await OrderConnector.findByIdAndUpdate(orderId, { position });
+    const order = await OrderConnector.findById(orderId)
+      .select(
+        "products id position createdAt totalprice totalpriceuzs position"
+      )
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          populate: {
+            path: "category productdata unit total price",
+            select: "name code sellingprice",
+          },
+        },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
+      });
+    res.status(200).json(order);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 // Vaqtincha saqlangan buyurtmalar
 const registerTemporaryOrder = async (req, res) => {
   try {
@@ -257,6 +349,8 @@ module.exports = {
   registerOrder,
   updateOrder,
   getOrders,
+  getIncomingOrders,
+  updateOrderPosition,
   registerTemporaryOrder,
   getTemporaryOrders,
   deleteTemporaryOrders,

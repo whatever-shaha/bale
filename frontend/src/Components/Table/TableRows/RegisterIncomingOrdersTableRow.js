@@ -9,53 +9,68 @@ import {
 } from 'react-icons/io5'
 import SelectTable from '../../SelectTable/SelectTable.js'
 
-export const RegisterOrdersTableRow = ({
+export const RegisterIncomingOrdersTableRow = ({
     data,
     currentPage,
     countPage,
     currency,
     Print,
+    updatePosition,
 }) => {
     const navigate = useNavigate()
     const linkToSale = (order) => {
-        navigate('/dukonlar/buyurtma_berish/buyurtmalar', {
+        navigate('/dukonlar/buyurtma_olish/buyurtmalar', {
             state: {order: {...order}},
         })
     }
     const positions = [
         {name: "so'ralgan", position: 'requested'},
-        {name: 'tasdiqlangan', position: 'accepted'},
-        {name: "jo'natilgan", position: 'send'},
-        {name: 'qabul qilish', position: 'delivered'},
-        {name: 'yakunlangan', position: 'completed'},
+        {name: 'tasdiqlash', position: 'accepted'},
+        {name: 'rad etish', position: 'rejected'},
+        {name: "jo'natish", position: 'send'},
+        {name: 'yetkazilgan', position: 'delivered'},
+        {name: 'yakunlash', position: 'completed'},
     ]
 
     const createOptions = (currentPosition) => {
         let hasEqual = false
         const check = (position, index) => {
-            if (currentPosition === 'requested') return false
+            if (currentPosition === 'delivered' && index === 5) return false
+            if (currentPosition === 'send' && index === 3) return false
             if (
-                (currentPosition === 'send' ||
-                    currentPosition === 'delivered') &&
-                index === 3
+                currentPosition === 'accepted' &&
+                (index === 3 || index === 2 || index === 1)
             )
                 return false
-            if (currentPosition === 'send' && index === 3) return false
+            if (
+                (currentPosition === 'requested' ||
+                    currentPosition === 'rejected') &&
+                (index === 1 || index === 2)
+            ) {
+                return false
+            }
             return true
         }
-        const checkPosition = ({position, currentPosition, index}) => {
+        const checkPosition = ({position, index}) => {
             if (position.position === currentPosition) {
                 hasEqual = true
             }
             return {
                 label: (
                     <span className='flex'>
-                        {position.position === currentPosition || !hasEqual ? (
+                        {position.position === 'rejected' ? (
+                            <IoCloseCircleSharp size={17} color={'red'} />
+                        ) : position.position === currentPosition ||
+                          !hasEqual ? (
                             <IoCheckmarkCircleSharp size={17} color={'green'} />
                         ) : (
                             <IoHourglass size={17} color='#F89009' />
                         )}
-                        <span className='pl-2'>{position.name}</span>
+                        <span className='pl-2'>
+                            {currentPosition === 'completed' && index === 5
+                                ? 'yanlangan'
+                                : position.name}
+                        </span>
                     </span>
                 ),
                 value: position.position,
@@ -63,7 +78,7 @@ export const RegisterOrdersTableRow = ({
             }
         }
         return map(positions, (position, index) =>
-            checkPosition({position, currentPosition, index})
+            checkPosition({position, index})
         )
     }
     const createValue = (currentPosition) => {
@@ -79,15 +94,21 @@ export const RegisterOrdersTableRow = ({
                         <IoCheckmarkCircleSharp size={17} color='green' />
                     )}{' '}
                     <span className='pl-2'>
-                        {check ? 'red etilgan' : val?.name}
+                        {check
+                            ? 'red etilgan'
+                            : currentPosition === 'completed'
+                            ? 'yakunlangan'
+                            : val?.name}
                     </span>
                 </span>
             ),
             isDisabled: true,
         }
     }
-    const handleChange = (e, order) => {
-        e.value === 'requested' && linkToSale(order)
+    const handleChange = (e, order, index) => {
+        if (e.value === 'rejected' || e.value === 'accepted') {
+            updatePosition(e.value, order._id, index)
+        }
     }
 
     return (
@@ -129,19 +150,16 @@ export const RegisterOrdersTableRow = ({
                                     type={'edit'}
                                     bgcolor={'bg-warning-500'}
                                     onClick={() => linkToSale(item)}
-                                    isDisabled={item?.position !== 'requested'}
+                                    isDisabled={item?.position !== 'delivered'}
                                 />
                             }
                         </div>
                     </td>
                     <td className='td border-r-0'>
                         <SelectTable
-                            options={
-                                item?.position !== 'rejected' &&
-                                createOptions(item.position)
-                            }
-                            defaultValue={createValue(item.position)}
-                            onSelect={(e) => handleChange(e, item)}
+                            options={createOptions(item.position)}
+                            value={createValue(item.position)}
+                            onSelect={(e) => handleChange(e, item, index)}
                         />
                     </td>
                 </tr>

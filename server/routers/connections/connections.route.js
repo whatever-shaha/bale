@@ -52,7 +52,7 @@ router.post("/getcheckshowall", auth, (req, res) => {
   require("./products").getCheckShowAll(req, res);
 });
 
-// Buyurtmalar
+// Buyurtma berish
 router.post("/registerorder", auth, (req, res) => {
   require("./orders").registerOrder(req, res);
 });
@@ -63,6 +63,15 @@ router.post("/updateorder", auth, (req, res) => {
 
 router.post("/getorders", auth, (req, res) => {
   require("./orders").getOrders(req, res);
+});
+
+//Buyurtma olish
+router.post("/getincomingorders", auth, (req, res) => {
+  require("./orders").getIncomingOrders(req, res);
+});
+
+router.post("/updateorderposition", auth, (req, res) => {
+  require("./orders").updateOrderPosition(req, res);
 });
 
 // Saqlangan buyurtmalar

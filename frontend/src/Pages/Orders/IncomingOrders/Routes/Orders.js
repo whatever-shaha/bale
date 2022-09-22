@@ -7,10 +7,12 @@ import {
     clearSearchedOrders,
     getOrders,
     getOrdersByFilter,
+    updateOrderPosition,
 } from '../Slices/ordersSlice.js'
 import Spinner from '../../../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../../../Components/NotFind/NotFind.js'
 import {filter} from 'lodash'
+import UniversalModal from '../../../../Components/Modal/UniversalModal.js'
 
 function Orders() {
     const {currencyType} = useSelector((state) => state.currency)
@@ -36,6 +38,7 @@ function Orders() {
             title: 'Umumiy narxi',
             filter: '',
         },
+        {title: 'Check'},
         {
             title: 'Holati',
             filter: '',
@@ -52,6 +55,14 @@ function Orders() {
         new Date(new Date().getFullYear(), new Date().getMonth(), 1, 0, 0, 0)
     )
     const [endDate, setEndDate] = useState(new Date())
+    const [printedOrder, setPrintedOrder] = useState(null)
+    const [modalVisible, setModalVisible] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
+
+    const toggleModal = () => {
+        setModalVisible(!modalVisible)
+        setPrintedOrder(null)
+    }
 
     // filter by total
     const filterByTotal = ({value}) => {
@@ -112,6 +123,27 @@ function Orders() {
         }
     }
 
+    const handleClickPrint = (order) => {
+        setModalBody('checkOrder')
+        setPrintedOrder(order)
+        setModalVisible(true)
+    }
+
+    const handleUpdatePosition = (position, orderId, index) => {
+        dispatch(updateOrderPosition({position, orderId})).then(
+            ({error, payload}) => {
+                if (!error) {
+                    const newData =
+                        searchedData.length > 0 ? [...searchedData] : [...data]
+                    newData[index] = payload
+                    searchedData.length > 0
+                        ? setSearchedData(newData)
+                        : setData(newData)
+                }
+            }
+        )
+    }
+
     useEffect(() => {
         const body = {
             currentPage,
@@ -152,6 +184,13 @@ function Orders() {
                     />
                 )}
             </div>
+            <UniversalModal
+                order={printedOrder}
+                currency={currencyType}
+                body={modalBody}
+                isOpen={modalVisible}
+                toggleModal={toggleModal}
+            />
             <SearchForm
                 filterBy={['total', 'startDate', 'endDate', 'id', 'marketName']}
                 endDate={endDate}
@@ -168,7 +207,7 @@ function Orders() {
                     filterByMarketNameAndInnWhenPressEnter
                 }
             />
-            <div className='tableContainerPadding'>
+            <div className='tablePadding'>
                 {loading ? (
                     <Spinner />
                 ) : data.length === 0 && searchedData.length === 0 ? (
@@ -179,9 +218,10 @@ function Orders() {
                         currentPage={currentPage}
                         currency={currencyType}
                         countPage={showByTotal}
-                        page={'registerOrder'}
+                        page={'registerIncomingOrder'}
                         headers={headers}
-                        // Print={handleClickPrint}
+                        Print={handleClickPrint}
+                        updatePosition={handleUpdatePosition}
                         // addPlus={addPlus}
                         // Sort={filterData}
                         // sortItem={sorItem}

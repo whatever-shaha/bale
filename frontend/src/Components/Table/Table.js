@@ -38,6 +38,7 @@ import {PartnerProductsTableRow} from './TableRows/PartnerProductsTableRow'
 import {RegisterOrdersTableRow} from './TableRows/RegisterOrdersTableRow'
 import {OrderProductsTableRow} from './TableRows/OrderProductsTableRow'
 import {SavedOrdersTableRow} from './TableRows/SavedOrdersTableRow.js'
+import {RegisterIncomingOrdersTableRow} from './TableRows/RegisterIncomingOrdersTableRow.js'
 function Table({
     page,
     data,
@@ -78,6 +79,7 @@ function Table({
     handleDelete,
     wholeSale,
     handleShowProduct,
+    updatePosition,
 }) {
     const checkRows = () => {
         switch (page) {
@@ -456,6 +458,17 @@ function Table({
                         currentPage={currentPage}
                         countPage={countPage}
                         Print={Print}
+                    />
+                )
+            case 'registerIncomingOrder':
+                return (
+                    <RegisterIncomingOrdersTableRow
+                        currency={currency}
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                        Print={Print}
+                        updatePosition={updatePosition}
                     />
                 )
             case 'orderProducts':
