@@ -10,6 +10,7 @@ const { OrderConnector } = require("../models/Orders/OrderConnector.js");
 const {
   OrderProduct,
   validateOrderProduct,
+  validateSendingOrderProduct,
 } = require("../models/Orders/OrderProduct.js");
 const { TemporaryOrders } = require("../models/Orders/TemporaryOrders.js");
 
@@ -23,4 +24,8 @@ module.exports.models = {
   OrderProduct,
   Category,
 };
-module.exports.validators = { validateConnection, validateOrderProduct };
+module.exports.validators = {
+  validateConnection,
+  validateOrderProduct,
+  validateSendingOrderProduct,
+};

@@ -17,9 +17,9 @@ export const RegisterOrdersTableRow = ({
     Print,
 }) => {
     const navigate = useNavigate()
-    const linkToSale = (order) => {
+    const linkToSale = (position, order) => {
         navigate('/dukonlar/buyurtma_berish/buyurtmalar', {
-            state: {order: {...order}},
+            state: {order: {...order}, position},
         })
     }
     const positions = [
@@ -33,7 +33,7 @@ export const RegisterOrdersTableRow = ({
     const createOptions = (currentPosition) => {
         let hasEqual = false
         const check = (position, index) => {
-            if (currentPosition === 'requested') return false
+            if (currentPosition === 'requested' && index === 0) return false
             if (
                 (currentPosition === 'send' ||
                     currentPosition === 'delivered') &&
@@ -87,7 +87,7 @@ export const RegisterOrdersTableRow = ({
         }
     }
     const handleChange = (e, order) => {
-        e.value === 'requested' && linkToSale(order)
+        e.value === 'requested' && linkToSale(e.value, order)
     }
 
     return (

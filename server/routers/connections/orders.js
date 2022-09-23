@@ -1,7 +1,16 @@
-const { Market, Connection, TemporaryOrders, OrderProduct, OrderConnector } =
-  require("../constants.js").models;
+const {
+  Market,
+  Connection,
+  TemporaryOrders,
+  OrderProduct,
+  OrderConnector,
+  Product,
+} = require("../constants.js").models;
 const { validateOrderProduct } = require("../constants.js").validators;
 const { map, filter } = require("lodash");
+const {
+  validateSendingOrderProduct,
+} = require("../../models/Orders/OrderProduct.js");
 
 // Buyurtma berish
 const registerOrder = async (req, res) => {
@@ -27,7 +36,7 @@ const registerOrder = async (req, res) => {
         sender: product.sender,
         market,
         product: product.product._id,
-        pieces: { recived: product.pieces },
+        pieces: { recived: product.pieces.recived },
         unitprice: product.unitprice,
         unitpriceuzs: product.unitpriceuzs,
         totalprice: product.totalprice,
@@ -100,7 +109,7 @@ const updateOrder = async (req, res) => {
         sender: product.sender,
         market,
         product: product.product._id,
-        pieces: { recived: product.pieces },
+        pieces: { ...product.pieces },
         unitprice: product.unitprice,
         unitpriceuzs: product.unitpriceuzs,
         totalprice: product.totalprice,
@@ -237,12 +246,12 @@ const getIncomingOrders = async (req, res) => {
           path: "product",
           populate: {
             path: "category productdata unit total price",
-            select: "name code sellingprice",
+            select: "name code sellingprice incomingprice incomingpriceuzs",
           },
         },
       })
       .populate({
-        path: "sender",
+        path: "market",
         select: "name inn",
         match: { name: name },
       });
@@ -283,6 +292,92 @@ const updateOrderPosition = async (req, res) => {
         path: "sender",
         select: "name inn",
       });
+    res.status(200).json(order);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
+const sendingProducts = async (req, res) => {
+  try {
+    const { market, products, orderId } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(400).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+
+    for (const product of products) {
+      const { error } = validateSendingOrderProduct(product);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+      const updateProduct = await Product.findByIdAndUpdate(
+        product.product._id
+      );
+      if (updateProduct.total < product.pieces.send)
+        return res.status(400).json({
+          message: `Omborda ${product.product.code} kodli mahsulotdan yetarlicha mavjud emas`,
+        });
+    }
+
+    const orderConnector = await OrderConnector.findById(orderId).populate({
+      path: "products",
+      select: "pieces product",
+      populate: { path: "product", select: "total" },
+    });
+
+    map(orderConnector.products, async (product) => {
+      await Product.findByIdAndUpdate(product.product._id, {
+        total: product.product.total + product.pieces.send,
+      });
+    });
+
+    let newProducts = [];
+    let totalPrice = 0;
+    let totalPriceUzs = 0;
+
+    for (const product of products) {
+      const orderProduct = new OrderProduct({
+        sender: market,
+        market: product.market,
+        product: product.product._id,
+        pieces: { ...product.pieces },
+        unitprice: product.unitprice,
+        unitpriceuzs: product.unitpriceuzs,
+        totalprice: product.totalprice,
+        totalpriceuzs: product.totalpriceuzs,
+      });
+      await orderProduct.save();
+      const updateProduct = await Product.findByIdAndUpdate(
+        product.product._id
+      );
+      updateProduct.total = updateProduct.total - product.pieces.send;
+      await updateProduct.save();
+      totalPrice += product.totalprice;
+      totalPriceUzs += product.totalpriceuzs;
+      newProducts.push(orderProduct._id);
+    }
+    orderConnector.products = newProducts;
+    orderConnector.position = "send";
+    orderConnector.totalprice = totalPrice;
+    orderConnector.totalpriceuzs = totalPriceUzs;
+
+    await orderConnector.save();
+    const order = await OrderConnector.findById(orderConnector._id)
+      .select("products id position createdAt totalprice totalpriceuzs")
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          select: "name code",
+          populate: { path: "productdata category unit", select: "name code" },
+        },
+      })
+      .populate({
+        path: "market",
+        select: "name inn",
+      });
+
     res.status(200).json(order);
   } catch (error) {
     return res.status(400).json({ message: error.message });
@@ -350,6 +445,7 @@ module.exports = {
   updateOrder,
   getOrders,
   getIncomingOrders,
+  sendingProducts,
   updateOrderPosition,
   registerTemporaryOrder,
   getTemporaryOrders,

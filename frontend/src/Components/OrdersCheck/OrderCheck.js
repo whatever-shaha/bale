@@ -51,7 +51,10 @@ export const OrderCheck = forwardRef((props, ref) => {
                             <td className='check-table-rtr'>Kategoriya</td>
                             <td className='check-table-rtr'>Kodi</td>
                             <td className='check-table-rtr'>Maxsulot</td>
-                            <td className='check-table-rtr'>Soni</td>
+                            <td className='check-table-rtr'>Buyurtma</td>
+                            <td className='check-table-rtr'>Yuborilgan</td>
+                            <td className='check-table-rtr'>Qabul qilingan</td>
+                            <td className='check-table-rtr'>Qaytarilgan</td>
                             <td className='check-table-rtr'>Jami</td>
                         </tr>
                     </thead>
@@ -72,12 +75,33 @@ export const OrderCheck = forwardRef((props, ref) => {
                                         {item?.product?.productdata?.name}
                                     </td>
                                     <td className='check-table-body'>
-                                        {item?.pieces?.recived}
+                                        {item?.pieces?.recived?.toLocaleString(
+                                            'ru-RU'
+                                        )}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {item?.pieces?.send?.toLocaleString(
+                                            'ru-RU'
+                                        )}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {item?.pieces?.delivered?.toLocaleString(
+                                            'ru-RU'
+                                        )}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {item?.pieces?.returned?.toLocaleString(
+                                            'ru-RU'
+                                        )}
                                     </td>
                                     <td className='check-table-body'>
                                         {currencyType === 'USD'
-                                            ? item?.totalprice
-                                            : item?.totalpriceuzs}{' '}
+                                            ? item?.totalprice?.toLocaleString(
+                                                  'ru-RU'
+                                              )
+                                            : item?.totalpriceuzs?.toLocaleString(
+                                                  'ru-RU'
+                                              )}{' '}
                                         {currencyType}
                                     </td>
                                 </tr>
@@ -92,8 +116,10 @@ export const OrderCheck = forwardRef((props, ref) => {
                     Jami:{' '}
                     <span>
                         {currencyType === 'USD'
-                            ? order?.totalprice
-                            : order?.totalpriceuzs}{' '}
+                            ? order?.totalprice?.toLocaleString('ru-RU')
+                            : order?.totalpriceuzs?.toLocaleString(
+                                  'ru-RU'
+                              )}{' '}
                         {currencyType}
                     </span>
                 </li>

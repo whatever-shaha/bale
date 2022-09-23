@@ -18,9 +18,9 @@ export const RegisterIncomingOrdersTableRow = ({
     updatePosition,
 }) => {
     const navigate = useNavigate()
-    const linkToSale = (order) => {
+    const linkToSale = (order, position) => {
         navigate('/dukonlar/buyurtma_olish/buyurtmalar', {
-            state: {order: {...order}},
+            state: {order: {...order}, position},
         })
     }
     const positions = [
@@ -106,8 +106,12 @@ export const RegisterIncomingOrdersTableRow = ({
         }
     }
     const handleChange = (e, order, index) => {
-        if (e.value === 'rejected' || e.value === 'accepted') {
+        const val = e.value
+        if (val === 'rejected' || val === 'accepted') {
             updatePosition(e.value, order._id, index)
+        }
+        if (val === 'send') {
+            linkToSale(order, val)
         }
     }
 
@@ -128,8 +132,8 @@ export const RegisterIncomingOrdersTableRow = ({
                             </span>
                         </div>
                     </td>
-                    <td className='td text-end'>{item?.sender?.name}</td>
-                    <td className='td text-start'>{item?.sender?.inn}</td>
+                    <td className='td text-end'>{item?.market?.name}</td>
+                    <td className='td text-start'>{item?.market?.inn}</td>
                     <td className='td text-end'>{item?.id}</td>
                     <td className='td text-end'>{item?.products?.length}</td>
                     <td className='td text-end font-bold'>

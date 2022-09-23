@@ -2,11 +2,23 @@ import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import Api from '../../../../Config/Api.js'
 import {universalToast} from '../../../../Components/ToastMessages/ToastMessages.js'
 
-export const createOrder = createAsyncThunk(
-    'createOrder/createOrder',
+export const sendingOrderProducts = createAsyncThunk(
+    'registerIncomingOrders/sendingOrderProducts',
     async (body = {}, {rejectWithValue}) => {
         try {
-            const {data} = await Api.post('/connections/registerorder', body)
+            const {data} = await Api.post('/connections/sendingproucts', body)
+            return data
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+)
+
+export const updateOrder = createAsyncThunk(
+    'registerIncomingOrders/updateOrder',
+    async (body = {}, {rejectWithValue}) => {
+        try {
+            const {data} = await Api.post('/connections/updateorder', body)
             return data
         } catch (error) {
             return rejectWithValue(error)
@@ -15,7 +27,7 @@ export const createOrder = createAsyncThunk(
 )
 
 const registerOrdersSlice = createSlice({
-    name: 'registerOrders',
+    name: 'registerIncomingOrders',
     initialState: {
         allProductsPartner: [],
         categoriesPartner: [],
@@ -31,14 +43,14 @@ const registerOrdersSlice = createSlice({
         },
     },
     extraReducers: {
-        [createOrder.pending]: (state) => {
+        [sendingOrderProducts.pending]: (state) => {
             state.loading = true
         },
-        [createOrder.fulfilled]: (state, {payload}) => {
+        [sendingOrderProducts.fulfilled]: (state, {payload}) => {
             state.lastOrder = payload
             state.loading = false
         },
-        [createOrder.rejected]: (state, {payload}) => {
+        [sendingOrderProducts.rejected]: (state, {payload}) => {
             universalToast(payload, 'error')
             state.loading = false
         },

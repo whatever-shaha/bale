@@ -74,6 +74,10 @@ router.post("/updateorderposition", auth, (req, res) => {
   require("./orders").updateOrderPosition(req, res);
 });
 
+router.post("/sendingproucts", auth, (req, res) => {
+  require("./orders").sendingProducts(req, res);
+});
+
 // Saqlangan buyurtmalar
 router.post("/createtemporary", auth, (req, res) => {
   require("./orders").registerTemporaryOrder(req, res);

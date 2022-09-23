@@ -29,6 +29,7 @@ import RegisterOrdersReducer from '../Pages/Orders/SendingOrders/Slices/register
 import SavedOrdersReducer from '../Pages/Orders/SendingOrders/Slices/savedOrdersSlice.js'
 import OrdersReducer from '../Pages/Orders/SendingOrders/Slices/ordersSlice.js'
 import IncomingOrdersReducer from '../Pages/Orders/IncomingOrders/Slices/ordersSlice.js'
+import RegisterIncomingOrdersReducer from '../Pages/Orders/IncomingOrders/Slices/registerOrdersSlice.js'
 
 export default configureStore({
     devTools: process.env.NODE_ENV === 'development',
@@ -63,5 +64,6 @@ export default configureStore({
         savedOrders: SavedOrdersReducer,
         orders: OrdersReducer,
         incomingOrders: IncomingOrdersReducer,
+        registerIncomingOrders: RegisterIncomingOrdersReducer,
     },
 })

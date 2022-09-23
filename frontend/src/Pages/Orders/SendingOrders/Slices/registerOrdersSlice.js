@@ -3,7 +3,7 @@ import Api from '../../../../Config/Api.js'
 import {universalToast} from '../../../../Components/ToastMessages/ToastMessages.js'
 
 export const createOrder = createAsyncThunk(
-    'createOrder/createOrder',
+    'registerOrders/createOrder',
     async (body = {}, {rejectWithValue}) => {
         try {
             const {data} = await Api.post('/connections/registerorder', body)
@@ -15,7 +15,7 @@ export const createOrder = createAsyncThunk(
 )
 
 export const updateOrder = createAsyncThunk(
-    'createOrder/updateOrder',
+    'registerOrders/updateOrder',
     async (body = {}, {rejectWithValue}) => {
         try {
             const {data} = await Api.post('/connections/updateorder', body)

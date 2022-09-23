@@ -31,15 +31,34 @@ function validateOrderProduct(orderproduct) {
     category: Joi.string().required(),
     total: Joi.number().required(),
     unit: Joi.object().required(),
-    pieces: Joi.number().required(),
+    pieces: Joi.object().required(),
     unitprice: Joi.number().required(),
     unitpriceuzs: Joi.number().required(),
     totalprice: Joi.number().required(),
     totalpriceuzs: Joi.number().required(),
   });
+  return schema.validate(orderproduct);
+}
+
+function validateSendingOrderProduct(orderproduct) {
+  const schema = Joi.object({
+    market: Joi.string().required(),
+    product: Joi.object().required(),
+    productdata: Joi.string().required(),
+    category: Joi.string().required(),
+    total: Joi.number().required(),
+    unit: Joi.object().required(),
+    pieces: Joi.object().required(),
+    unitprice: Joi.number().required(),
+    unitpriceuzs: Joi.number().required(),
+    totalprice: Joi.number().required(),
+    totalpriceuzs: Joi.number().required(),
+    incomingprice: Joi.number(),
+    incomingpriceuzs: Joi.number(),
+  });
 
   return schema.validate(orderproduct);
 }
 
-module.exports.validateOrderProduct = validateOrderProduct;
+module.exports = { validateOrderProduct, validateSendingOrderProduct };
 module.exports.OrderProduct = model("OrderProduct", orderproduct);

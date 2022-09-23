@@ -80,6 +80,7 @@ function RegisterOrders() {
     const [temporary, setTemporary] = useState(null)
     const [sendingOrder, setSendingOrder] = useState(null)
     const [editOrder, setEditOrder] = useState(null)
+    const [currentPosition, setCurrentPosition] = useState('recived')
 
     const handleSearchCategory = (e) => {
         const str = e.target.value
@@ -130,7 +131,7 @@ function RegisterOrders() {
                 category: product.category._id,
                 totalprice: product.price.sellingprice,
                 totalpriceuzs: product.price.sellingpriceuzs,
-                pieces: 1,
+                pieces: {recived: 1},
                 total: product.total,
                 unitprice: product.price.sellingprice,
                 unitpriceuzs: product.price.sellingpriceuzs,
@@ -146,13 +147,17 @@ function RegisterOrders() {
             prevProduct.product._id === id
                 ? {
                       ...prevProduct,
-                      pieces: Number(prevProduct.pieces) + 1,
+                      pieces: {
+                          ...prevProduct.pieces,
+                          [currentPosition]:
+                              Number(prevProduct.pieces[currentPosition]) + 1,
+                      },
                       totalprice: roundUsd(
-                          (Number(prevProduct.pieces) + 1) *
+                          (Number(prevProduct.pieces[currentPosition]) + 1) *
                               prevProduct.unitprice
                       ),
                       totalpriceuzs: roundUzs(
-                          (Number(prevProduct.pieces) + 1) *
+                          (Number(prevProduct.pieces[currentPosition]) + 1) *
                               prevProduct.unitpriceuzs
                       ),
                   }
@@ -165,20 +170,39 @@ function RegisterOrders() {
             prevProduct.product._id === id
                 ? {
                       ...prevProduct,
-                      pieces:
-                          Number(prevProduct.pieces) > 1
-                              ? Number(prevProduct.pieces) - 1
-                              : 1,
+                      pieces: {
+                          ...prevProduct,
+                          [currentPosition]:
+                              Number(prevProduct.pieces[currentPosition]) > 1
+                                  ? Number(
+                                        prevProduct.pieces[currentPosition]
+                                    ) - 1
+                                  : 1,
+                      },
                       totalprice: roundUsd(
-                          (Number(prevProduct.pieces) > 1
-                              ? Number(prevProduct.pieces) - 1
+                          (Number(prevProduct.pieces[currentPosition]) > 1
+                              ? Number(prevProduct.pieces[currentPosition]) - 1
                               : 1) * prevProduct.unitprice
                       ),
                       totalpriceuzs: roundUzs(
-                          (Number(prevProduct.pieces) > 1
-                              ? Number(prevProduct.pieces) - 1
+                          (Number(prevProduct.pieces[currentPosition]) > 1
+                              ? Number(prevProduct.pieces[currentPosition]) - 1
                               : 1) * prevProduct.unitpriceuzs
                       ),
+                  }
+                : prevProduct
+        )
+        setTableProducts(newRelease)
+    }
+    const handleCountProduct = (e, id) => {
+        const val = Number(e.target.value)
+        const newRelease = map(tableProducts, (prevProduct) =>
+            prevProduct.product._id === id
+                ? {
+                      ...prevProduct,
+                      pieces: {...prevProduct, [currentPosition]: val},
+                      totalprice: roundUsd(val * prevProduct.unitprice),
+                      totalpriceuzs: roundUzs(val * prevProduct.unitpriceuzs),
                   }
                 : prevProduct
         )
@@ -349,6 +373,7 @@ function RegisterOrders() {
             setCurrentPartner(data?.temporary?.partner)
         }
         if (data && data.order) {
+            data.position === 'requested' && setCurrentPosition('recived')
             setEditOrder(data.order)
             setCurrentPartner({
                 label: data.order.sender.name + ' - ' + data.order.sender.inn,
@@ -364,14 +389,14 @@ function RegisterOrders() {
                         barcode: product.product?.productdata?.barcode,
                     },
                     productdata: product.product?.productdata._id,
-                    category: product.product?.category._id,
-                    totalprice: product.totalprice,
+                    category: product?.product?.category._id,
+                    totalprice: product?.totalprice,
                     totalpriceuzs: product.totalpriceuzs,
-                    pieces: product.pieces.recived,
-                    total: product.product?.total,
-                    unitprice: product.unitprice,
-                    unitpriceuzs: product.unitpriceuzs,
-                    unit: product.product?.unit,
+                    pieces: {...product?.pieces},
+                    total: product?.product?.total,
+                    unitprice: product?.unitprice,
+                    unitpriceuzs: product?.unitpriceuzs,
+                    unit: product?.product?.unit,
                 }
             })
             setTableProducts(products)
@@ -429,6 +454,7 @@ function RegisterOrders() {
                             decrement={decrement}
                             handleDelete={handleDelete}
                             footer={'registersale'}
+                            handleCountProduct={handleCountProduct}
                         />
                     )}
                 </div>
