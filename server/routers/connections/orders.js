@@ -5,12 +5,22 @@ const {
   OrderProduct,
   OrderConnector,
   Product,
+  Category,
+  ProductData,
+  Unit,
 } = require("../constants.js").models;
 const { validateOrderProduct } = require("../constants.js").validators;
 const { map, filter } = require("lodash");
 const {
   validateSendingOrderProduct,
 } = require("../../models/Orders/OrderProduct.js");
+const {
+  createCategory,
+  createUnit,
+  createProductData,
+  createProduct,
+  createProductPrice,
+} = require("../globalFunctions.js");
 
 // Buyurtma berish
 const registerOrder = async (req, res) => {
@@ -206,6 +216,148 @@ const getOrders = async (req, res) => {
   }
 };
 
+const deliveredOrder = async (req, res) => {
+  try {
+    const { market, products, orderId } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(400).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+    for (const product of products) {
+      const { error } = validateOrderProduct(product);
+      if (error) {
+        return res.status(400).json({ message: error.details[0].message });
+      }
+      if (product.pieces.send < product.pieces.delivered) {
+        return res.status(400).json({
+          message: `Qabul qilingan miqdor jo'natilgan miqdordan katta bo'lishi mumkin emas`,
+        });
+      }
+    }
+
+    let totalPrice = 0;
+    let totalPriceUzs = 0;
+    for (const product of products) {
+      const orderProduct = await OrderProduct.findById(product._id);
+      await OrderProduct.findByIdAndUpdate(product._id, {
+        pieces: {
+          recived: product.pieces.recived,
+          send: product.pieces.send,
+          delivered: product.pieces.delivered,
+          returned: product.pieces.send - product.pieces.delivered,
+        },
+        totalprice: product.totalprice,
+        totalpriceuzs: product.totalpriceuzs,
+      });
+      totalPrice += product.totalprice;
+      totalPriceUzs += product.totalpriceuzs;
+
+      const productData = await Product.findById(product.product._id)
+        .populate({
+          path: "productdata",
+          select: "code name barcode",
+        })
+        .populate({ path: "category", select: "code name" })
+        .populate({ path: "unit", select: "name" });
+
+      // Categoriyani olish
+      let category = await Category.findOne({
+        market,
+        code: productData.category.code,
+      });
+      if (!category) {
+        category = await createCategory({
+          market,
+          code: productData.category.code,
+          name: productData.category.name,
+        });
+      }
+
+      // ProductData ni olish
+      let productdata = await ProductData.findOne({
+        market,
+        code: productData.productdata.code,
+        category: category._id,
+      });
+
+      if (!productdata) {
+        let unit = await Unit.findOne({
+          market,
+          name: productData.unit.name,
+        });
+        if (!unit) {
+          unit = createUnit({
+            market,
+            name: productData.unit.name,
+          });
+        }
+        productdata = await createProductData({
+          market,
+          code: productData.productdata.code,
+          name: productData.productdata.name,
+          barcode: productData.productdata.barcode,
+          unit: unit._id,
+          category: category._id,
+        });
+        const newProduct = await createProduct({
+          market,
+          category: category._id,
+          productdata: productdata._id,
+          unit: unit._id,
+          total: product.pieces.delivered,
+          minimumcount: 1,
+        });
+        const productPrice = await createProductPrice({
+          market,
+          product: newProduct._id,
+          sellingprice: 0,
+          sellingpriceuzs: 0,
+          incomingpriceuzs: product.unitpriceuzs,
+          incomingprice: product.unitprice,
+          tradeprice: 0,
+          tradepriceuzs: 0,
+        });
+
+        newProduct.price = productPrice._id;
+        await newProduct.save();
+        productdata.product = newProduct._id;
+        productdata.unit = unit._id;
+        await productdata.save();
+      } else {
+        const currentProduct = await Product.findById(productdata.product);
+        currentProduct.total -= orderProduct.pieces.delivered;
+        currentProduct.total += product.pieces.delivered;
+        await currentProduct.save();
+      }
+    }
+
+    await OrderConnector.findByIdAndUpdate(orderId, {
+      position: "delivered",
+      totalpriceuzs: totalPriceUzs,
+      totalprice: totalPrice,
+    });
+
+    const order = await OrderConnector.findById(orderId)
+      .select("products id position createdAt totalprice totalpriceuzs")
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          select: "name code",
+          populate: { path: "productdata category unit", select: "name code" },
+        },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
+      });
+
+    res.status(200).json(order);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 // Buyurtma olish
 const getIncomingOrders = async (req, res) => {
   try {
@@ -384,6 +536,44 @@ const sendingProducts = async (req, res) => {
   }
 };
 
+const completedOrderTransfer = async (req, res) => {
+  try {
+    const { market, orderId } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
+    }
+
+    const orderConnector = await OrderConnector.findById(orderId).populate({
+      path: "products",
+      populate: { path: "product", select: "total" },
+    });
+    for (const product of orderConnector.products) {
+    }
+    const order = await OrderConnector.findById(orderId)
+      .select(
+        "products id position createdAt totalprice totalpriceuzs position"
+      )
+      .populate({
+        path: "products",
+        populate: {
+          path: "product",
+          populate: {
+            path: "category productdata unit total price",
+            select: "name code sellingprice",
+          },
+        },
+      })
+      .populate({
+        path: "sender",
+        select: "name inn",
+      });
+    res.status(200).json(order);
+  } catch (error) {
+    return res.status(400).json({ message: error.message });
+  }
+};
+
 // Vaqtincha saqlangan buyurtmalar
 const registerTemporaryOrder = async (req, res) => {
   try {
@@ -450,4 +640,5 @@ module.exports = {
   registerTemporaryOrder,
   getTemporaryOrders,
   deleteTemporaryOrders,
+  deliveredOrder,
 };

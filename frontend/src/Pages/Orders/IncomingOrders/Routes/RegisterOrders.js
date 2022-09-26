@@ -112,7 +112,6 @@ function RegisterOrders() {
                 : allProductsPartner.find((obj) => obj._id === option.value)
 
             // if (product.total === 0) return warningCountSellPayment()
-            console.log(product)
             const currentProduct = {
                 market: currentPartner.value,
                 product: {

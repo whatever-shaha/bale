@@ -87,7 +87,8 @@ export const RegisterOrdersTableRow = ({
         }
     }
     const handleChange = (e, order) => {
-        e.value === 'requested' && linkToSale(e.value, order)
+        ;(e.value === 'requested' || e.value === 'delivered') &&
+            linkToSale(e.value, order)
     }
 
     return (
@@ -137,8 +138,9 @@ export const RegisterOrdersTableRow = ({
                     <td className='td border-r-0'>
                         <SelectTable
                             options={
-                                item?.position !== 'rejected' &&
-                                createOptions(item.position)
+                                item?.position !== 'rejected'
+                                    ? createOptions(item.position)
+                                    : []
                             }
                             defaultValue={createValue(item.position)}
                             onSelect={(e) => handleChange(e, item)}

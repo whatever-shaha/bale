@@ -4,6 +4,8 @@ const {
 } = require("../models/Connections/Connection");
 const { Market } = require("../models/MarketAndBranch/Market.js");
 const { Product } = require("../models/Products/Product.js");
+const { Unit } = require("../models/Products/Unit.js");
+const { ProductData } = require("../models/Products/Productdata.js");
 const { ProductPrice } = require("../models/Products/ProductPrice.js");
 const { Category } = require("../models/Products/Category.js");
 const { OrderConnector } = require("../models/Orders/OrderConnector.js");
@@ -23,6 +25,8 @@ module.exports.models = {
   OrderConnector,
   OrderProduct,
   Category,
+  ProductData,
+  Unit,
 };
 module.exports.validators = {
   validateConnection,

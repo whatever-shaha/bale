@@ -25,6 +25,7 @@ const orderproduct = new Schema(
 
 function validateOrderProduct(orderproduct) {
   const schema = Joi.object({
+    _id: Joi.string(),
     sender: Joi.string().required(),
     product: Joi.object().required(),
     productdata: Joi.string().required(),

@@ -65,6 +65,10 @@ router.post("/getorders", auth, (req, res) => {
   require("./orders").getOrders(req, res);
 });
 
+router.post("/deliveredorder", auth, (req, res) => {
+  require("./orders").deliveredOrder(req, res);
+});
+
 //Buyurtma olish
 router.post("/getincomingorders", auth, (req, res) => {
   require("./orders").getIncomingOrders(req, res);

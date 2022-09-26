@@ -18,6 +18,7 @@ import {
 } from '../../../../Components/ToastMessages/ToastMessages.js'
 import {
     createOrder,
+    deliveredOrder,
     setAllProductsPartner,
     setCategoriesPartner,
     updateOrder,
@@ -46,31 +47,44 @@ function RegisterOrders() {
     const [currentPartner, setCurrentPartner] = useState(null)
     const [filteredCategories, setFilteredCategories] =
         useState(categoriesPartner)
-    const headers = [
-        {title: '№', styles: 'w-[10%]'},
-        {
-            filter: '',
-            title: 'Maxsulot kodi',
-            styles: 'w-[10%]',
-        },
-        {
-            title: 'Maxsulot nomi',
-            filter: 'name',
-        },
-        {title: 'Maxsulot soni', filter: 'count', styles: 'w-[15%]'},
-        {title: 'Maxsulot narxi', filter: 'price', styles: 'w-[15%]'},
-        {
-            title: 'Soni',
-            filter: '',
-            styles: 'w-[15%]',
-        },
-        {title: 'Jami'},
-        {
-            title: '',
-            filter: '',
-            styles: 'w-[10%]',
-        },
-    ]
+    const headers = {
+        recived: [
+            {title: '№'},
+            {
+                title: 'Maxsulot kodi',
+            },
+            {
+                title: 'Maxsulot nomi',
+            },
+            {title: 'Maxsulot soni'},
+            {title: 'Maxsulot narxi'},
+            {
+                title: 'Soni',
+            },
+            {title: 'Jami'},
+            {
+                title: '',
+            },
+        ],
+        delivered: [
+            {title: '№'},
+            {
+                title: 'Maxsulot kodi',
+            },
+            {
+                title: 'Maxsulot nomi',
+            },
+            {title: "So'ralgan"},
+            {title: 'Yuborilgan'},
+            {
+                title: 'Qabul qilinayotgan',
+            },
+            {title: 'Narxi'},
+            {
+                title: 'Jami',
+            },
+        ],
+    }
     const [filteredProducts, setFilteredProducts] = useState([])
     const [activeCategory, setActiveCategory] = useState(null)
     const [searchCategory, setSearchCategory] = useState('')
@@ -81,6 +95,7 @@ function RegisterOrders() {
     const [sendingOrder, setSendingOrder] = useState(null)
     const [editOrder, setEditOrder] = useState(null)
     const [currentPosition, setCurrentPosition] = useState('recived')
+    const [tableBody, setTableBody] = useState('orderProducts')
 
     const handleSearchCategory = (e) => {
         const str = e.target.value
@@ -171,23 +186,23 @@ function RegisterOrders() {
                 ? {
                       ...prevProduct,
                       pieces: {
-                          ...prevProduct,
+                          ...prevProduct.pieces,
                           [currentPosition]:
-                              Number(prevProduct.pieces[currentPosition]) > 1
+                              Number(prevProduct.pieces[currentPosition]) > 0
                                   ? Number(
                                         prevProduct.pieces[currentPosition]
                                     ) - 1
-                                  : 1,
+                                  : 0,
                       },
                       totalprice: roundUsd(
-                          (Number(prevProduct.pieces[currentPosition]) > 1
+                          (Number(prevProduct.pieces[currentPosition]) > 0
                               ? Number(prevProduct.pieces[currentPosition]) - 1
-                              : 1) * prevProduct.unitprice
+                              : 0) * prevProduct.unitprice
                       ),
                       totalpriceuzs: roundUzs(
-                          (Number(prevProduct.pieces[currentPosition]) > 1
+                          (Number(prevProduct.pieces[currentPosition]) > 0
                               ? Number(prevProduct.pieces[currentPosition]) - 1
-                              : 1) * prevProduct.unitpriceuzs
+                              : 0) * prevProduct.unitpriceuzs
                       ),
                   }
                 : prevProduct
@@ -273,25 +288,27 @@ function RegisterOrders() {
                 products: tableProducts,
                 orderId: editOrder ? editOrder._id : null,
             }
-            dispatch(editOrder ? updateOrder(body) : createOrder(body)).then(
-                ({error, payload}) => {
-                    if (!error) {
-                        editOrder && setEditOrder(null)
-                        setSendingOrder(payload)
-                        setTimeout(() => {
-                            setModalBody('checkOrder')
-                            setModalVisible(true)
-                            clearAll()
-                        }, 500)
-                        if (temporary) {
-                            dispatch(
-                                deleteSavedOrder({temporaryId: temporary._id})
-                            )
-                            setTemporary(null)
-                        }
+            dispatch(
+                currentPosition === 'delivered'
+                    ? deliveredOrder(body)
+                    : editOrder
+                    ? updateOrder(body)
+                    : createOrder(body)
+            ).then(({error, payload}) => {
+                if (!error) {
+                    editOrder && setEditOrder(null)
+                    setSendingOrder(payload)
+                    setTimeout(() => {
+                        setModalBody('checkOrder')
+                        setModalVisible(true)
+                        clearAll()
+                    }, 500)
+                    if (temporary) {
+                        dispatch(deleteSavedOrder({temporaryId: temporary._id}))
+                        setTemporary(null)
                     }
                 }
-            )
+            })
         } else {
             universalToast(t("Maxsulotlar ro'yxati bo'sh!"), 'warning')
         }
@@ -373,7 +390,14 @@ function RegisterOrders() {
             setCurrentPartner(data?.temporary?.partner)
         }
         if (data && data.order) {
-            data.position === 'requested' && setCurrentPosition('recived')
+            if (data.position === 'requested') {
+                setCurrentPosition('recived')
+                setTableBody('orderProducts')
+            }
+            if (data.position === 'delivered') {
+                setCurrentPosition('delivered')
+                setTableBody('receiveOrderProducts')
+            }
             setEditOrder(data.order)
             setCurrentPartner({
                 label: data.order.sender.name + ' - ' + data.order.sender.inn,
@@ -381,6 +405,7 @@ function RegisterOrders() {
             })
             const products = map(data.order.products, (product) => {
                 return {
+                    _id: product._id,
                     sender: product.sender,
                     product: {
                         _id: product.product?._id,
@@ -428,9 +453,12 @@ function RegisterOrders() {
                         onChange={(e) => setCurrentPartner(e)}
                         options={partners}
                         border={true}
+                        disabled={currentPosition === 'delivered'}
                     />
                     <FieldContainer
-                        disabled={!currentPartner}
+                        disabled={
+                            !currentPartner || currentPosition === 'delivered'
+                        }
                         select={true}
                         placeholder={'misol: kompyuter'}
                         value={''}
@@ -446,9 +474,9 @@ function RegisterOrders() {
                         />
                     ) : (
                         <Table
-                            page='orderProducts'
+                            page={tableBody}
                             data={tableProducts}
-                            headers={headers}
+                            headers={headers[currentPosition]}
                             currency={currencyType}
                             increment={increment}
                             decrement={decrement}
@@ -499,9 +527,11 @@ function RegisterOrders() {
                         className={'register-selling-right-accept-btn'}
                         onClick={handleClickOrder}
                     >
-                        {t('Buyurtma berish')}
+                        {currentPosition === 'delivered'
+                            ? t('Qabul qilish')
+                            : t('Buyurtma berish')}
                     </button>
-                    {
+                    {currentPosition !== 'delivered' && (
                         <button
                             type={'button'}
                             onClick={handleClickSave}
@@ -509,7 +539,7 @@ function RegisterOrders() {
                         >
                             <IoAttach size={'1.5rem'} />
                         </button>
-                    }
+                    )}
                 </div>
             </div>
         </section>

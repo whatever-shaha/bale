@@ -40,6 +40,7 @@ import {OrderProductsTableRow} from './TableRows/OrderProductsTableRow'
 import {SavedOrdersTableRow} from './TableRows/SavedOrdersTableRow.js'
 import {RegisterIncomingOrdersTableRow} from './TableRows/RegisterIncomingOrdersTableRow.js'
 import {IncomingOrderProductsTableRow} from './TableRows/IncomingOrderProductsTableRow.js'
+import {ReceiveOrderProductsTableRow} from './TableRows/ReceiveOrderProductsTableRow.js'
 function Table({
     page,
     data,
@@ -482,6 +483,16 @@ function Table({
                         currency={currency}
                         data={data}
                         handleDelete={handleDelete}
+                        handleCountProduct={handleCountProduct}
+                    />
+                )
+            case 'receiveOrderProducts':
+                return (
+                    <ReceiveOrderProductsTableRow
+                        increment={increment}
+                        decrement={decrement}
+                        currency={currency}
+                        data={data}
                         handleCountProduct={handleCountProduct}
                     />
                 )
