@@ -56,7 +56,9 @@ module.exports.updateProductPrices = async (req, res) => {
     map(products, async (product) => {
       const price = await ProductPrice.findById(product.price);
       price.sellingpriceuzs = price.sellingprice * exchangerate.exchangerate;
-      price.tradepriceuzs = price.tradeprice * exchangerate.exchangerate;
+      if (price.tradeprice) {
+        price.tradepriceuzs = price.tradeprice * exchangerate.exchangerate;
+      }
       await price.save();
     });
     res.status(200).json({ message: "Mahsulot narxlari yangilandi." });
