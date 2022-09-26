@@ -54,7 +54,7 @@ module.exports.updateProductPrices = async (req, res) => {
     const products = await Product.find({ market });
 
     map(products, async (product) => {
-      const price = await ProductPrice.findById(product.price._id);
+      const price = await ProductPrice.findById(product.price);
       price.sellingpriceuzs = price.sellingprice * exchangerate.exchangerate;
       price.tradepriceuzs = price.tradeprice * exchangerate.exchangerate;
       await price.save();
