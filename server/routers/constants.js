@@ -15,6 +15,10 @@ const {
   validateSendingOrderProduct,
 } = require("../models/Orders/OrderProduct.js");
 const { TemporaryOrders } = require("../models/Orders/TemporaryOrders.js");
+const {
+  Exchangerate,
+  validateExchangerate,
+} = require("../models/Exchangerate/Exchangerate");
 
 module.exports.models = {
   Connection,
@@ -27,9 +31,11 @@ module.exports.models = {
   Category,
   ProductData,
   Unit,
+  Exchangerate,
 };
 module.exports.validators = {
   validateConnection,
   validateOrderProduct,
   validateSendingOrderProduct,
+  validateExchangerate,
 };

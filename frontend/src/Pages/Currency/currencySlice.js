@@ -1,11 +1,11 @@
 import {createAsyncThunk, createSlice} from '@reduxjs/toolkit'
 import Api from '../../Config/Api'
-import {map, filter } from 'lodash'
+import {map, filter} from 'lodash'
 import {
     successAddExchangeMessage,
     successDeleteExchangeMessage,
     successUpdateExchangeMessage,
-    universalToast
+    universalToast,
 } from '../../Components/ToastMessages/ToastMessages.js'
 
 export const getCurrency = createAsyncThunk(
@@ -13,7 +13,7 @@ export const getCurrency = createAsyncThunk(
     async (body, {rejectWithValue}) => {
         try {
             const {
-                data: {exchangerate}
+                data: {exchangerate},
             } = await Api.post('/exchangerate/get')
             return exchangerate
         } catch (error) {
@@ -27,7 +27,7 @@ export const getCurrencyType = createAsyncThunk(
     async (body, {rejectWithValue}) => {
         try {
             const {
-                data: {currency}
+                data: {currency},
             } = await Api.post('/exchangerate/currencyget')
             return currency
         } catch (error) {
@@ -41,7 +41,7 @@ export const changeCurrencyType = createAsyncThunk(
     async (body, {rejectWithValue}) => {
         try {
             const {
-                data: {currency}
+                data: {currency},
             } = await Api.put('/exchangerate/currencyupdate', body)
             return currency
         } catch (error) {
@@ -89,8 +89,23 @@ export const deleteExchangerate = createAsyncThunk(
     async (body, {rejectWithValue}) => {
         try {
             const {data} = await Api.delete('/exchangerate/delete', {
-                data: body
+                data: body,
             })
+            return data
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+)
+
+export const updateProductPrices = createAsyncThunk(
+    'currency/updateProductPrices',
+    async (body, {rejectWithValue}) => {
+        try {
+            const {data} = await Api.post('/exchangerate/updateproductprices', {
+                data: body,
+            })
+            console.log(data)
             return data
         } catch (error) {
             return rejectWithValue(error)
@@ -105,7 +120,7 @@ const initialState = {
     getCurrenciesLoading: true,
     getCurrencyLoading: true,
     currencyLoading: true,
-    currencyError: null
+    currencyError: null,
 }
 
 const currencySlice = createSlice({
@@ -115,7 +130,7 @@ const currencySlice = createSlice({
         reset: () => initialState,
         clearError: (state) => {
             state.currencyError = null
-        }
+        },
     },
     extraReducers: {
         [getCurrency.pending]: (state) => {
@@ -161,7 +176,8 @@ const currencySlice = createSlice({
         [getCurrencies.rejected]: (state, action) => {
             state.getCurrenciesLoading = false
             universalToast(action.payload, 'error')
-        }, [addExchangerate.pending]: (state) => {
+        },
+        [addExchangerate.pending]: (state) => {
             state.loading = true
         },
         [addExchangerate.fulfilled]: (state, {payload}) => {
@@ -195,14 +211,28 @@ const currencySlice = createSlice({
         },
         [deleteExchangerate.fulfilled]: (state, {payload}) => {
             state.getCurrenciesLoading = false
-            state.currencies = filter(state.currencies,(item) => item._id !== payload._id)
+            state.currencies = filter(
+                state.currencies,
+                (item) => item._id !== payload._id
+            )
             successDeleteExchangeMessage()
         },
         [deleteExchangerate.rejected]: (state, {payload}) => {
             state.getCurrenciesLoading = false
             universalToast(payload, 'error')
-        }
-    }
+        },
+        [updateProductPrices.pending]: (state) => {
+            state.getCurrenciesLoading = true
+        },
+        [updateProductPrices.fulfilled]: (state, {payload}) => {
+            state.getCurrenciesLoading = false
+            universalToast(payload.message, 'success')
+        },
+        [updateProductPrices.rejected]: (state, {payload}) => {
+            state.getCurrenciesLoading = false
+            universalToast(payload, 'error')
+        },
+    },
 })
 
 export const {clearError, reset} = currencySlice.actions

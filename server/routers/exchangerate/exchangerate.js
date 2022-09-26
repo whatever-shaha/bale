@@ -1,8 +1,7 @@
-const {
-  Exchangerate,
-  validateExchangerate,
-} = require('../../models/Exchangerate/Exchangerate');
-const { Market } = require('../../models/MarketAndBranch/Market');
+const { validateExchangerate } = require("../constants.js").validators;
+const { map } = require("lodash");
+const { Product, ProductPrice, Exchangerate, Market } =
+  require("../constants.js").models;
 
 //Currency register
 
@@ -33,7 +32,36 @@ module.exports.register = async (req, res) => {
 
     res.send(newExchangerate);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+  }
+};
+
+module.exports.updateProductPrices = async (req, res) => {
+  try {
+    const { market } = req.body;
+    const marketData = await Market.findById(market);
+    if (!marketData) {
+      return res
+        .status(400)
+        .json({ message: "Do'kon ma'lumotlari topilmadi." });
+    }
+
+    const exchangerate = await Exchangerate.findOne({ market })
+      .sort({
+        _id: -1,
+      })
+      .select("exchangerate");
+    const products = await Product.find({ market });
+
+    map(products, async (product) => {
+      const price = await ProductPrice.findById(product.price._id);
+      price.sellingpriceuzs = price.sellingprice * exchangerate.exchangerate;
+      price.tradepriceuzs = price.tradeprice * exchangerate.exchangerate;
+      await price.save();
+    });
+    res.status(200).json({ message: "Mahsulot narxlari yangilandi." });
+  } catch (error) {
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -57,7 +85,7 @@ module.exports.update = async (req, res) => {
 
     res.send(exchangerat);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -70,7 +98,7 @@ module.exports.delete = async (req, res) => {
 
     res.send(exchangerate);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -89,12 +117,12 @@ module.exports.getAll = async (req, res) => {
     const exchangerates = await Exchangerate.find({
       market,
     })
-      .select('exchangerate createdAt market')
+      .select("exchangerate createdAt market")
       .sort({ _id: -1 });
 
     res.send(exchangerates);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -113,10 +141,10 @@ module.exports.get = async (req, res) => {
     const exchangerates = await Exchangerate.findOne({
       market,
     })
-      .select('exchangerate')
+      .select("exchangerate")
       .sort({ _id: -1 });
     res.status(201).send(exchangerates);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };

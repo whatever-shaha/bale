@@ -4,27 +4,33 @@ import Button from '../../Components/Buttons/BtnAddRemove.js'
 import Table from '../../Components/Table/Table.js'
 import {useDispatch, useSelector} from 'react-redux'
 import {motion} from 'framer-motion'
-import {addExchangerate, deleteExchangerate, getCurrencies, updateExchangerate} from './currencySlice.js'
+import {
+    addExchangerate,
+    deleteExchangerate,
+    getCurrencies,
+    updateExchangerate,
+    updateProductPrices,
+} from './currencySlice.js'
 import UniversalModal from '../../Components/Modal/UniversalModal.js'
 import Spinner from '../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../Components/NotFind/NotFind.js'
 import {checkEmptyString} from '../../App/globalFunctions.js'
 import {universalToast} from '../../Components/ToastMessages/ToastMessages.js'
 import {useTranslation} from 'react-i18next'
+import SmallLoader from '../../Components/Spinner/SmallLoader.js'
 
 const Currency = () => {
     const {t} = useTranslation(['common'])
     const dispatch = useDispatch()
-    const {
-        currencies,
-        getCurrenciesLoading
-    } = useSelector((state) => state.currency)
+    const {currencies, getCurrenciesLoading} = useSelector(
+        (state) => state.currency
+    )
 
     const headers = [
         {title: '№', styles: 'w-[8%] text-left'},
         {title: t('Sana'), styles: 'w-[17%] text-center'},
         {title: t('Kurs'), styles: 'w-[67%] text-center'},
-        {title: '', styles: 'w-[8%] text-center'}
+        {title: '', styles: 'w-[8%] text-center'},
     ]
 
     const [data, setData] = useState(currencies)
@@ -33,6 +39,8 @@ const Currency = () => {
     const [deletedExchange, setDeletedExchange] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [stickyForm, setStickyForm] = useState(false)
+    const [newExchange, setNewExchange] = useState(false)
+    const [modalBody, setModalBody] = useState(null)
 
     const toggleModal = () => setModalVisible(!modalVisible)
 
@@ -47,6 +55,7 @@ const Currency = () => {
     }
     const handleDeleteExchange = (exchangerate) => {
         setDeletedExchange(exchangerate)
+        setModalBody('approve')
         toggleModal()
     }
     const handleClickApproveToDelete = () => {
@@ -57,36 +66,56 @@ const Currency = () => {
     const handleClickCancelToDelete = () => {
         setModalVisible(false)
         setDeletedExchange(null)
+        setModalBody(null)
     }
 
     const addNewExchange = (e) => {
         e.preventDefault()
         const body = {exchangerate: exchangeName}
-        const {failed} = checkEmptyString([{value: exchangeName, message: 'Kurs narxi'}])
+        const {failed} = checkEmptyString([
+            {value: exchangeName, message: 'Kurs narxi'},
+        ])
         if (failed) {
             return universalToast(t('Valyuta kursini kiriting!'), 'error')
         }
         dispatch(addExchangerate(body)).then(({error}) => {
             if (!error) {
                 clearForm()
+                setNewExchange(true)
+                setModalVisible(true)
+                setModalBody('complete')
             }
         })
-
     }
 
     const handleEdit = (e) => {
         e.preventDefault()
-        const {failed} = checkEmptyString([{value: exchangeName, message: 'Kurs narxi'}])
+        const {failed} = checkEmptyString([
+            {value: exchangeName, message: 'Kurs narxi'},
+        ])
         if (failed) {
             return universalToast(t('Valyuta kursini kiriting!'), 'error')
         }
         const body = {
             exchangerate: exchangeName,
-            _id: currentExchange._id
+            _id: currentExchange._id,
         }
         dispatch(updateExchangerate(body)).then(({error}) => {
             if (!error) {
                 clearForm()
+                setNewExchange(true)
+                setModalVisible(true)
+                setModalBody('complete')
+            }
+        })
+    }
+
+    const updateAllProducts = () => {
+        dispatch(updateProductPrices()).then(({error}) => {
+            if (!error) {
+                setModalBody(null)
+                setModalVisible(false)
+                setNewExchange(false)
             }
         })
     }
@@ -121,22 +150,41 @@ const Currency = () => {
             exit='collapsed'
             variants={{
                 open: {opacity: 1, height: 'auto'},
-                collapsed: {opacity: 0, height: 0}
+                collapsed: {opacity: 0, height: 0},
             }}
             transition={{duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98]}}
         >
+            {getCurrenciesLoading && (
+                <div className='fixed backdrop-blur-[2px] z-[100] left-0 top-0 right-0 bottom-0 bg-white-700 flex flex-col items-center justify-center w-full h-full'>
+                    <SmallLoader />
+                </div>
+            )}
             <UniversalModal
-                headerText={`${deletedExchange && deletedExchange.exchangerate
-                } ${t('kurs narxini o\'chirishni tasdiqlaysizmi?')}`}
-                title={t('O\'chirilgan kurs narxini tiklashning imkoni mavjud emas!')}
+                headerText={
+                    newExchange
+                        ? "Diqqat! Barcha mahsulotlar narxi valyuta kursiga nisbatan o'zgarishini xohlaysizmi?"
+                        : `${
+                              deletedExchange && deletedExchange.exchangerate
+                          } ${t("kurs narxini o'chirishni tasdiqlaysizmi?")}`
+                }
+                title={
+                    newExchange
+                        ? ''
+                        : t(
+                              "O'chirilgan kurs narxini tiklashning imkoni mavjud emas!"
+                          )
+                }
                 toggleModal={toggleModal}
-                body={'approve'}
-                approveFunction={handleClickApproveToDelete}
+                body={modalBody}
+                approveFunction={
+                    newExchange ? updateAllProducts : handleClickApproveToDelete
+                }
                 closeModal={handleClickCancelToDelete}
                 isOpen={modalVisible}
             />
             <form
-                className={`unitFormStyle ${stickyForm && 'stickyForm'
+                className={`unitFormStyle ${
+                    stickyForm && 'stickyForm'
                 } flex gap-[1.25rem] bg-background flex-col mainPadding transition ease-linear duration-200`}
             >
                 <div className='exchangerate-style'>
