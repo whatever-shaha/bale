@@ -2,7 +2,7 @@ const { validateExchangerate } = require("../constants.js").validators;
 const { map } = require("lodash");
 const { Product, ProductPrice, Exchangerate, Market } =
   require("../constants.js").models;
-
+const { roundToUzs } = require("../globalFunctions.js");
 //Currency register
 
 module.exports.register = async (req, res) => {
@@ -55,9 +55,13 @@ module.exports.updateProductPrices = async (req, res) => {
 
     map(products, async (product) => {
       const price = await ProductPrice.findById(product.price);
-      price.sellingpriceuzs = price.sellingprice * exchangerate.exchangerate;
+      price.sellingpriceuzs = roundToUzs(
+        price.sellingprice * exchangerate.exchangerate
+      );
       if (price.tradeprice) {
-        price.tradepriceuzs = price.tradeprice * exchangerate.exchangerate;
+        price.tradepriceuzs = roundToUzs(
+          price.tradeprice * exchangerate.exchangerate
+        );
       }
       await price.save();
     });
