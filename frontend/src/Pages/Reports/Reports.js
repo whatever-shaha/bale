@@ -71,7 +71,7 @@ const Reports = () => {
         totalreports,
         saleproductsreport,
         startDate,
-        endDate
+        endDate,
     } = useSelector((state) => state.reports)
 
     const {currencyType} = useSelector((state) => state.currency)
@@ -93,7 +93,7 @@ const Reports = () => {
         dispatch(changeStartDate({start: e.toISOString()}))
     }
     const handleEndDate = (e) => {
-        dispatch(changeEndDate({end : e.toISOString()}))
+        dispatch(changeEndDate({end: e.toISOString()}))
     }
 
     useEffect(() => {

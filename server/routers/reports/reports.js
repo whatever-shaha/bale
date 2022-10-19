@@ -22,6 +22,7 @@ module.exports.getReport = async (req, res) => {
   try {
     const { market, startDate, endDate } = req.body;
     const marke = await Market.findById(market);
+
     if (!marke) {
       return res
         .status(401)
@@ -548,10 +549,10 @@ module.exports.getDebtsReport = async (req, res) => {
 
         const debtComment =
           sale.debts.length > 0
-            ? sale.debts[sale.debts.length - 1]?.comment
+            ? sale.debts[sale.debts.length - 1].comment
             : '';
         const debtId =
-          sale.debts.length > 0 ? sale.debts[sale.debts.length - 1]?._id : '';
+          sale.debts.length > 0 ? sale.debts[sale.debts.length - 1]._id : '';
 
         return {
           _id: sale._id,
