@@ -683,7 +683,16 @@ module.exports.getBackProducts = async (req, res) => {
       .populate('user', 'firstname lastname')
       .populate({
         path: 'products',
-        select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs',
+        select:
+          'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product',
+        populate: {
+          path: 'product',
+          select: 'productdata',
+          populate: {
+            path: 'productdata',
+            select: 'code name',
+          },
+        },
       })
       .lean();
 
