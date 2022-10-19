@@ -46,4 +46,8 @@ router.post('/getsaleproducts', auth, (req, res) => {
   require('./reports').getSalesReport(req, res);
 });
 
+router.post('/debtcomment', auth, (req, res) => {
+  require('./reports').changeDebtComment(req, res);
+});
+
 module.exports = router;

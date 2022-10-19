@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {useParams} from 'react-router-dom'
-import {UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
+import {roundUsd, roundUzs, UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
 import LinkToBack from '../../Components/LinkToBack/LinkToBack'
 import UniversalModal from '../../Components/Modal/UniversalModal'
 import Pagination from '../../Components/Pagination/Pagination'
@@ -14,6 +14,7 @@ import {
 } from '../../Components/ToastMessages/ToastMessages'
 import {
     clearDatas,
+    clearSuccessDebtComment,
     getBackProducts,
     getDebts,
     getDiscounts,
@@ -22,6 +23,7 @@ import {
     getProfit,
     getSales,
     payDebt,
+    setDebtComment,
 } from './reportsSlice'
 import {ReportsTableHeaders} from './ReportsTableHeaders'
 import {filter} from 'lodash'
@@ -33,7 +35,7 @@ const ReportPage = () => {
     const dispatch = useDispatch()
 
     const {market: _id, user} = useSelector((state) => state.login)
-    const {datas, count, startDate, endDate} = useSelector(
+    const {datas, count, startDate, endDate, successDebtComment} = useSelector(
         (state) => state.reports
     )
     const {currencyType, currency} = useSelector((state) => state.currency)
@@ -502,6 +504,11 @@ const ReportPage = () => {
             setModalBody('checkSell')
             setModalVisible(true)
         }
+        if (id === 'backproducts') {
+            setModalBody('checkSellReturn')
+            setModalData(saleconnector)
+            setModalVisible(!modalVisible)
+        }
     }
 
     // search functions
@@ -609,6 +616,18 @@ const ReportPage = () => {
         }
     }
 
+    const handleModalDebtComment = (comment, debtid) => {
+        dispatch(setDebtComment({comment, debtid}))
+        setModalBody('debtcomment')
+        setModalVisible(!modalVisible)
+    }
+
+    const toggleDebtCommentModal = () => {
+        dispatch(setDebtComment({comment: null, debtid: null}))
+        setModalBody('')
+        setModalVisible(!modalVisible)
+    }
+
     useEffect(() => {
         const check = (page) => id === page
         let body = {
@@ -633,7 +652,6 @@ const ReportPage = () => {
         check('discounts') && dispatch(getDiscounts(body))
         check('backproducts') && dispatch(getBackProducts(body))
         check('expenses') && dispatch(getExpensesReport(body))
-
         return () => {
             dispatch(clearDatas())
         }
@@ -668,8 +686,10 @@ const ReportPage = () => {
     useEffect(() => {
         if (id === 'debts') {
             setTotalDebt({
-                usd: datas.reduce((prev, {debt}) => prev + debt, 0),
-                uzs: datas.reduce((prev, {debtuzs}) => prev + debtuzs, 0),
+                usd: roundUsd(datas.reduce((prev, {debt}) => prev + debt, 0)),
+                uzs: roundUzs(
+                    datas.reduce((prev, {debtuzs}) => prev + debtuzs, 0)
+                ),
             })
         }
     }, [datas, id])
@@ -686,6 +706,17 @@ const ReportPage = () => {
         setCurrentData(datas)
         setStoreData(datas)
     }, [id, datas, beginDay, endDay])
+    useEffect(() => {
+        if (successDebtComment) {
+            let debtBody = {
+                startDate: beginDay,
+                endDate: endDay,
+                market: _id,
+            }
+            dispatch(getDebts(debtBody))
+            dispatch(clearSuccessDebtComment())
+        }
+    }, [successDebtComment, id, _id, sendingSearch])
 
     return (
         <div className='relative overflow-auto h-full'>
@@ -744,6 +775,7 @@ const ReportPage = () => {
                         Print={handleClickPrint}
                         Sort={filterData}
                         sortItem={sorItem}
+                        Edit={handleModalDebtComment}
                     />
                 )}
                 {id === 'debts' && (
@@ -817,6 +849,8 @@ const ReportPage = () => {
                         ? handleClosePay
                         : modalBody === 'allChecks'
                         ? toggleSaleCheck
+                        : modalBody === 'debtcomment'
+                        ? toggleDebtCommentModal
                         : toggleCheckModal
                 }
                 approveFunction={handleApprovePay}

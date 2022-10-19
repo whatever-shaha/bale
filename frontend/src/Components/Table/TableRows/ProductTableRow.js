@@ -1,6 +1,6 @@
 import React from 'react'
 import TableBtn from '../../Buttons/TableBtn'
-import {map} from 'lodash'
+import {map, uniqueId} from 'lodash'
 export const ProductTableRow = ({
     currentPage,
     countPage,
@@ -14,7 +14,11 @@ export const ProductTableRow = ({
     return (
         <>
             {map(data, (product, index) => (
-                <tr key={product._id} className='tr'>
+                <tr
+                    key={product._id}
+                    className='tr'
+                    id={'producttablerow' + index}
+                >
                     <td className='td text-center '>
                         {productminimumpage
                             ? index + 1
@@ -88,7 +92,9 @@ export const ProductTableRow = ({
                                 <TableBtn
                                     type={'edit'}
                                     bgcolor='bg-warning-500'
-                                    onClick={() => Edit(product)}
+                                    onClick={() =>
+                                        Edit('producttablerow' + index, product)
+                                    }
                                 />
                                 <TableBtn
                                     type={'delete'}

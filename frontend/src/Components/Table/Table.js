@@ -362,6 +362,7 @@ function Table({
                         currency={currency}
                         Pay={Pay}
                         Print={Print}
+                        Edit={Edit}
                     />
                 )
             case 'discounts':
@@ -401,6 +402,7 @@ function Table({
                         currentPage={currentPage}
                         countPage={countPage}
                         currency={currency}
+                        Print={Print}
                     />
                 )
             case 'filialShop':

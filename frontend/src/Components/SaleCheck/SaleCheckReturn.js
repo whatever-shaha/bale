@@ -4,6 +4,7 @@ import {uniqueId, map} from 'lodash'
 
 export const SaleCheckReturn = forwardRef((props, ref) => {
     const {product} = props
+
     const totalprice = (datas, property) => {
         return datas.reduce((summ, data) => summ + data[property], 0)
     }
@@ -69,47 +70,47 @@ export const SaleCheckReturn = forwardRef((props, ref) => {
             <div className='mt-4'>
                 <table className='border-collapse border border-slate-400 w-full break-inside-auto'>
                     <thead>
-                    <tr className={'break-inside-avoid break-after-auto'}>
-                        <td className='check-table-rtr'>№</td>
-                        <td className='check-table-rtr'>Kodi</td>
-                        <td className='check-table-rtr'>Maxsulot</td>
-                        <td className='check-table-rtr'>Soni</td>
-                        <td className='check-table-rtr'>Narxi (dona)</td>
-                        <td className='check-table-rtr'>Jami</td>
-                    </tr>
+                        <tr className={'break-inside-avoid break-after-auto'}>
+                            <td className='check-table-rtr'>№</td>
+                            <td className='check-table-rtr'>Kodi</td>
+                            <td className='check-table-rtr'>Maxsulot</td>
+                            <td className='check-table-rtr'>Soni</td>
+                            <td className='check-table-rtr'>Narxi (dona)</td>
+                            <td className='check-table-rtr'>Jami</td>
+                        </tr>
                     </thead>
                     <tbody>
-                    {map(product?.products,(item, index) => {
-                        return (
-                            <tr key={uniqueId('sale-check-return')}>
-                                <td className='p-1 border text-center text-[0.875rem] font-bold'>
-                                    {index + 1}
-                                </td>
-                                <td className='check-table-body text-end'>
-                                    {item?.product?.productdata?.code}
-                                </td>
-                                <td className='check-table-body text-start'>
-                                    {item?.product?.productdata?.name}
-                                </td>
-                                <td className='check-table-body'>
-                                    {item?.pieces}
-                                </td>
-                                <td className='check-table-body'>
-                                    {currencyType === 'USD'
-                                        ? item?.unitprice
-                                        : item?.unitpriceuzs}{' '}
-                                    {currencyType}
-                                </td>
-                                <td className='check-table-body'>
-                                    {(currencyType === 'USD'
+                        {map(product?.products, (item, index) => {
+                            return (
+                                <tr key={uniqueId('sale-check-return')}>
+                                    <td className='p-1 border text-center text-[0.875rem] font-bold'>
+                                        {index + 1}
+                                    </td>
+                                    <td className='check-table-body text-end'>
+                                        {item?.product?.productdata?.code}
+                                    </td>
+                                    <td className='check-table-body text-start'>
+                                        {item?.product?.productdata?.name}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {item?.pieces}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {currencyType === 'USD'
+                                            ? item?.unitprice
+                                            : item?.unitpriceuzs}{' '}
+                                        {currencyType}
+                                    </td>
+                                    <td className='check-table-body'>
+                                        {(currencyType === 'USD'
                                             ? item?.totalprice
                                             : item?.totalpriceuzs
-                                    ).toLocaleString('ru-RU')}{' '}
-                                    {currencyType}
-                                </td>
-                            </tr>
-                        )
-                    })}
+                                        ).toLocaleString('ru-RU')}{' '}
+                                        {currencyType}
+                                    </td>
+                                </tr>
+                            )
+                        })}
                     </tbody>
                 </table>
             </div>
@@ -133,8 +134,8 @@ export const SaleCheckReturn = forwardRef((props, ref) => {
                     To'langan:{' '}
                     <span>
                         {(currencyType === 'USD'
-                                ? product?.payment?.payment || 0
-                                : product?.payment?.paymentuzs || 0
+                            ? product?.payment?.payment || 0
+                            : product?.payment?.paymentuzs || 0
                         ).toLocaleString('ru-RU')}{' '}
                         {currencyType}
                     </span>
