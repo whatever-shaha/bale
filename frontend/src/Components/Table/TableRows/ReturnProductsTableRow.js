@@ -1,15 +1,17 @@
-import {uniqueId,map} from 'lodash'
+import {uniqueId, map} from 'lodash'
 import React from 'react'
+import TableBtn from '../../Buttons/TableBtn'
 
 export const ReturnProductsTableRow = ({
-                                           data,
-                                           currentPage,
-                                           countPage,
-                                           currency
-                                       }) => {
+    data,
+    currentPage,
+    countPage,
+    currency,
+    Print,
+}) => {
     return (
         <>
-            {map(data,(connector, index) => (
+            {map(data, (connector, index) => (
                 <tr className='tr' key={uniqueId('connector')}>
                     <td className='text-left td'>
                         {currentPage * countPage + 1 + index}
@@ -33,11 +35,20 @@ export const ReturnProductsTableRow = ({
                             : connector.totalprice.toLocaleString('ru-RU')}{' '}
                         <span className='text-warning-500'>{currency}</span>
                     </td>
-                    <td className='text-right td border-r-0 py-[0.625rem] font-medium'>
+                    <td className='text-right td py-[0.625rem] font-medium'>
                         {currency === 'UZS'
                             ? connector.backuzs.toLocaleString('ru-RU')
                             : connector.back.toLocaleString('ru-RU')}{' '}
                         <span className='text-success-500'>{currency}</span>
+                    </td>
+                    <td className='td border-r-0 py-[6px]'>
+                        <div className='flex justify-center items-center gap-[0.625rem]'>
+                            <TableBtn
+                                type={'print'}
+                                bgcolor={'bg-primary-800'}
+                                onClick={() => Print(connector.dailyconnector)}
+                            />
+                        </div>
                     </td>
                 </tr>
             ))}

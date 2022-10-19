@@ -19,6 +19,7 @@ import RequestConnection from './ModalBodys/RequestConnection.js'
 import RequestApplication from './ModalBodys/ReuqestApplication.js'
 import SendingApplication from './ModalBodys/SendingApplication.js'
 import {SavedOrdersCheck} from '../OrdersCheck/SavedOrdersCheck.js'
+import DebtComment from './ModalBodys/DebtComment'
 function UniversalModal({
     isOpen,
     toggleModal,
@@ -199,6 +200,8 @@ function UniversalModal({
                         handleRejectRequest={handleRejectRequest}
                     />
                 )
+            case 'debtcomment':
+                return <DebtComment toggleModal={toggleModal} />
             default:
                 return t('Bunday jadval topilmadi')
         }

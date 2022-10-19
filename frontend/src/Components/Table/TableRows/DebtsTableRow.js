@@ -1,8 +1,10 @@
 import {uniqueId, map} from 'lodash'
-import React from 'react'
+import React, {useState} from 'react'
 import TableBtn from '../../Buttons/TableBtn'
 
-export const DebtsTableRow = ({data, currency, Pay, Print}) => {
+export const DebtsTableRow = ({data, currency, Pay, Print, Edit}) => {
+    const [isEditComment, setIsEditComment] = useState(null)
+
     return (
         <>
             {map(data, (debt, index) => (
@@ -14,6 +16,24 @@ export const DebtsTableRow = ({data, currency, Pay, Print}) => {
                     <td className='text-right td'>{debt.id}</td>
                     <td className='text-left td'>
                         {debt.client && debt.client.name}
+                    </td>
+                    <td
+                        onMouseOver={() => setIsEditComment(debt._id)}
+                        onMouseOut={() => setIsEditComment(null)}
+                        className={`text-left td relative hover:bg-black-200 transition duration-300 ease-in-out`}
+                    >
+                        {debt.comment}
+                        {isEditComment === debt._id && (
+                            <span className='absolute top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%]'>
+                                <TableBtn
+                                    type={'edit'}
+                                    bgcolor={'bg-warning-500'}
+                                    onClick={() =>
+                                        Edit(debt.comment, debt.debtid)
+                                    }
+                                />
+                            </span>
+                        )}
                     </td>
                     <td className='text-right td font-medium'>
                         {(currency === 'USD'

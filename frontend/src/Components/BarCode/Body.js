@@ -1,5 +1,7 @@
 import React from 'react'
 import {useBarcode} from 'next-barcode'
+import {UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
+import {useSelector} from 'react-redux'
 
 export const Body = ({product, currency, marketName}) => {
     const {inputRef} = useBarcode({
@@ -7,13 +9,17 @@ export const Body = ({product, currency, marketName}) => {
         options: {
             background: '#fff',
             width: '2cm',
-            height: '40cm'
-        }
+            height: '40cm',
+        },
     })
+    const {currency: currencyEx} = useSelector((state) => state.currency)
     return (
         <div className='w-[40mm] break-after-page font-sans h-[65mm] times '>
             <div className='w-[65mm] rotate-90 mt-20 -ml-0 text-xl'>
-                <div className='text-center font-bold text-2xl p-1'>
+                <div className='text-[10px] font-normal text-right pb-[10px]'>
+                    1$ - {currencyEx} UZS
+                </div>
+                <div className='text-center font-bold text-2xl p-[1px]'>
                     <span>"{marketName}"</span>
                     <hr />
                 </div>
@@ -29,13 +35,13 @@ export const Body = ({product, currency, marketName}) => {
                         <span>{product.price ? 'Цена:' : ''}</span>{' '}
                         <span>
                             {(product.price &&
-                                    (currency === 'UZS'
-                                        ? product.price.sellingpriceuzs.toLocaleString(
-                                            'ru-RU'
-                                        )
-                                        : product.price.sellingprice.toLocaleString(
-                                            'ru-RU'
-                                        )) +
+                                (currency === 'UZS'
+                                    ? product.price.sellingpriceuzs.toLocaleString(
+                                          'ru-RU'
+                                      )
+                                    : product.price.sellingprice.toLocaleString(
+                                          'ru-RU'
+                                      )) +
                                     ' ' +
                                     currency) ||
                                 ''}
