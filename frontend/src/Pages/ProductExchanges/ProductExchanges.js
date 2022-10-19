@@ -455,7 +455,7 @@ function ProductExchanges() {
             return item?.number !== 0
         })
         setSellingProductData(newSellingsData)
-    }, [productData])
+    }, [productData, sellingProductData])
 
     return (
         <>

@@ -1,7 +1,7 @@
 import {t} from 'i18next'
 import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
-import {changeDebtComment, getDebts} from '../../../Pages/Reports/reportsSlice'
+import {changeDebtComment} from '../../../Pages/Reports/reportsSlice'
 import FieldContainer from '../../FieldContainer/FieldContainer'
 import {universalToast} from '../../ToastMessages/ToastMessages'
 

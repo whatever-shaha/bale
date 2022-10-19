@@ -716,7 +716,7 @@ const ReportPage = () => {
             dispatch(getDebts(debtBody))
             dispatch(clearSuccessDebtComment())
         }
-    }, [successDebtComment, id, _id, sendingSearch])
+    }, [dispatch, successDebtComment, id, _id, sendingSearch, beginDay, endDay])
 
     return (
         <div className='relative overflow-auto h-full'>

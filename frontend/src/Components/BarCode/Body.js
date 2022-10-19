@@ -1,6 +1,5 @@
 import React from 'react'
 import {useBarcode} from 'next-barcode'
-import {UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
 import {useSelector} from 'react-redux'
 
 export const Body = ({product, currency, marketName}) => {
