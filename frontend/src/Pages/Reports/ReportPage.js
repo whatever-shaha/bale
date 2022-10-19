@@ -505,7 +505,7 @@ const ReportPage = () => {
             setModalVisible(true)
         }
         if (id === 'backproducts') {
-            setModalBody('checkSellReturn')
+            setModalBody('allChecks')
             setModalData(saleconnector)
             setModalVisible(!modalVisible)
         }
