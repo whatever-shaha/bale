@@ -658,6 +658,36 @@ module.exports.getBackProducts = async (req, res) => {
         .json({ message: `Diqqat! Do'kon haqida malumotlar topilmadi!` });
     }
 
+    const saleconnector = await SaleConnector.find({
+      market,
+    })
+      .select('-isArchive -updatedAt -__v')
+      .populate(
+        'payments',
+        'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
+      )
+      .populate({
+        path: 'products',
+        select:
+          'totalprice totalpriceuzs pieces price unitprice unitpriceuzs user createdAt product',
+        populate: [
+          {
+            path: 'product',
+            select: 'productdata',
+            populate: {
+              path: 'productdata',
+              select: 'code name',
+            },
+          },
+          {
+            path: 'user',
+            select: 'firstname lastname',
+          },
+        ],
+      })
+      .populate('user', 'firstname lastname')
+      .lean();
+
     const dailyconnector = await DailySaleConnector.find({
       market,
       createdAt: {
@@ -706,6 +736,9 @@ module.exports.getBackProducts = async (req, res) => {
           sale.products[0].pieces < 0
       )
       .map((connector) => {
+        const chequeData = saleconnector.filter(
+          (item) => String(item._id) === String(connector.saleconnector._id)
+        );
         return {
           createdAt: connector.createdAt,
           id: connector.saleconnector && connector.saleconnector.id,
@@ -719,7 +752,7 @@ module.exports.getBackProducts = async (req, res) => {
           totalpriceuzs: reduce(connector.products, 'totalpriceuzs'),
           back: (connector.payment && connector.payment.payment) || 0,
           backuzs: (connector.payment && connector.payment.paymentuzs) || 0,
-          dailyconnector: { ...connector },
+          dailyconnector: { ...chequeData[0] },
         };
       });
     const count = filter.length;
