@@ -68,6 +68,8 @@ function validateIncomingAll(incoming) {
     file: Joi.string(),
     sellingprice: Joi.number(),
     sellingpriceuzs: Joi.number(),
+    tradeprice: Joi.number(),
+    tradepriceuzs: Joi.number(),
   });
   return schema.validate(incoming);
 }
