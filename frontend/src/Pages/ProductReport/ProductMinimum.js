@@ -4,8 +4,9 @@ import React, {useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux'
 import {exportExcel, universalSort} from '../../App/globalFunctions'
 import ExportBtn from '../../Components/Buttons/ExportBtn'
+import SelectInput from '../../Components/SelectInput/SelectInput'
 import Table from '../../Components/Table/Table'
-import { universalToast } from '../../Components/ToastMessages/ToastMessages'
+import {universalToast} from '../../Components/ToastMessages/ToastMessages'
 import {getMinimumProducts} from './productreportSlice'
 
 const ProductMinimum = () => {
@@ -15,6 +16,7 @@ const ProductMinimum = () => {
 
     const [currentData, setCurrentData] = useState([])
     const [storageData, setStorageData] = useState([])
+    const [categories, setCategories] = useState([])
     const [sorItem, setSorItem] = useState({
         filter: '',
         sort: '',
@@ -83,7 +85,7 @@ const ProductMinimum = () => {
             'Optom narxi UZS',
             'Minimum qiymat',
         ]
-        if(minimumproducts?.length > 0) {
+        if (minimumproducts?.length > 0) {
             const newData = map(minimumproducts, (item, index) => ({
                 nth: index + 1,
                 barcode: item?.productdata?.barcode || '',
@@ -101,9 +103,8 @@ const ProductMinimum = () => {
                 minimumcount: item?.minimumcount || '',
             }))
             exportExcel(newData, fileName, exportHeader)
-        }
-        else {
-           universalToast("Jadvalda ma'lumot mavjud emas !","warning");
+        } else {
+            universalToast("Jadvalda ma'lumot mavjud emas !", 'warning')
         }
     }
 
@@ -168,6 +169,19 @@ const ProductMinimum = () => {
         }
     }
 
+    const selectCategory = (e) => {
+        if (e.value === 'all') {
+            setCurrentData(minimumproducts)
+            setStorageData(minimumproducts)
+        } else {
+            const data = minimumproducts.filter(
+                (product) => product.category._id === e.value
+            )
+            setStorageData(data)
+            setCurrentData(data)
+        }
+    }
+
     useEffect(() => {
         dispatch(getMinimumProducts())
     }, [dispatch])
@@ -175,9 +189,35 @@ const ProductMinimum = () => {
     useEffect(() => {
         setStorageData(minimumproducts)
         setCurrentData(minimumproducts)
+        let categoriesData = []
+        minimumproducts.forEach((product) => {
+            const {category} = product
+            const obj = {
+                label: category.code + ' - ' + category.name,
+                value: category._id,
+            }
+            if (categoriesData.length > 0) {
+                if (
+                    !categoriesData.some(
+                        (categ) => categ.value === category._id
+                    )
+                ) {
+                    categoriesData.push(obj)
+                }
+            } else {
+                categoriesData.push(obj)
+            }
+        })
+        setCategories([
+            {
+                label: 'Hammasi',
+                value: 'all',
+            },
+            ...categoriesData,
+        ])
     }, [minimumproducts])
 
-    return currentData.length > 0 ? (
+    return minimumproducts.length > 0 ? (
         <div className='pt-[1rem]'>
             <div className='flex items-center justify-center mainPadding'>
                 <p className='product_name text-center'>
@@ -189,6 +229,15 @@ const ProductMinimum = () => {
                     <ExportBtn onClick={exportData} />
                 </div>
             )}
+            <div className='flex justify-between items-center mainPadding'>
+                <div className='max-w-[300px]'>
+                    <SelectInput
+                        placeholder={'Kategoriya'}
+                        options={categories}
+                        onSelect={selectCategory}
+                    />
+                </div>
+            </div>
             {currentData.length > 0 && (
                 <div className='mainPadding'>
                     <Table
