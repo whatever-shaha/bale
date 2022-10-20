@@ -497,7 +497,7 @@ module.exports.getDebtsReport = async (req, res) => {
         $lte: endDate,
       },
     })
-      .select('-isArchive -user -updatedAt -__v -packman')
+      .select('-isArchive -updatedAt -__v -packman')
       .populate(
         'payments',
         'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
@@ -534,7 +534,8 @@ module.exports.getDebtsReport = async (req, res) => {
         'discount discountuzs procient products totalprice totalpriceuzs'
       )
       .populate('user', 'firstname lastname')
-      .populate('dailyconnectors', 'comment debt');
+      .populate('dailyconnectors', 'comment debt')
+      .lean();
 
     const debtsreport = saleconnector
       .map((sale) => {
@@ -566,6 +567,7 @@ module.exports.getDebtsReport = async (req, res) => {
             Math.round((totalpriceuzs - paymentuzs - discountuzs) * 1) / 1,
           debtid: debtId,
           comment: debtComment,
+          saleconnector: { ...sale },
         };
       })
       .filter((sales) => sales.debt > 0);
