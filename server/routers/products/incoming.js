@@ -53,6 +53,8 @@ module.exports.registerAll = async (req, res) => {
         totalpriceuzs,
         sellingprice,
         sellingpriceuzs,
+        tradeprice,
+        tradepriceuzs,
       } = newproduct;
 
       const marke = await Market.findById(market);
@@ -101,6 +103,8 @@ module.exports.registerAll = async (req, res) => {
         incomingpriceuzs: Math.round(unitpriceuzs * 10000) / 10000,
         sellingprice: Math.round(sellingprice * 10000) / 10000,
         sellingpriceuzs: Math.round(sellingpriceuzs * 10000) / 10000,
+        tradeprice: Math.round(tradeprice * 10000) / 10000,
+        tradepriceuzs: Math.round(tradepriceuzs * 10000) / 10000,
         market,
       });
 

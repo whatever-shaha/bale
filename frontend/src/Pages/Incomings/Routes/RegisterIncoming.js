@@ -137,6 +137,8 @@ const RegisterIncoming = () => {
             unit: product.unit,
             sellingprice: product.price.sellingprice,
             sellingpriceuzs: product.price.sellingpriceuzs,
+            tradeprice: product.price.tradeprice,
+            tradepriceuzs: product.price.tradepriceuzs,
             procient: '',
             supplier: {...supplier},
         })
@@ -189,6 +191,11 @@ const RegisterIncoming = () => {
             obj.procient = 0
         }
 
+        const changetradeprice = (obj) => {
+            obj.tradeprice = countUsd
+            obj.tradepriceuzs = countUzs
+        }
+
         const changeProcient = (obj) => {
             obj.procient = target
             obj.sellingprice = countProcient(obj.unitprice)
@@ -199,6 +206,7 @@ const RegisterIncoming = () => {
         check('unitprice') && changeunitprice(product)
         check('sellingprice') && changesellingprice(product)
         check('procient') && changeProcient(product)
+        check('tradeprice') && changetradeprice(product)
 
         if (id) {
             setIncomings([
@@ -387,6 +395,10 @@ const RegisterIncoming = () => {
         },
         {
             title: t('Sotish'),
+            styles: 'w-[15%]',
+        },
+        {
+            title: 'Optom narx',
             styles: 'w-[15%]',
         },
         {
