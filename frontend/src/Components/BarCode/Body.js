@@ -15,7 +15,7 @@ export const Body = ({product, currency, marketName}) => {
     return (
         <div className='w-[40mm] break-after-page font-sans h-[65mm] times '>
             <div className='w-[65mm] rotate-90 mt-20 -ml-0 text-xl'>
-                <div className='text-[10px] font-normal text-right pb-[10px]'>
+                <div className='text-[14px] font-medium text-right pb-[10px]'>
                     1$ - {currencyEx} UZS
                 </div>
                 <div className='text-center font-bold text-2xl p-[1px]'>
