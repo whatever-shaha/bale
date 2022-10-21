@@ -103,8 +103,10 @@ module.exports.registerAll = async (req, res) => {
         incomingpriceuzs: Math.round(unitpriceuzs * 10000) / 10000,
         sellingprice: Math.round(sellingprice * 10000) / 10000,
         sellingpriceuzs: Math.round(sellingpriceuzs * 10000) / 10000,
-        tradeprice: Math.round(tradeprice * 10000) / 10000,
-        tradepriceuzs: Math.round(tradepriceuzs * 10000) / 10000,
+        tradeprice: tradeprice ? Math.round(tradeprice * 10000) / 10000 : 0,
+        tradepriceuzs: tradeprice
+          ? Math.round(tradepriceuzs * 10000) / 10000
+          : 0,
         market,
       });
 

@@ -3,13 +3,13 @@ import Select from 'react-select'
 import CustomStyle, {DropdownIcon} from './CustomStyle'
 
 const SelectInput = ({
-                         onSelect,
-                         options,
-                         isDisabled,
-                         label,
-                         placeholder,
-                         value
-                     }) => {
+    onSelect,
+    options,
+    isDisabled,
+    label,
+    placeholder,
+    value,
+}) => {
     return (
         <div className='grow'>
             {label && (
@@ -31,7 +31,7 @@ const SelectInput = ({
                 placeholder={placeholder}
                 components={{
                     IndicatorSeparator: () => null,
-                    DropdownIndicator: DropdownIcon
+                    DropdownIndicator: DropdownIcon,
                 }}
             />
         </div>
