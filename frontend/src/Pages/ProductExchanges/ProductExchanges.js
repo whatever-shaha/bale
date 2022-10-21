@@ -20,6 +20,7 @@ import {getProducts} from './../Incomings/incomingSlice'
 import SmallLoader from '../../Components/Spinner/SmallLoader'
 import {motion} from 'framer-motion'
 import socket from '../../Config/socket.js'
+import SelectInput from '../../Components/SelectInput/SelectInput'
 
 function ProductExchanges() {
     const dispatch = useDispatch()
@@ -33,8 +34,6 @@ function ProductExchanges() {
     const {market} = useSelector((state) => state.login)
 
     const [filialNameSearch, setFilialNameSearch] = useState('')
-    const [productCodeSearch, setProductCodeSearch] = useState('')
-    const [productNameSearch, setProductNameSearch] = useState('')
     const [filialProductNameSearch, setFilialProductNameSearch] = useState('')
     const [filialProductCodeSearch, setFilialProductCodeSearch] = useState('')
     const [productData, setProductData] = useState([])
@@ -49,12 +48,10 @@ function ProductExchanges() {
     const [filteredFilials, setFilteredFilials] = useState([
         ...sellingProductData,
     ])
-    const [filteredShopProducts, setFilteredShopProducts] = useState([
-        ...productData,
-    ])
     const [filteredFilialNames, setFilteredFilialNames] = useState([
         ...filialData,
     ])
+    const [selectProductValue, setSelectProductValue] = useState('')
 
     const handleFilial = (e) => {
         setFilialInformation(e)
@@ -64,8 +61,15 @@ function ProductExchanges() {
     const toggleModal = () => setModalVisible(!modalVisible)
 
     const productModal = (e) => {
+        let obj = {...e}
+        setSelectProductValue({
+            label: e.label,
+            value: e.label,
+        })
         setApproveModal('modal1')
-        setDataObject(e)
+        delete obj.label
+        delete obj.value
+        setDataObject(obj)
         toggleModal()
     }
 
@@ -219,61 +223,6 @@ function ProductExchanges() {
         }
     }
 
-    const filterShopProduct = (key, value) => {
-        if (key === 'name') {
-            setProductNameSearch(value)
-            if (isNaN(value)) {
-                if (productCodeSearch.trim() !== '') {
-                    return setFilteredShopProducts(
-                        filter(
-                            productData,
-                            (item) =>
-                                item.name
-                                    .toLowerCase()
-                                    .includes(value.toLowerCase().trim()) &&
-                                item.code.includes(productCodeSearch.trim())
-                        )
-                    )
-                } else {
-                    return setFilteredShopProducts(
-                        filter(productData, (item) =>
-                            item.name
-                                .toLowerCase()
-                                .includes(value.toLowerCase())
-                        )
-                    )
-                }
-            } else {
-                setFilteredShopProducts(productData)
-            }
-        } else {
-            let searchedVal = value.trim()
-            setProductCodeSearch(value)
-            if (searchedVal) {
-                if (isNaN(productNameSearch)) {
-                    return setFilteredShopProducts(
-                        filter(
-                            productData,
-                            (item) =>
-                                item.code.includes(value) &&
-                                item.name
-                                    .toLowerCase()
-                                    .includes(
-                                        productNameSearch.toLowerCase().trim()
-                                    )
-                        )
-                    )
-                } else {
-                    return setFilteredShopProducts(
-                        filter(productData, (item) => item.code.includes(value))
-                    )
-                }
-            } else {
-                setFilteredShopProducts(productData)
-            }
-        }
-    }
-
     const filterFilialProducts = (key, value) => {
         if (key === 'name') {
             setFilialProductNameSearch(value)
@@ -382,6 +331,7 @@ function ProductExchanges() {
                     setArrAdded([])
                     setFilialInformation('')
                     setActiveFilial('')
+                    setSelectProductValue('')
                 }
             })
         } else {
@@ -410,6 +360,9 @@ function ProductExchanges() {
             products &&
             map(products, (item) => {
                 return {
+                    value: item._id,
+                    label:
+                        item.productdata.code + ' - ' + item.productdata.name,
                     id: item._id,
                     categoryId: item.category._id,
                     categoryCode: item.category.code,
@@ -434,9 +387,6 @@ function ProductExchanges() {
     useEffect(() => {
         setFilteredFilials(sellingProductData)
     }, [sellingProductData])
-    useEffect(() => {
-        setFilteredShopProducts(productData)
-    }, [productData])
     useEffect(() => {
         const newUpdateFilialProduct = map(filialDatas, (obj) => {
             return {
@@ -479,7 +429,7 @@ function ProductExchanges() {
                 </div>
             )}
             <section className='flex h-full'>
-                <div className='min-w-[20rem] border-r-[1px] border-r-[#A9C0EF] flex flex-col'>
+                <div className='basis-2/3 border-r-[1px] border-r-[#A9C0EF] flex flex-col'>
                     <div className='mainPadding'>
                         <LabelSearchInput
                             labelText={`Filiallar`}
@@ -517,87 +467,17 @@ function ProductExchanges() {
                         </div>
                     </div>
                 </div>
-                <div className='grow border-r-[1px] border-r-[#A9C0EF] flex flex-col'>
+                <div className='basis-1/3 bg-white-700 flex flex-col'>
                     <div className='p-[1.25rem]'>
-                        <div className='flex justify-between gap-[1.25rem]'>
-                            <div className='w-full'>
-                                <LabelSearchInput
-                                    labelText={`Kodi`}
-                                    placeholder='qidirish...'
-                                    value={productCodeSearch}
-                                    onChange={(e) => {
-                                        filterShopProduct(
-                                            'code',
-                                            e.target.value
-                                        )
-                                    }}
-                                />
-                            </div>
-                            <div className='w-full'>
-                                <LabelSearchInput
-                                    labelText={`Nomi`}
-                                    placeholder='qidirish...'
-                                    value={productNameSearch}
-                                    onChange={(e) => {
-                                        filterShopProduct(
-                                            'name',
-                                            e.target.value
-                                        )
-                                    }}
-                                />
-                            </div>
+                        <div className='mb-[1.25rem] pt-[0.5rem]'>
+                            <SelectInput
+                                label={'Mahsulotlar'}
+                                placeholder={'Mahsulotlar'}
+                                options={productData}
+                                onSelect={productModal}
+                                value={selectProductValue}
+                            />
                         </div>
-                    </div>
-                    <div className='grow relative'>
-                        <div className='absolute left-0 right-0 top-0 bottom-[1rem] overflow-auto pl-[1.25rem] pr-[2rem] pt-[1.25rem]'>
-                            {filteredShopProducts.length === 0 ||
-                            filialInformation === '' ? (
-                                <NotFind text='Maxsulotlar mavjud emas!' />
-                            ) : (
-                                map(filteredShopProducts, (item, index) => {
-                                    return (
-                                        <motion.div
-                                            initial={{opacity: 0}}
-                                            animate={{opacity: 1}}
-                                            transition={{duration: 0.5}}
-                                            key={index}
-                                            className='pb-[0.675rem] '
-                                        >
-                                            <Exchanges
-                                                dataObject={item}
-                                                added={
-                                                    filter(
-                                                        arrAdded,
-                                                        (add) => add === item.id
-                                                    ).length > 0
-                                                }
-                                                fulled={
-                                                    item.number === 0 &&
-                                                    filter(
-                                                        arrAdded,
-                                                        (add) => add === item.id
-                                                    ).length > 0
-                                                }
-                                                fulled2={
-                                                    item.number === 0 &&
-                                                    filter(
-                                                        arrAdded,
-                                                        (add) => add === item.id
-                                                    ).length === 0
-                                                }
-                                                type='allProducts'
-                                                onClick={productModal}
-                                                currency={currencyType}
-                                            />
-                                        </motion.div>
-                                    )
-                                })
-                            )}
-                        </div>
-                    </div>
-                </div>
-                <div className='grow bg-white-700 flex flex-col'>
-                    <div className='p-[1.25rem]'>
                         <div className='flex justify-between gap-[1.25rem]'>
                             <div className='w-full'>
                                 <LabelSearchInput

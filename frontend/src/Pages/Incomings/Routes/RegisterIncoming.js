@@ -641,8 +641,10 @@ const RegisterIncoming = () => {
                     transferuzs: Number(paymentTransferUzs),
                 },
             })
-        ).then(({error}) => !error && navigate('/maxsulotlar/qabul/qabullar'))
-        removeTemporary()
+        ).then(({error}) => {
+            removeTemporary()
+            !error && navigate('/maxsulotlar/qabul/qabullar')
+        })
     }
     const changeComment = (e) => {
         setSaleComment(e)
