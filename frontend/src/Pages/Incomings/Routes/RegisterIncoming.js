@@ -643,6 +643,7 @@ const RegisterIncoming = () => {
             })
         ).then(({error}) => {
             removeTemporary()
+            dispatch(getProducts())
             !error && navigate('/maxsulotlar/qabul/qabullar')
         })
     }
