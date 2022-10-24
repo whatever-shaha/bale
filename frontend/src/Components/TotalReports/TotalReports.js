@@ -96,36 +96,42 @@ const TotalReports = ({
                             cost={
                                 currencyType === 'USD'
                                     ? (
-                                          (totalreports?.cash?.cash * 1000) /
-                                          1000
+                                          Math.round(
+                                              totalreports?.cash?.cash * 1000
+                                          ) / 1000
                                       ).toLocaleString('ru-RU')
                                     : (
-                                          (totalreports?.cash?.cashuzs * 1) /
-                                          1
+                                          Math.round(
+                                              totalreports?.cash?.cashuzs * 1
+                                          ) / 1
                                       ).toLocaleString('ru-RU')
                             }
                             plastic={
                                 currencyType === 'USD'
                                     ? (
-                                          (totalreports?.card?.card * 1000) /
-                                          1000
+                                          Math.round(
+                                              totalreports?.card?.card * 1000
+                                          ) / 1000
                                       ).toLocaleString('ru-RU')
                                     : (
-                                          (totalreports?.card?.carduzs * 1) /
-                                          1
+                                          Math.round(
+                                              totalreports?.card?.carduzs * 1
+                                          ) / 1
                                       ).toLocaleString('ru-RU')
                             }
                             transfer={
                                 currencyType === 'USD'
                                     ? (
-                                          (totalreports?.transfer?.transfer *
-                                              1000) /
-                                          1000
+                                          Math.round(
+                                              totalreports?.transfer?.transfer *
+                                                  1000
+                                          ) / 1000
                                       ).toLocaleString('ru-RU')
                                     : (
-                                          (totalreports?.transfer?.transferuzs *
-                                              1) /
-                                          1
+                                          Math.round(
+                                              totalreports?.transfer
+                                                  ?.transferuzs * 1
+                                          ) / 1
                                       ).toLocaleString('ru-RU')
                             }
                             currency={currencyType}
@@ -135,12 +141,14 @@ const TotalReports = ({
                         <p className='text-[36px] text-[#61BD7B] font-bold'>
                             {currencyType === 'USD'
                                 ? (
-                                      (totalreports.income.income * 1000) /
-                                      1000
+                                      Math.round(
+                                          totalreports.income.income * 1000
+                                      ) / 1000
                                   ).toLocaleString('ru-RU')
                                 : (
-                                      (totalreports.income.incomeuzs * 1) /
-                                      1
+                                      Math.round(
+                                          totalreports.income.incomeuzs * 1
+                                      ) / 1
                                   ).toLocaleString('ru-RU')}{' '}
                             {currencyType}
                         </p>
@@ -165,12 +173,14 @@ const TotalReports = ({
                     number1={
                         currencyType === 'USD'
                             ? (
-                                  (incomingreport?.totalprice * 1000) /
-                                  1000
+                                  Math.round(
+                                      incomingreport?.totalprice * 1000
+                                  ) / 1000
                               ).toLocaleString('ru-RU')
                             : (
-                                  (incomingreport?.totalpriceuzs * 1) /
-                                  1
+                                  Math.round(
+                                      incomingreport?.totalpriceuzs * 1
+                                  ) / 1
                               ).toLocaleString('ru-RU')
                     }
                     number2={incomingreport?.producttypes}
@@ -188,12 +198,18 @@ const TotalReports = ({
                     number3={
                         currencyType === 'USD'
                             ? (
-                                  (productreport?.totalprice * 1000) /
-                                  1000
+                                  (Math.round(
+                                      productreport?.totalprice * 1000
+                                  ) /
+                                      1000) *
+                                  productreport.totalpieces
                               ).toLocaleString('ru-RU')
                             : (
-                                  (productreport?.totalpriceuzs * 1) /
-                                  1
+                                  (Math.round(
+                                      productreport?.totalpriceuzs * 1
+                                  ) /
+                                      1) *
+                                  productreport.totalpieces
                               ).toLocaleString('ru-RU')
                     }
                     text1={'Tovar turlarining umumiy soni'}
