@@ -194,7 +194,7 @@ const TotalReports = ({
                 <TotalReport
                     label1={'Omborxona hisoboti'}
                     number1={productreport?.producttypes}
-                    number2={productreport?.totalpieces}
+                    number2={Math.round(productreport?.totalpieces)}
                     number3={
                         currencyType === 'USD'
                             ? (
