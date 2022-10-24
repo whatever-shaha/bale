@@ -198,18 +198,18 @@ const TotalReports = ({
                     number3={
                         currencyType === 'USD'
                             ? (
-                                  (Math.round(
-                                      productreport?.totalprice * 1000
-                                  ) /
-                                      1000) *
-                                  productreport.totalpieces
+                                  Math.round(
+                                      productreport?.totalprice *
+                                          productreport.totalpieces *
+                                          1000
+                                  ) / 1000
                               ).toLocaleString('ru-RU')
                             : (
-                                  (Math.round(
-                                      productreport?.totalpriceuzs * 1
-                                  ) /
-                                      1) *
-                                  productreport.totalpieces
+                                  Math.round(
+                                      productreport?.totalpriceuzs *
+                                          productreport.totalpieces *
+                                          1
+                                  ) / 1
                               ).toLocaleString('ru-RU')
                     }
                     text1={'Tovar turlarining umumiy soni'}
