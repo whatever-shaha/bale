@@ -676,7 +676,16 @@ function Products() {
         dispatch(deleteProduct(deletedProduct)).then(({error}) => {
             if (!error) {
                 handleClickCancelToDelete()
-                dispatch(getAllProducts())
+                const body = {
+                    currentPage,
+                    countPage: showByTotal,
+                    search: {
+                        name: searchByName.replace(/\s+/g, ' ').trim(),
+                        code: searchByCode.replace(/\s+/g, ' ').trim(),
+                        category: searchByCategory.replace(/\s+/g, ' ').trim(),
+                    },
+                }
+                dispatch(getProducts(body))
             }
         })
     }
