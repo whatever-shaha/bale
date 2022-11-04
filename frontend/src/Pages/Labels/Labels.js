@@ -18,7 +18,7 @@ import {BarCode} from '../../Components/BarCode/BarCode.js'
 import {exportExcel, universalSort} from '../../App/globalFunctions.js'
 import {useTranslation} from 'react-i18next'
 import {filter, map} from 'lodash'
-import { universalToast } from '../../Components/ToastMessages/ToastMessages'
+import {universalToast} from '../../Components/ToastMessages/ToastMessages'
 
 const Labels = () => {
     const {t} = useTranslation(['common'])
@@ -285,6 +285,7 @@ const Labels = () => {
                 search: {
                     name: searchByName.replace(/\s+/g, ' ').trim(),
                     code: searchByCode.replace(/\s+/g, ' ').trim(),
+                    category: searchByCategory.replace(/\s+/g, ''),
                 },
             }
             dispatch(getProductsByFilter(body))
@@ -309,12 +310,12 @@ const Labels = () => {
         ]
         dispatch(getProductsAll()).then(({error, payload}) => {
             if (!error) {
-                if(payload?.length>0){
+                if (payload?.length > 0) {
                     const ReportData = map(payload, (item, index) => ({
                         nth: index + 1,
                         code: item?.productdata?.code || '',
                         name: item?.productdata?.name || '',
-                        total: (item.total + item?.unit?.name) || '',
+                        total: item.total + item?.unit?.name || '',
                         incomingprice: item?.price?.incomingprice || '',
                         incomingpriceuzs: item?.price?.incomingpriceuzs || '',
                         incomingpricealluzs:
@@ -325,12 +326,11 @@ const Labels = () => {
                         sellingpriceuzs: item?.price?.sellingpriceuzs || '',
                         sellingalluzs:
                             item?.price?.sellingpriceuzs * item.total,
-                        sellingallusd: item?.price?.sellingprice * item.total
+                        sellingallusd: item?.price?.sellingprice * item.total,
                     }))
                     exportExcel(ReportData, fileName, exportProductHead)
-                }
-                else {
-                    universalToast("Jadvalda ma'lumot mavjud emas !","warning" )
+                } else {
+                    universalToast("Jadvalda ma'lumot mavjud emas !", 'warning')
                 }
             }
         })
