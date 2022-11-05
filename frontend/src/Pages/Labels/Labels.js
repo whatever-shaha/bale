@@ -343,6 +343,7 @@ const Labels = () => {
             search: {
                 name: searchByName.replace(/\s+/g, ' ').trim(),
                 code: searchByCode.replace(/\s+/g, ' ').trim(),
+                category: searchByCategory.replace(/\s+/g, ''),
             },
         }
         dispatch(getProducts(body))
