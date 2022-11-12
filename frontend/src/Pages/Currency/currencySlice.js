@@ -105,7 +105,6 @@ export const updateProductPrices = createAsyncThunk(
             const {data} = await Api.post('/exchangerate/updateproductprices', {
                 data: body,
             })
-            console.log(data)
             return data
         } catch (error) {
             return rejectWithValue(error)
