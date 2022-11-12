@@ -1,16 +1,19 @@
-import {uniqueId,map} from 'lodash'
+import {uniqueId, map} from 'lodash'
 import React from 'react'
 import TableBtn from '../../Buttons/TableBtn'
 import {useNavigate} from 'react-router-dom'
+import {useSelector} from 'react-redux'
 
 export const TemporarySaleTableRow = ({data, Delete, currency, Print}) => {
     const navigate = useNavigate()
+    const {user} = useSelector((state) => state.login)
+    const link = user?.type?.toLowerCase() === 'seller' ? '/' : '/sotuv/sotish'
     const linkToSale = (temporary) => {
-        navigate('/sotuv/sotish', {state: {temporary: {...temporary}}})
+        navigate(link, {state: {temporary: {...temporary}}})
     }
     return (
         <>
-            {map(data,({_id, temporary, createdAt}, index) => (
+            {map(data, ({_id, temporary, createdAt}, index) => (
                 <tr className='tr' key={uniqueId('sale')}>
                     <td className='td'>{1 + index}</td>
                     <td className='td text-left'>
