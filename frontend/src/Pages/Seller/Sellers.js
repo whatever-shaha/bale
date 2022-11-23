@@ -23,6 +23,7 @@ import {
     updateSeller
 } from './sellerSlice'
 import {useNavigate} from 'react-router-dom'
+import SearchForm from '../../Components/SearchForm/SearchForm'
 
 function Sellers() {
     const {t} = useTranslation(['common'])
@@ -36,6 +37,7 @@ function Sellers() {
         successAddSelling,
         successUpdateSelling
     } = useSelector((state) => state.sellers)
+    const {currencyType} = useSelector(state => state.currency)
 
     const {user} = useSelector((state) => state.login)
 
@@ -44,7 +46,8 @@ function Sellers() {
         {title: t('Ismi'), styles: 'w-[21%]'},
         {title: t('Familiyasi'), styles: 'w-[21%]'},
         {title: t('Telefon raqami'), styles: 'w-[21%]'},
-        {title: t('Login'), styles: 'w-[21%]'},
+        {title: 'Sotuvlar'},
+        {title: 'Summa'},
         {title: '', styles: 'w-[8%]'}
     ]
 
@@ -57,6 +60,11 @@ function Sellers() {
     const [sellerPassword, setSellerPassword] = useState('')
     const [sellerAgainPassword, setSellerAgainPassword] = useState('')
     const [currentSeller, setCurrentSeller] = useState('')
+
+    const [startDate, setStartDate] = useState(
+        new Date(new Date().setDate(new Date().getDate() - 10))
+    )
+    const [endDate, setEndDate] = useState(new Date())
 
     // handle Changed inputs
     const addNewSeller = (e) => {
@@ -208,8 +216,11 @@ function Sellers() {
     }, [dispatch, errorSellings, successAddSelling, successUpdateSelling])
 
     useEffect(() => {
-        dispatch(getSellers())
-    }, [dispatch])
+        dispatch(getSellers({
+            startDate,
+            endDate
+        }))
+    }, [dispatch, startDate, endDate])
 
     useEffect(() => {
         setData(sellers)
@@ -330,7 +341,18 @@ function Sellers() {
             <div className='font-normal text-[1.25rem] leading-[1.875rem] text-blue-900 mainPadding'>
                 <p>{t('Sotuvchilar')}</p>
             </div>
-
+            <div className='flex w-full'>
+                    <SearchForm
+                        filterBy={[
+                            'startDate',
+                            'endDate',
+                        ]}
+                        startDate={startDate}
+                        setStartDate={setStartDate}
+                        endDate={endDate}
+                        setEndDate={setEndDate}
+                    />
+            </div>
             <div className='tableContainerPadding'>
                 {loading ? (
                     <Spinner />
@@ -345,6 +367,7 @@ function Sellers() {
                         headers={headers}
                         Edit={handleEditSeller}
                         linkToSellerReports={linkToSellerReports}
+                        currency={currencyType}
                     />
                 )}
             </div>

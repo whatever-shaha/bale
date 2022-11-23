@@ -140,7 +140,7 @@ const RegisterSelling = () => {
         setModalBody('')
         setModalData(null)
     }
-
+    console.log(location);
     const convertToUsd = (value) => Math.round(value * 1000) / 1000
     const convertToUzs = (value) => Math.round(value)
     const currentEchangerate = (uzs, usd) => {
@@ -500,6 +500,7 @@ const RegisterSelling = () => {
             ...map([...clients], (client) => ({
                 value: client._id,
                 label: client.name,
+                saleconnectorid: client?.saleconnectorid || null
             })),
         ])
         setUserValue('')
@@ -665,7 +666,7 @@ const RegisterSelling = () => {
             }
         })
     }
-
+    
     const handleClickSave = () => {
         if (tableProducts.length > 0) {
             const all = tableProducts.reduce(
@@ -804,6 +805,7 @@ const RegisterSelling = () => {
                     label: client.name,
                     value: client._id,
                     packman: pack,
+                    saleconnectorid: client?.saleconnectorid || null
                 }))
             )
         } else {
@@ -816,6 +818,7 @@ const RegisterSelling = () => {
                     label: client.name,
                     value: client._id,
                     packman: client?.packman,
+                    saleconnectorid: client?.saleconnectorid || null
                 })),
             ])
         }
@@ -825,6 +828,7 @@ const RegisterSelling = () => {
     const handleClickPrint = () => {}
     const handleChangeClientValue = (option) => {
         setClientValue(option)
+        setSaleConnectorId(option?.saleconnectorid || null)
         const client = filter(
             clients,
             (client) => client._id === option.value
@@ -1245,6 +1249,7 @@ const RegisterSelling = () => {
             ...map([...clients], (client) => ({
                 value: client._id,
                 label: client.name,
+                saleconnectorid: client?.saleconnectorid || null,
             })),
         ])
     }, [clients, t])
