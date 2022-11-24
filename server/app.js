@@ -19,7 +19,7 @@ app.use(cors());
 
 socketIO(io);
 
-start(server);
+start(server).then(()=>{});
 
 routers(app);
 
