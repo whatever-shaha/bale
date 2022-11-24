@@ -265,7 +265,7 @@ module.exports.login = async (req, res) => {
       login,
     }).populate("market");
 
-    if (!user) {
+    if (!user) { 
       return res
         .status(400)
         .json({ message: `Login yoki parol noto'g'ri kiritilgan` });
