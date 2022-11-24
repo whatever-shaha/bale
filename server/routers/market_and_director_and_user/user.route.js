@@ -12,6 +12,8 @@ const { Department } = require("../../models/Products/Category");
 const config = require("config");
 const jwt = require("jsonwebtoken");
 const ObjectId = require("mongodb").ObjectId;
+const {DailySaleConnector} = require('../../models/Sales/DailySaleConnector')
+require('../../models/Sales/Payment')
 
 module.exports.register = async (req, res) => {
   try {
@@ -483,9 +485,8 @@ module.exports.createseller = async (req, res) => {
 
 module.exports.getsellers = async (req, res) => {
   try {
-    const { market } = req.body;
+    const { market, startDate, endDate } = req.body;
     const marke = await Market.findById(market);
-
     if (!marke) {
       return res.status(400).json({
         message:
@@ -495,8 +496,31 @@ module.exports.getsellers = async (req, res) => {
 
     const sellers = await User.find({ type: "Seller", market })
       .select("firstname lastname market type login phone")
-      .sort({ _id: -1 });
+      .sort({ _id: -1 })
+      .lean()
 
+    
+    if (sellers.length > 0) {
+      for (const seller of sellers) {
+        const sales = await DailySaleConnector.find({
+          user: seller._id,
+          createdAt: {
+            $gte: startDate,
+            $lt: endDate,
+          },
+        })
+        .select('user payment')
+        .populate('payment', 'totalprice totalpriceuzs')
+
+        seller.sales = sales.length;
+        seller.totalsales = sales.reduce((prev, sale) => {
+          return prev + sale?.payment?.totalprice
+        }, 0)
+        seller.totalsalesuzs = sales.reduce((prev, sale) => {
+          return prev + sale?.payment?.totalpriceuzs
+        }, 0)
+      }
+    }
     res.status(201).send(sellers);
   } catch (error) {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });

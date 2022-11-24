@@ -8,6 +8,7 @@ export const SellerTableRow = ({
     countPage,
     Edit,
     linkToSellerReports,
+    currency
 }) => {
     return (
         <>
@@ -19,7 +20,12 @@ export const SellerTableRow = ({
                     <td className='text-right td'>{seller.firstname}</td>
                     <td className='text-left td'>{seller.lastname}</td>
                     <td className='text-right td'>{seller.phone}</td>
-                    <td className='text-right td'>{seller.login}</td>
+                    <td className='text-right td'>{seller?.sales || 0}</td>
+                    <td className='text-right td'>{
+                        currency === 'USD' ? 
+                        seller?.totalsales?.toLocaleString('ru-RU') :
+                        seller?.totalsalesuzs?.toLocaleString('ru-RU') 
+                    } {currency === 'USD' ? 'USD' : 'UZS'}</td>
                     <td className='border-r-0 td py-[0.375rem]'>
                         <div className='flex items-center justify-center gap-[0.625rem]'>
                             <TableBtn
