@@ -140,7 +140,6 @@ const RegisterSelling = () => {
         setModalBody('')
         setModalData(null)
     }
-    console.log(location);
     const convertToUsd = (value) => Math.round(value * 1000) / 1000
     const convertToUzs = (value) => Math.round(value)
     const currentEchangerate = (uzs, usd) => {
@@ -666,7 +665,7 @@ const RegisterSelling = () => {
             }
         })
     }
-    
+
     const handleClickSave = () => {
         if (tableProducts.length > 0) {
             const all = tableProducts.reduce(
