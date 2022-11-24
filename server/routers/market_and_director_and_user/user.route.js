@@ -514,10 +514,10 @@ module.exports.getsellers = async (req, res) => {
 
         seller.sales = sales.length;
         seller.totalsales = sales.reduce((prev, sale) => {
-          return prev + sale?.payment?.totalprice
+          return prev + sale.payment.totalprice
         }, 0)
         seller.totalsalesuzs = sales.reduce((prev, sale) => {
-          return prev + sale?.payment?.totalpriceuzs
+          return prev + sale.payment.totalpriceuzs
         }, 0)
       }
     }
