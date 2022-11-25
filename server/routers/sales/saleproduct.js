@@ -580,7 +580,7 @@ module.exports.getsaleconnectors = async (req, res) => {
       },
     })
       .select('-isArchive -updatedAt -market -__v')
-      .sort({ _id: -1 })
+      .sort({ updatedAt: -1 })
       .populate({
         path: 'products',
         select: 'user',
