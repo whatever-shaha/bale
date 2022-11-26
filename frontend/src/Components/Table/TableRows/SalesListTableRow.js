@@ -41,12 +41,12 @@ export const SalesListTableRow = ({
                         <div className='flex justify-between'>
                             <span>
                                 {new Date(
-                                    saleconnector.createdAt
+                                    saleconnector.updatedAt
                                 ).toLocaleDateString()}
                             </span>
                             <span>
                                 {new Date(
-                                    saleconnector.createdAt
+                                    saleconnector.updatedAt
                                 ).toLocaleTimeString()}{' '}
                             </span>
                         </div>

@@ -264,6 +264,7 @@ function Table({
                         countPage={countPage}
                         Edit={Edit}
                         Delete={Delete}
+                        Print={Print}
                     />
                 )
             case 'packman':
