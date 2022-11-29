@@ -189,7 +189,7 @@ function Products() {
         setNameOfProduct(e.target.value)
     }
     const handleChangeNumberOfProduct = (e) => {
-        let val = e.target.value
+        let val = Number(e.target.value)
         if (regexForTypeNumber.test(val)) {
             setNumberOfProduct(val)
         }
