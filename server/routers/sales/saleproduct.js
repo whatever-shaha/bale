@@ -593,7 +593,7 @@ module.exports.getsaleconnectors = async (req, res) => {
         path: 'products',
         select:
           'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
-        options: { sort: { createdAt: -1 }},
+        options: { sort: { createdAt: -1 } },
         populate: {
           path: 'product',
           select: 'productdata',
@@ -621,34 +621,41 @@ module.exports.getsaleconnectors = async (req, res) => {
               connector.client) ||
             search.client.length === 0
         );
-      })
-      
-      const filteredProductsSale = saleconnectors.map((connector) => {
-          const filterProducts = connector.products.filter(product => {
-            return new Date(product.createdAt) > new Date(startDate) && 
-            new Date(product.createdAt) < new Date(endDate)
-          })
-          const filterPayment = connector.payments.filter(payment => {
-            return new Date(payment.createdAt) > new Date(startDate) && 
-            new Date(payment.createdAt) < new Date(endDate)
-          })
-          return {
-            _id: connector._id,
-            dailyconnectors: connector.dailyconnectors,
-            discounts: connector.discounts,
-            debts: connector.debts,
-            user: connector.user,
-            createdAt: connector.createdAt,
-            updatedAt: connector.updatedAt,
-            client: connector.client,
-            id: connector.id,
-            products: filterProducts,
-            payments: filterPayment,
-          }
-        })
+      });
+
+    const filteredProductsSale = saleconnectors.map((connector) => {
+      const filterProducts = connector.products.filter((product) => {
+        return (
+          new Date(product.createdAt) > new Date(startDate) &&
+          new Date(product.createdAt) < new Date(endDate)
+        );
+      });
+      const filterPayment = connector.payments.filter((payment) => {
+        return (
+          new Date(payment.createdAt) > new Date(startDate) &&
+          new Date(payment.createdAt) < new Date(endDate)
+        );
+      });
+      return {
+        _id: connector._id,
+        dailyconnectors: connector.dailyconnectors,
+        discounts: connector.discounts,
+        debts: connector.debts,
+        user: connector.user,
+        createdAt: connector.createdAt,
+        updatedAt: connector.updatedAt,
+        client: connector.client,
+        id: connector.id,
+        products: filterProducts,
+        payments: filterPayment,
+      };
+    });
 
     res.status(200).json({
-      saleconnectors: filteredProductsSale.splice(countPage * currentPage, countPage),
+      saleconnectors: filteredProductsSale.splice(
+        countPage * currentPage,
+        countPage
+      ),
       count: filteredProductsSale.length,
     });
   } catch (error) {
@@ -727,7 +734,7 @@ module.exports.registeredit = async (req, res) => {
       saleconnectorid,
       comment,
     } = req.body;
-
+    console.log(req.body);
     const marke = await Market.findById(market);
     if (!marke) {
       return res.status(400).json({
@@ -911,6 +918,7 @@ module.exports.registeredit = async (req, res) => {
       .populate('saleconnector', 'id');
     res.status(201).send(connector);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };

@@ -499,7 +499,7 @@ const RegisterSelling = () => {
             ...map([...clients], (client) => ({
                 value: client._id,
                 label: client.name,
-                saleconnectorid: client?.saleconnectorid || null
+                saleconnectorid: client?.saleconnectorid || null,
             })),
         ])
         setUserValue('')
@@ -804,7 +804,7 @@ const RegisterSelling = () => {
                     label: client.name,
                     value: client._id,
                     packman: pack,
-                    saleconnectorid: client?.saleconnectorid || null
+                    saleconnectorid: client?.saleconnectorid || null,
                 }))
             )
         } else {
@@ -817,7 +817,7 @@ const RegisterSelling = () => {
                     label: client.name,
                     value: client._id,
                     packman: client?.packman,
-                    saleconnectorid: client?.saleconnectorid || null
+                    saleconnectorid: client?.saleconnectorid || null,
                 })),
             ])
         }
@@ -1116,12 +1116,32 @@ const RegisterSelling = () => {
             setReturnDiscounts(newRelease)
             setAllPayment(payment)
             setAllPaymentUzs(paymentUzs)
-            setPaymentCash(Math.abs(payment))
-            setPaymentCashUzs(Math.abs(paymentUzs))
             setPaid(Math.abs(payment))
             setPaidUzs(Math.abs(paymentUzs))
-            setPaymentModalVisible(true)
             currentEchangerate(allUzs, all)
+            const data = location.state
+            const totalprice = data.saleconnector.products.reduce(
+                (prev, prod) => prev + prod.totalprice,
+                0
+            )
+            const totalpayment = data.saleconnector.payments.reduce(
+                (prev, payment) => prev + payment.payment,
+                0
+            )
+            const totaldiscounts =
+                data.saleconnector.discounts.reduce(
+                    (prev, discount) => prev + discount.discount,
+                    0
+                ) || 0
+            const debt = totalprice - totalpayment - totaldiscounts
+            if (debt !== 0) {
+                setPaymentCash(0)
+                setPaymentCashUzs(0)
+            } else {
+                setPaymentCash(Math.abs(payment))
+                setPaymentCashUzs(Math.abs(paymentUzs))
+            }
+            setPaymentModalVisible(true)
         } else {
             warningReturnProductsEmpty()
         }
@@ -1336,7 +1356,6 @@ const RegisterSelling = () => {
         }
         window.history.replaceState({}, document.title)
     }, [location.state])
-
     return (
         <div className={'flex grow relative overflow-auto'}>
             {loadingMakePayment && (
