@@ -792,9 +792,12 @@ module.exports.getProductsReport = async (req, res) => {
 
     products.map((product) => {
       productsreport.totalpieces += product.total;
-      productsreport.totalprice += product.price.incomingprice * product.total;
+      productsreport.totalprice +=
+        (Math.round(Number(product.price.incomingprice) * 1000) / 1000) *
+        Math.round(product.total);
       productsreport.totalpriceuzs +=
-        product.price.incomingpriceuzs * product.total;
+        (Math.round(Number(product.price.incomingpriceuzs) * 1) / 1) *
+        Math.round(product.total);
     });
 
     res.status(200).json(productsreport);
