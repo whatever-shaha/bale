@@ -792,8 +792,9 @@ module.exports.getProductsReport = async (req, res) => {
 
     products.map((product) => {
       productsreport.totalpieces += product.total;
-      productsreport.totalprice += product.price.incomingprice;
-      productsreport.totalpriceuzs += product.price.incomingpriceuzs;
+      productsreport.totalprice += product.price.incomingprice * product.total;
+      productsreport.totalpriceuzs +=
+        product.price.incomingpriceuzs * product.total;
     });
 
     res.status(200).json(productsreport);

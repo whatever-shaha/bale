@@ -734,7 +734,6 @@ module.exports.registeredit = async (req, res) => {
       saleconnectorid,
       comment,
     } = req.body;
-    console.log(req.body);
     const marke = await Market.findById(market);
     if (!marke) {
       return res.status(400).json({
