@@ -99,7 +99,7 @@ module.exports.getSalesDataByMonth = async (req, res) => {
           new Date(new Date().setMonth(count, 1)).setHours(0, 0, 0, 0)
       ).toISOString()
       const endDate = new Date(
-          new Date(new Date().setMonth(count + 1, 0)).setHours(0, 0, 0, 0)
+          new Date(new Date().setMonth(count + 1, 1)).setHours(0, 0, 0, 0)
       ).toISOString()
       const dailysales = await DailySaleConnector.find({
         market,
