@@ -95,15 +95,17 @@ module.exports.getSalesDataByMonth = async (req, res) => {
       uzs: 0,
     };
     while (count <= currentMonth) {
+      const startDate = new Date(
+          new Date(new Date().setMonth(count, 1)).setHours(0, 0, 0, 0)
+      ).toISOString()
+      const endDate = new Date(
+          new Date(new Date().setMonth(count + 1, 0)).setHours(0, 0, 0, 0)
+      ).toISOString()
       const dailysales = await DailySaleConnector.find({
         market,
         createdAt: {
-          $gte: new Date(
-            new Date(new Date().setMonth(count, 1)).setHours(0, 0, 0, 0)
-          ).toISOString(),
-          $lte: new Date(
-            new Date(new Date().setMonth(count + 1, 0)).setHours(0, 0, 0, 0)
-          ).toISOString(),
+          $gte: startDate,
+          $lte: endDate,
         },
       })
         .select("-isArchive -updatedAt -user -market -__v")
