@@ -425,7 +425,8 @@ const updateOrderPosition = async (req, res) => {
     if (!marketData) {
       return res.status(404).json({ message: "Do'kon ma'lumotlari topilmadi" });
     }
-    await OrderConnector.findByIdAndUpdate(orderId, { position });
+    await OrderConnector.findByIdAndUpdate(orderId, { position })
+
     const order = await OrderConnector.findById(orderId)
       .select(
         "products id position createdAt totalprice totalpriceuzs position"
@@ -444,6 +445,13 @@ const updateOrderPosition = async (req, res) => {
         path: "sender",
         select: "name inn",
       });
+
+    for (const product of order.products) {
+      const returnedProduct = await Product.findById(product.product);
+      returnedProduct.total = returnedProduct.total + product.pieces.returned
+      await returnedProduct.save();
+    }
+
     res.status(200).json(order);
   } catch (error) {
     return res.status(400).json({ message: error.message });

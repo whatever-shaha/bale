@@ -215,7 +215,7 @@ function RegisterOrders() {
             prevProduct.product._id === id
                 ? {
                       ...prevProduct,
-                      pieces: {...prevProduct, [currentPosition]: val},
+                      pieces: {...prevProduct.pieces, [currentPosition]: val},
                       totalprice: roundUsd(val * prevProduct.unitprice),
                       totalpriceuzs: roundUzs(val * prevProduct.unitpriceuzs),
                   }

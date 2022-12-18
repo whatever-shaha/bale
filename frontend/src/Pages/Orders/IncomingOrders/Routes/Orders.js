@@ -130,6 +130,8 @@ function Orders() {
     }
 
     const handleUpdatePosition = (position, orderId, index) => {
+
+
         dispatch(updateOrderPosition({position, orderId})).then(
             ({error, payload}) => {
                 if (!error) {

@@ -68,7 +68,7 @@ export const RegisterIncomingOrdersTableRow = ({
                         )}
                         <span className='pl-2'>
                             {currentPosition === 'completed' && index === 5
-                                ? 'yanlangan'
+                                ? 'yakunlangan'
                                 : position.name}
                         </span>
                     </span>
@@ -107,7 +107,7 @@ export const RegisterIncomingOrdersTableRow = ({
     }
     const handleChange = (e, order, index) => {
         const val = e.value
-        if (val === 'rejected' || val === 'accepted') {
+        if (val === 'rejected' || val === 'accepted' || val === 'completed') {
             updatePosition(e.value, order._id, index)
         }
         if (val === 'send') {
