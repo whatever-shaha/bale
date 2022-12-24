@@ -149,7 +149,10 @@ export const SalesListTableRow = ({
                                     type={'return'}
                                     bgcolor={'bg-error-500'}
                                     onClick={() =>
-                                        linkToSale(saleconnector, true)
+                                        linkToSale(
+                                            saleconnector.saleconnector,
+                                            true
+                                        )
                                     }
                                 />
                             </div>

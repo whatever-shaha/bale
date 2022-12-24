@@ -285,6 +285,7 @@ function Table({
                         countPage={countPage}
                         Edit={Edit}
                         linkToSellerReports={linkToSellerReports}
+                        currency={currency}
                     />
                 )
             case 'exchange':

@@ -5,15 +5,18 @@ const {
   validateAdministration,
   validateSeller,
   validateEditUser,
-} = require("../../models/Users");
-const bcrypt = require("bcryptjs");
-const { Market } = require("../../models/MarketAndBranch/Market");
-const { Department } = require("../../models/Products/Category");
-const config = require("config");
-const jwt = require("jsonwebtoken");
-const ObjectId = require("mongodb").ObjectId;
-const {DailySaleConnector} = require('../../models/Sales/DailySaleConnector')
-require('../../models/Sales/Payment')
+} = require('../../models/Users');
+const bcrypt = require('bcryptjs');
+const { Market } = require('../../models/MarketAndBranch/Market');
+const { Department } = require('../../models/Products/Category');
+const config = require('config');
+const jwt = require('jsonwebtoken');
+const ObjectId = require('mongodb').ObjectId;
+const { DailySaleConnector } = require('../../models/Sales/DailySaleConnector');
+require('../../models/Sales/Payment');
+require('../../models/Sales/SaleConnector');
+require('../../models/Sales/SaleProduct');
+require('../../models/Sales/Discount');
 
 module.exports.register = async (req, res) => {
   try {
@@ -84,9 +87,9 @@ module.exports.register = async (req, res) => {
 
     res
       .status(201)
-      .send({ message: "Foydalanuvchi muvaffaqqiyatli yaratildi!" });
+      .send({ message: 'Foydalanuvchi muvaffaqqiyatli yaratildi!' });
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
 
@@ -119,7 +122,7 @@ module.exports.editUser = async (req, res) => {
 
     return res.status(200).json(updatedUser);
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
 
@@ -171,7 +174,7 @@ module.exports.registerDirector = async (req, res) => {
       phone,
       password: hash,
       market,
-      type: "Director",
+      type: 'Director',
       login,
       administrator,
     });
@@ -185,8 +188,8 @@ module.exports.registerDirector = async (req, res) => {
       {
         userId: newUser._id,
       },
-      config.get("jwtSecret"),
-      { expiresIn: "12h" }
+      config.get('jwtSecret'),
+      { expiresIn: '12h' }
     );
 
     res.status(201).send({
@@ -196,7 +199,7 @@ module.exports.registerDirector = async (req, res) => {
       market: newUser.market,
     });
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
 
@@ -237,15 +240,15 @@ module.exports.registerAdmin = async (req, res) => {
       image,
       login,
       password: hashPasword,
-      type: "Admin",
+      type: 'Admin',
     });
     await newAdmin.save();
 
     res
       .status(201)
-      .send({ message: "Foydalanuvchi muvaffaqqiyatli yaratildi!" });
+      .send({ message: 'Foydalanuvchi muvaffaqqiyatli yaratildi!' });
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
 
@@ -263,7 +266,7 @@ module.exports.login = async (req, res) => {
 
     const user = await User.findOne({
       login,
-    }).populate("market");
+    }).populate('market');
 
     if (!user) {
       return res
@@ -282,13 +285,13 @@ module.exports.login = async (req, res) => {
       {
         userId: user._id,
       },
-      config.get("jwtSecret"),
-      { expiresIn: "12h" }
+      config.get('jwtSecret'),
+      { expiresIn: '12h' }
     );
 
     const userr = await User.findById(user._id)
-      .select("firstname type lastname image")
-      .populate("market", "name phone1 phone2 phone3 image permission address");
+      .select('firstname type lastname image')
+      .populate('market', 'name phone1 phone2 phone3 image permission address');
 
     const hashType = await bcrypt.hash(userr.type, 8);
 
@@ -301,7 +304,7 @@ module.exports.login = async (req, res) => {
       market: userr.market,
     });
   } catch (e) {
-    res.status(500).json({ message: "Serverda xatolik yuz berdi" });
+    res.status(500).json({ message: 'Serverda xatolik yuz berdi' });
   }
 };
 
@@ -315,7 +318,7 @@ module.exports.getUser = async (req, res) => {
       });
     }
 
-    const user = await User.findById(userId).populate("market");
+    const user = await User.findById(userId).populate('market');
 
     if (!user) {
       return res.status(400).json({
@@ -359,8 +362,8 @@ module.exports.getUsers = async (req, res) => {
       market,
       isArchive: false,
     })
-      .populate("specialty", "name")
-      .select("-password -isArchive -createdAt -updatedAt -__v ")
+      .populate('specialty', 'name')
+      .select('-password -isArchive -createdAt -updatedAt -__v ')
       .sort({ _id: -1 });
 
     res.status(201).send(users);
@@ -379,7 +382,7 @@ module.exports.removeUser = async (req, res) => {
       });
     }
 
-    const user = await User.findById(userId).populate("market");
+    const user = await User.findById(userId).populate('market');
 
     if (!user) {
       return res.status(400).json({
@@ -430,8 +433,8 @@ module.exports.createseller = async (req, res) => {
       }
       await User.findByIdAndUpdate(_id, req.body);
 
-      const sellers = await User.find({ type: "Seller", market })
-        .select("firstname lastname market type login phone")
+      const sellers = await User.find({ type: 'Seller', market })
+        .select('firstname lastname market type login phone')
         .sort({ _id: -1 });
 
       res.status(201).send(sellers);
@@ -466,20 +469,20 @@ module.exports.createseller = async (req, res) => {
       phone,
       password: hash,
       market,
-      type: "Seller",
+      type: 'Seller',
       login,
       specialty,
       user,
     });
     await newUser.save();
 
-    const sellers = await User.find({ type: "Seller", market })
-      .select("firstname lastname market type login phone")
+    const sellers = await User.find({ type: 'Seller', market })
+      .select('firstname lastname market type login phone')
       .sort({ _id: -1 });
 
     res.status(201).send(sellers);
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
 
@@ -494,12 +497,11 @@ module.exports.getsellers = async (req, res) => {
       });
     }
 
-    const sellers = await User.find({ type: "Seller", market })
-      .select("firstname lastname market type login phone")
+    const sellers = await User.find({ type: 'Seller', market })
+      .select('firstname lastname market type login phone')
       .sort({ _id: -1 })
-      .lean()
+      .lean();
 
-    
     if (sellers.length > 0) {
       for (const seller of sellers) {
         const sales = await DailySaleConnector.find({
@@ -509,20 +511,67 @@ module.exports.getsellers = async (req, res) => {
             $lt: endDate,
           },
         })
-        .select('user payment')
-        .populate('payment', 'totalprice totalpriceuzs')
+          .select('user payment')
+          .populate(
+            'payment',
+            'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
+          )
+          .populate('saleconnector', 'id')
+          .populate('client', 'name')
+          .populate({
+            path: 'products',
+            select: 'totalprice totalpriceuzs pieces price',
+            populate: {
+              path: 'price',
+              select:
+                'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
+            },
+          })
+          .populate(
+            'discount',
+            'discount discountuzs totalprice totalpriceuzs procient'
+          );
 
         seller.sales = sales.length;
         seller.totalsales = sales.reduce((prev, sale) => {
-          return prev + sale.payment.totalprice
-        }, 0)
+          return prev + sale.payment.totalprice;
+        }, 0);
         seller.totalsalesuzs = sales.reduce((prev, sale) => {
-          return prev + sale.payment.totalpriceuzs
-        }, 0)
+          return prev + sale.payment.totalpriceuzs;
+        }, 0);
+
+        let profit = 0;
+        let profituzs = 0;
+
+        const profitData = sales.map((sale) => {
+          const totalincomingprice = sale.products.reduce(
+            (prev, item) => prev + item.pieces * item.price.incomingprice,
+            0
+          );
+          const totalincomingpriceuzs = sale.products.reduce(
+            (prev, item) => prev + item.pieces * item.price.incomingpriceuzs,
+            0
+          );
+          const totalprice = sale.products.reduce(
+            (summ, product) => summ + product.totalprice,
+            0
+          );
+          const totalpriceuzs = sale.products.reduce(
+            (summ, product) => summ + product.totalpriceuzs,
+            0
+          );
+          const discount = (sale.discount && sale.discount.discount) || 0;
+          const discountuzs = (sale.discount && sale.discount.discountuzs) || 0;
+          profit += totalprice - totalincomingprice - discount;
+          profituzs += totalpriceuzs - totalincomingpriceuzs - discountuzs;
+        });
+        seller.profit = profit;
+        seller.profituzs = profituzs;
       }
     }
     res.status(201).send(sellers);
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    console.log(error);
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
