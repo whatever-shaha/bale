@@ -50,6 +50,8 @@ const PayDebts = () => {
     const [modalBody, setModalBody] = useState('')
     const [modalData, setModalData] = useState(null)
 
+    const [printedSelling, setPrintedSelling] = useState(null)
+
     const headers = [
         {title: '№'},
         {title: 'Kodi'},
@@ -423,8 +425,17 @@ const PayDebts = () => {
             saleconnectorid: saleConnectorId,
         }
         dispatch(payDebt(body)).then(({payload}) => {
+            const startDate = new Date(
+                new Date().setMonth(new Date().getMonth() - 3)
+            )
+            const endDate = new Date()
             setModalData(payload)
-            dispatch(getDebts())
+            dispatch(
+                getDebts({
+                    startDate,
+                    endDate,
+                })
+            )
             setTimeout(() => {
                 setModalBody('checkPayment')
                 setModalVisible(true)
@@ -442,13 +453,16 @@ const PayDebts = () => {
 
     const searchId = (e) => {
         setCurrentData([
-            ...filter([...storageData],(debt) => debt.id.includes(e.target.value)),
+            ...filter([...storageData], (debt) =>
+                debt.id.includes(e.target.value)
+            ),
         ])
     }
 
     const searchClientName = (e) => {
         setCurrentData([
-            ...filter([...storageData],
+            ...filter(
+                [...storageData],
                 (debt) =>
                     debt.client &&
                     debt.client.name
@@ -458,8 +472,23 @@ const PayDebts = () => {
         ])
     }
 
+    const handleClickPrint = (selling) => {
+        setModalBody('allChecks')
+        setPrintedSelling(selling)
+        setModalVisible(true)
+    }
+
     useEffect(() => {
-        dispatch(getDebts())
+        const startDate = new Date(
+            new Date().setMonth(new Date().getMonth() - 3)
+        )
+        const endDate = new Date()
+        dispatch(
+            getDebts({
+                startDate,
+                endDate,
+            })
+        )
     }, [dispatch])
 
     useEffect(() => {
@@ -479,6 +508,9 @@ const PayDebts = () => {
         },
         {
             title: 'Mijoz',
+        },
+        {
+            title: 'Izoh',
         },
         {
             title: 'Jami',
@@ -508,6 +540,7 @@ const PayDebts = () => {
                         data={currentData}
                         currency={currencyType}
                         Pay={handleClickPayment}
+                        Print={handleClickPrint}
                     />
                 )}
             </div>
@@ -564,6 +597,7 @@ const PayDebts = () => {
                 isOpen={modalVisible}
                 payment={modalData}
                 headers={headers}
+                printedSelling={printedSelling}
                 headerText={
                     modalBody === 'complete' &&
                     "To'lovni amalga oshirishni tasdiqlaysizmi ?"

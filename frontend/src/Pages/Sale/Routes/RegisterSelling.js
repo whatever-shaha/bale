@@ -1272,8 +1272,11 @@ const RegisterSelling = () => {
             })),
         ])
     }, [clients, t])
+
+    console.log(location)
     useEffect(() => {
         const data = location.state
+
         const setClientData = () => {
             data.saleconnector.client &&
                 setClientValue({

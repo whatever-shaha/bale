@@ -24,7 +24,7 @@ export const SalesListTableRow = ({
 
     const navigate = useNavigate()
     const linkToSale = (saleconnector, returnProducts) => {
-        navigate('/sotuv/sotish', {
+        navigate(`${sellers ? '/' : '/sotuv/sotish'}`, {
             replace: true,
             state: {saleconnector, returnProducts},
         })
@@ -125,38 +125,28 @@ export const SalesListTableRow = ({
                     </td>
 
                     <td className='py-[0.375rem] td border-r-0'>
-                        {sellers ? (
-                            <div className='flex items-center justify-center gap-[0.625rem]'>
-                                <TableBtn
-                                    type={'print'}
-                                    bgcolor={'bg-primary-800'}
-                                    onClick={() => Print(saleconnector)}
-                                />
-                            </div>
-                        ) : (
-                            <div className='flex items-center justify-center gap-[0.625rem]'>
-                                <TableBtn
-                                    type={'print'}
-                                    bgcolor={'bg-primary-800'}
-                                    onClick={() => Print(saleconnector)}
-                                />
-                                <TableBtn
-                                    type={'add'}
-                                    bgcolor={'bg-success-500'}
-                                    onClick={() => linkToSale(saleconnector)}
-                                />
-                                <TableBtn
-                                    type={'return'}
-                                    bgcolor={'bg-error-500'}
-                                    onClick={() =>
-                                        linkToSale(
-                                            saleconnector.saleconnector,
-                                            true
-                                        )
-                                    }
-                                />
-                            </div>
-                        )}
+                        <div className='flex items-center justify-center gap-[0.625rem]'>
+                            <TableBtn
+                                type={'print'}
+                                bgcolor={'bg-primary-800'}
+                                onClick={() => Print(saleconnector)}
+                            />
+                            <TableBtn
+                                type={'add'}
+                                bgcolor={'bg-success-500'}
+                                onClick={() => linkToSale(saleconnector)}
+                            />
+                            <TableBtn
+                                type={'return'}
+                                bgcolor={'bg-error-500'}
+                                onClick={() =>
+                                    linkToSale(
+                                        saleconnector.saleconnector,
+                                        true
+                                    )
+                                }
+                            />
+                        </div>
                     </td>
                 </tr>
             ))}

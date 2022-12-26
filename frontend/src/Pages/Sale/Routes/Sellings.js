@@ -57,6 +57,7 @@ const Sellings = () => {
     ]
     const dispatch = useDispatch()
     const {currencyType} = useSelector((state) => state.currency)
+    const {user} = useSelector((state) => state.login)
     const {
         sellings,
         searchedSellings,
@@ -384,6 +385,7 @@ const Sellings = () => {
                         addPlus={addPlus}
                         Sort={filterData}
                         sortItem={sorItem}
+                        sellers={user?.type === 'Seller' ? true : false}
                     />
                 )}
             </div>
