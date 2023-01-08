@@ -39,6 +39,8 @@ const ClientsPage = () => {
         {title: '№', styles: 'w-[8%] text-left'},
         // {title: t('Agent'), styles: 'w-[41%] text-left'},
         {title: t('Mijoz'), styles: 'w-[41%] text-left'},
+        {title: 'Savdo', styles: 'w-[41%] text-left'},
+        {title: 'Sof foyda', styles: 'w-[41%] text-left'},
         {title: '', styles: 'w-[8%] text-left'},
     ]
 

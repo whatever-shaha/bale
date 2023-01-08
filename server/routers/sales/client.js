@@ -332,6 +332,14 @@ module.exports.getClients = async (req, res) => {
         })
         .populate({
           path: 'products',
+          select: 'price',
+          populate: {
+            path: 'price',
+            select: 'incomingprice incomingpriceuzs',
+          },
+        })
+        .populate({
+          path: 'products',
           select:
             'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
           options: { sort: { createdAt: -1 } },
@@ -355,14 +363,44 @@ module.exports.getClients = async (req, res) => {
         .populate('dailyconnectors', 'comment');
 
       if (saleconnectors.length > 0) {
+        const payments = reduceForSales(saleconnectors, 'payments');
+        const products = reduceForSales(saleconnectors, 'products');
+        const debts = reduceForSales(saleconnectors, 'debts');
+        const discounts = reduceForSales(saleconnectors, 'discounts');
+        const dailyconnectors = reduceForSales(
+          saleconnectors,
+          'dailyconnectors'
+        );
+
+        const totalsales = [...products].reduce(
+          (prev, el) => prev + el.totalprice || 0,
+          0
+        );
+        const totalsalesuzs = [...products].reduce(
+          (prev, el) => prev + el.totalpriceuzs || 0,
+          0
+        );
+        const incomings = [...products].reduce(
+          (prev, el) => prev + el.pieces * el.price.incomingprice || 0,
+          0
+        );
+        const incomingsuzs = [...products].reduce(
+          (prev, el) => prev + el.pieces * el.price.incomingpriceuzs || 0,
+          0
+        );
+
         client.saleconnector = {
-          products: reduceForSales(saleconnectors, 'products'),
-          payments: reduceForSales(saleconnectors, 'payments'),
-          debts: reduceForSales(saleconnectors, 'debts'),
-          discounts: reduceForSales(saleconnectors, 'discounts'),
-          dailyconnectors: reduceForSales(saleconnectors, 'dailyconnectors'),
+          products: products,
+          payments: payments,
+          debts: debts,
+          discounts: discounts,
+          dailyconnectors: dailyconnectors,
           user: saleconnectors[0].user,
           createdAt: saleconnectors[0].createdAt,
+          totalsales: totalsales,
+          totalsalesuzs: totalsalesuzs,
+          profit: totalsales - incomings,
+          profituzs: totalsalesuzs - incomingsuzs,
           id: saleconnectors[0].id,
         };
       }
