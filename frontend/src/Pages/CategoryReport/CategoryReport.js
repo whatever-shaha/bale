@@ -1,12 +1,13 @@
-import React, {useEffect} from 'react'
-import {useLocation, useNavigate, useParams} from 'react-router-dom'
+import React, { useEffect } from 'react'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
 import LinkToBack from '../../Components/LinkToBack/LinkToBack.js'
-import {useDispatch, useSelector} from 'react-redux'
-import {getReportOfCategory} from './CategoryReportSlice.js'
+import { useDispatch, useSelector } from 'react-redux'
+import { getReportOfCategory } from './CategoryReportSlice.js'
 import Table from '../../Components/Table/Table.js'
 import Spinner from '../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../Components/NotFind/NotFind.js'
-import {reduce} from 'lodash'
+import { reduce } from 'lodash'
+import { roundUsd, roundUzs } from '../../App/globalFunctions.js'
 
 const calculateTotal = (data) => {
     return reduce(data, (sum, item) => {
@@ -16,11 +17,11 @@ const calculateTotal = (data) => {
 const calculateIncomings = (data, currency) => {
     if (currency === 'UZS') {
         return reduce(data, (sum, item) => {
-            return sum + Number(item.price.incomingpriceuzs)
+            return sum + roundUzs(Number(item.price.incomingpriceuzs) * item.total)
         }, 0).toLocaleString('ru-RU')
     } else {
         return reduce(data, (sum, item) => {
-            return sum + item.price.incomingprice
+            return sum + roundUsd(item.price.incomingprice * item.total)
         }, 0).toLocaleString('ru-RU')
     }
 }
@@ -37,15 +38,15 @@ const calculateSellings = (data, currency) => {
 }
 
 function CategoryReport() {
-    const headers = [{title: '№'}, {title: 'Kodi'}, {title: 'Nomi'}, {title: 'Soni'}, {title: 'Olish (UZS)'}, {title: 'Olish (USD)'}, {title: 'Sotish (UZS)'}, {title: 'Sotish (USD)'}]
+    const headers = [{ title: '№' }, { title: 'Kodi' }, { title: 'Nomi' }, { title: 'Soni' }, { title: 'Olish (UZS)' }, { title: 'Olish (USD)' }, { title: 'Sotish (UZS)' }, { title: 'Sotish (USD)' }]
     const dispatch = useDispatch()
     const location = useLocation()
     const navigate = useNavigate()
-    const {code} = useParams()
-    const {products, loading} = useSelector(state => state.categoryReport)
+    const { code } = useParams()
+    const { products, loading } = useSelector(state => state.categoryReport)
     useEffect(() => {
         if (location.state) {
-            dispatch(getReportOfCategory({categoryId: location.state.id}))
+            dispatch(getReportOfCategory({ categoryId: location.state.id }))
         } else {
             navigate(-1)
         }

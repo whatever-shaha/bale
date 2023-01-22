@@ -3,10 +3,10 @@ import SelectForm from '../Select/SelectForm.js'
 import FilterButtons from '../FilterButtons/FilterButtons.js'
 import FieldContainer from '../FieldContainer/FieldContainer.js'
 import PrintBtn from '../Buttons/PrintBtn.js'
-import {ConfirmBtn} from '../Buttons/SaveConfirmBtn.js'
+import { ConfirmBtn } from '../Buttons/SaveConfirmBtn.js'
 import Dates from '../Dates/Dates.js'
-import {useTranslation} from 'react-i18next'
-import {map} from 'lodash'
+import { useTranslation } from 'react-i18next'
+import { map } from 'lodash'
 
 function SearchForm({
     filterByTotal,
@@ -53,7 +53,7 @@ function SearchForm({
     filterByMarketInnWhenPressEnter,
     filterByMarketNameWhenPressEnter,
 }) {
-    const {t} = useTranslation(['common'])
+    const { t } = useTranslation(['common'])
     const chooseComponent = (key) => {
         switch (key) {
             case 'total':
@@ -283,7 +283,7 @@ function SearchForm({
         }
     }
     return (
-        <div className='flex items-end gap-[1.875rem] mainPadding grow'>
+        <div className='flex items-end gap-[1.5rem] mainPadding grow'>
             {map(filterBy, (key) => chooseComponent(key))}
         </div>
     )

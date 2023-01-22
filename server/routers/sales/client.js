@@ -277,7 +277,7 @@ module.exports.deleteClient = async (req, res) => {
 
 module.exports.getClients = async (req, res) => {
   try {
-    const { market, currentPage, countPage, search } = req.body;
+    const { market, currentPage, countPage, search, startDate, endDate } = req.body;
     const marke = await Market.findById(market);
     if (!marke) {
       return res
@@ -319,6 +319,10 @@ module.exports.getClients = async (req, res) => {
       const saleconnectors = await SaleConnector.find({
         market,
         client: client._id,
+        createdAt: {
+          $gte: startDate,
+          $lt: endDate,
+        },
       })
         .select('-isArchive -market -__v')
         .sort({ createdAt: -1 })
