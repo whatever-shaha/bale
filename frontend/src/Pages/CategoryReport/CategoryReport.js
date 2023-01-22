@@ -28,11 +28,11 @@ const calculateIncomings = (data, currency) => {
 const calculateSellings = (data, currency) => {
     if (currency === 'UZS') {
         return reduce(data, (sum, item) => {
-            return sum + item.price.sellingpriceuzs
+            return sum + roundUzs(item.price.sellingpriceuzs * item.total)
         }, 0).toLocaleString('ru-RU')
     } else {
         return reduce(data, (sum, item) => {
-            return sum + item.price.sellingprice
+            return sum + roundUsd(item.price.sellingprice * item.total)
         }, 0).toLocaleString('ru-RU')
     }
 }
