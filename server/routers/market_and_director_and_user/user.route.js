@@ -535,10 +535,10 @@ module.exports.getsellers = async (req, res) => {
 
         seller.sales = sales.length;
         seller.totalsales = sales.reduce((prev, sale) => {
-          return prev + (sale.payment?.totalprice || 0);
+          return prev + (sale.payment.totalprice || 0);
         }, 0);
         seller.totalsalesuzs = sales.reduce((prev, sale) => {
-          return prev + (sale.payment?.totalpriceuzs || 0);
+          return prev + (sale.payment.totalpriceuzs || 0);
         }, 0);
 
         let profit = 0;
@@ -554,11 +554,11 @@ module.exports.getsellers = async (req, res) => {
             0
           );
           const totalprice = sale.products.reduce(
-            (summ, product) => summ + (product?.totalprice || 0),
+            (summ, product) => summ + (product.totalprice || 0),
             0
           );
           const totalpriceuzs = sale.products.reduce(
-            (summ, product) => summ + (product?.totalpriceuzs || 0),
+            (summ, product) => summ + (product.totalpriceuzs || 0),
             0
           );
           const discount = (sale.discount && sale.discount.discount) || 0;
