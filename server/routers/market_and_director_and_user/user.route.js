@@ -572,6 +572,6 @@ module.exports.getsellers = async (req, res) => {
     res.status(201).send(sellers);
   } catch (error) {
     console.log(error);
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: 'Serverda xatolik yuz berdi...', description: error });
   }
 };
