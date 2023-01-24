@@ -17,6 +17,7 @@ require('../../models/Sales/Payment');
 require('../../models/Sales/SaleConnector');
 require('../../models/Sales/SaleProduct');
 require('../../models/Sales/Discount');
+require('../../models/Sales/Client')
 
 module.exports.register = async (req, res) => {
   try {
