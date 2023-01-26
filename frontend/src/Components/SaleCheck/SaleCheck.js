@@ -1,10 +1,10 @@
-import React, {forwardRef} from 'react'
-import {useSelector} from 'react-redux'
-import {uniqueId, map} from 'lodash'
+import React, { forwardRef } from 'react'
+import { useSelector } from 'react-redux'
+import { uniqueId, map } from 'lodash'
 export const SaleCheck = forwardRef((props, ref) => {
-    const {product} = props
-    const {market} = useSelector((state) => state.login)
-    const {currencyType} = useSelector((state) => state.currency)
+    const { product } = props
+    const { market } = useSelector((state) => state.login)
+    const { currencyType } = useSelector((state) => state.currency)
     const calculateDebt = (total, payment, discount = 0) => {
         return (total - payment - discount).toLocaleString('ru-Ru')
     }
@@ -75,6 +75,7 @@ export const SaleCheck = forwardRef((props, ref) => {
                             <td className='check-table-rtr'>Kodi</td>
                             <td className='check-table-rtr'>Maxsulot</td>
                             <td className='check-table-rtr'>Soni</td>
+                            {product?.products.some(el => el.fromFilial > 0) && <td style={{ backgroundColor: "grey" }} className='check-table-rtr'>Ombordan</td>}
                             <td className='check-table-rtr'>Narxi (dona)</td>
                             <td className='check-table-rtr'>Jami</td>
                         </tr>
@@ -95,6 +96,9 @@ export const SaleCheck = forwardRef((props, ref) => {
                                     <td className='check-table-body'>
                                         {item?.pieces}
                                     </td>
+                                    {product?.products.some(el => el.fromFilial > 0) && <td style={{ background: item?.fromFilial ? 'grey' : "white" }} className='check-table-body'>
+                                        {item?.fromFilial}
+                                    </td>}
                                     <td className='check-table-body'>
                                         {currencyType === 'USD'
                                             ? item?.unitprice
@@ -152,15 +156,15 @@ export const SaleCheck = forwardRef((props, ref) => {
                     <span>
                         {currencyType === 'USD'
                             ? calculateDebt(
-                                  product?.payment?.totalprice,
-                                  product?.payment?.payment,
-                                  product?.discount?.discount
-                              )
+                                product?.payment?.totalprice,
+                                product?.payment?.payment,
+                                product?.discount?.discount
+                            )
                             : calculateDebt(
-                                  product?.payment?.totalpriceuzs,
-                                  product?.payment?.paymentuzs,
-                                  product?.discount?.discountuzs
-                              )}{' '}
+                                product?.payment?.totalpriceuzs,
+                                product?.payment?.paymentuzs,
+                                product?.discount?.discountuzs
+                            )}{' '}
                         {currencyType}
                     </span>
                 </li>

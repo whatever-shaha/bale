@@ -8,7 +8,7 @@ import {
     IoWalletOutline,
 } from 'react-icons/io5'
 
-export const SaleBtn = ({onClick, text, type, active}) => {
+export const SaleBtn = ({ onClick, text, type, active }) => {
     const icons = {
         cash: <IoCashOutline className='paymentsstyle' size={'1.3125rem'} />,
         card: <IoCardOutline className='paymentsstyle' size={'1.3125rem'} />,
@@ -25,9 +25,8 @@ export const SaleBtn = ({onClick, text, type, active}) => {
     return (
         <button
             onClick={() => onClick(type)}
-            className={`salestyle ${
-                active ? 'bg-primary-700 text-white-900' : 'bg-[#E9ECEB]'
-            }`}
+            className={`salestyle ${active ? 'bg-primary-700 text-white-900' : 'bg-[#E9ECEB]'
+                }`}
         >
             {icons[type]}
             {text}
@@ -35,7 +34,7 @@ export const SaleBtn = ({onClick, text, type, active}) => {
     )
 }
 
-export const DiscountBtn = ({onClick, text}) => {
+export const DiscountBtn = ({ onClick, text }) => {
     return (
         <button
             onClick={onClick}
@@ -47,12 +46,12 @@ export const DiscountBtn = ({onClick, text}) => {
     )
 }
 
-export const Payment = ({onClick, text, onDoubleClick}) => {
+export const Payment = ({ onClick, text, onDoubleClick }) => {
     return (
         <button
             onClick={onClick}
             onDoubleClick={onDoubleClick}
-            className='paymentstyle grow'
+            className={`paymentstyle grow`}
         >
             <IoWalletOutline className='paystyle' size={'1.3125rem'} />
             {text}

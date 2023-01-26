@@ -17,6 +17,7 @@ const saleproduct = new Schema(
     saleproducts: [{ type: Schema.Types.ObjectId, ref: "SaleProduct" }],
     saleproduct: { type: Schema.Types.ObjectId, ref: "SaleProduct" },
     saleconnector: { type: Schema.Types.ObjectId, ref: "SaleConnector" },
+    fromFilial: { type: Number },
     dailysaleconnector: {
       type: Schema.Types.ObjectId,
       ref: "DailySaleConnector",

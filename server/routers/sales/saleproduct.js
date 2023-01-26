@@ -79,6 +79,7 @@ module.exports.register = async (req, res) => {
         unitpriceuzs,
         pieces,
         product,
+        fromFilial
       } = saleproduct;
       const { error } = validateSaleProduct({
         totalprice,
@@ -112,6 +113,7 @@ module.exports.register = async (req, res) => {
         product: product._id,
         market,
         user,
+        fromFilial,
         previous: produc.total,
         next: produc.total - Number(pieces),
       });
@@ -255,7 +257,7 @@ module.exports.register = async (req, res) => {
       .select('-isArchive -updatedAt -market -__v')
       .populate({
         path: 'products',
-        select: 'totalprice unitprice totalpriceuzs unitpriceuzs pieces',
+        select: 'totalprice unitprice totalpriceuzs unitpriceuzs pieces fromFilial',
         populate: {
           path: 'product',
           select: 'productdata total',
@@ -601,7 +603,7 @@ module.exports.getsaleconnectors = async (req, res) => {
       .populate({
         path: 'products',
         select:
-          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
+          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product fromFilial',
         options: { sort: { createdAt: -1 } },
         populate: {
           path: 'product',
@@ -612,7 +614,7 @@ module.exports.getsaleconnectors = async (req, res) => {
       .populate({
         path: 'products',
         select:
-          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
+          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product fromFilial',
         options: { sort: { createdAt: -1 } },
         populate: {
           path: 'saleproducts',
@@ -1062,16 +1064,16 @@ module.exports.getreportproducts = async (req, res) => {
         filter(saleproducts, (saleproduct) =>
           search.nameofclient.length > 0
             ? saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null &&
-              saleproduct.saleconnector &&
-              saleproduct.saleconnector.client &&
-              saleproduct.saleconnector.client !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null &&
+            saleproduct.saleconnector &&
+            saleproduct.saleconnector.client &&
+            saleproduct.saleconnector.client !== null
             : saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null
         )
       );
 
@@ -1113,16 +1115,16 @@ module.exports.getreportproducts = async (req, res) => {
         filter(saleproducts, (saleproduct) =>
           search.nameofclient.length > 0
             ? saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null &&
-              saleproduct.saleconnector &&
-              saleproduct.saleconnector.client &&
-              saleproduct.saleconnector.client !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null &&
+            saleproduct.saleconnector &&
+            saleproduct.saleconnector.client &&
+            saleproduct.saleconnector.client !== null
             : saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null
         )
       );
 
@@ -1202,16 +1204,16 @@ module.exports.getexcelreportproducts = async (req, res) => {
         filter(saleproducts, (saleproduct) =>
           search.nameofclient.length > 0
             ? saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null &&
-              saleproduct.saleconnector &&
-              saleproduct.saleconnector.client &&
-              saleproduct.saleconnector.client !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null &&
+            saleproduct.saleconnector &&
+            saleproduct.saleconnector.client &&
+            saleproduct.saleconnector.client !== null
             : saleproduct.product.productdata &&
-              saleproduct.product.productdata !== null &&
-              saleproduct.user &&
-              saleproduct.user !== null
+            saleproduct.product.productdata !== null &&
+            saleproduct.user &&
+            saleproduct.user !== null
         )
       );
 

@@ -1,5 +1,5 @@
-import React, {useEffect, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import SelectInput from '../../../Components/SelectInput/SelectInput'
 import Table from '../../../Components/Table/Table'
 import {
@@ -12,7 +12,7 @@ import {
     getProducts,
     getAllSuppliers,
 } from '../incomingSlice'
-import {ConfirmBtn, SaveBtn} from '../../../Components/Buttons/SaveConfirmBtn'
+import { ConfirmBtn, SaveBtn } from '../../../Components/Buttons/SaveConfirmBtn'
 import UniversalModal from '../../../Components/Modal/UniversalModal'
 import {
     currentExchangerate,
@@ -22,9 +22,9 @@ import {
     UsdToUzs,
     UzsToUsd,
 } from '../../../App/globalFunctions'
-import {useNavigate} from 'react-router-dom'
-import {useTranslation} from 'react-i18next'
-import {filter, map} from 'lodash'
+import { useNavigate } from 'react-router-dom'
+import { useTranslation } from 'react-i18next'
+import { filter, map } from 'lodash'
 import {
     universalToast,
     warningCurrencyRate,
@@ -32,17 +32,18 @@ import {
     warningSaleProductsEmpty,
 } from '../../../Components/ToastMessages/ToastMessages'
 import CustomerPayment from '../../../Components/Payment/CustomerPayment.js'
+import Loader from '../../../Components/Loader/Loader'
 
 const RegisterIncoming = () => {
-    const {t} = useTranslation(['common'])
+    const { t } = useTranslation(['common'])
     const dispatch = useDispatch()
     const navigate = useNavigate()
     const {
-        market: {_id},
+        market: { _id },
         user,
     } = useSelector((state) => state.login)
-    const {currency, currencyType} = useSelector((state) => state.currency)
-    const {suppliers, products, successAdd, successTemporary, temporary} =
+    const { currency, currencyType } = useSelector((state) => state.currency)
+    const { suppliers, products, successAdd, successTemporary, temporary, loading } =
         useSelector((state) => state.incoming)
 
     // states
@@ -127,7 +128,7 @@ const RegisterIncoming = () => {
             _id: product._id,
             oldprice: product.price.incomingprice,
             oldpriceuzs: product.price.incomingpriceuzs,
-            product: {...product.productdata, _id: product._id},
+            product: { ...product.productdata, _id: product._id },
             pieces: '',
             unitprice: '',
             unitpriceuzs: '',
@@ -140,7 +141,7 @@ const RegisterIncoming = () => {
             tradeprice: product.price.tradeprice,
             tradepriceuzs: product.price.tradepriceuzs,
             procient: '',
-            supplier: {...supplier},
+            supplier: { ...supplier },
         })
         setModalBody('registerincomingbody')
         setModalVisible(true)
@@ -160,7 +161,7 @@ const RegisterIncoming = () => {
         const check = (property) => key === property
         const product = (!id && {
             ...incomingModal,
-        }) || {...filter([...incomings], (incoming) => incoming._id === id)[0]}
+        }) || { ...filter([...incomings], (incoming) => incoming._id === id)[0] }
 
         const countUsd =
             currencyType === 'USD' ? target : UzsToUsd(target, currency)
@@ -300,7 +301,7 @@ const RegisterIncoming = () => {
     // request functions
     const createIncoming = () => {
         const postincoming = map(incomings, (incoming) => {
-            let obj = {...incoming}
+            let obj = { ...incoming }
             delete obj._id
             delete obj.procient
             return obj
@@ -349,7 +350,7 @@ const RegisterIncoming = () => {
                     incomings,
                 },
             })
-        ).then(({error}) => {
+        ).then(({ error }) => {
             if (!error) {
                 setSelectSupplierValue({
                     label: t('Yetkazib beruvchi'),
@@ -614,38 +615,42 @@ const RegisterIncoming = () => {
         }
     }
     const handleDoubleClick = () => {
-        window.clearTimeout(delay)
-        delay = null
-        handleApprovePay()
+        if (!loading) {
+            window.clearTimeout(delay)
+            delay = null
+            handleApprovePay()
+        }
     }
     const handleApprovePay = () => {
-        const postincoming = map(incomings, (incoming) => {
-            let obj = {...incoming}
-            delete obj._id
-            delete obj.procient
-            return obj
-        })
-        dispatch(
-            addIncoming({
-                products: [...postincoming],
-                user: user._id,
-                payment: {
-                    totalprice: Number(allPayment),
-                    totalpriceuzs: Number(allPaymentUzs),
-                    type: paymentType,
-                    cash: Number(paymentCash),
-                    cashuzs: Number(paymentCashUzs),
-                    card: Number(paymentCard),
-                    carduzs: Number(paymentCardUzs),
-                    transfer: Number(paymentTransfer),
-                    transferuzs: Number(paymentTransferUzs),
-                },
+        if (!loading) {
+            const postincoming = map(incomings, (incoming) => {
+                let obj = { ...incoming }
+                delete obj._id
+                delete obj.procient
+                return obj
             })
-        ).then(({error}) => {
-            removeTemporary()
-            dispatch(getProducts())
-            !error && navigate('/maxsulotlar/qabul/qabullar')
-        })
+            dispatch(
+                addIncoming({
+                    products: [...postincoming],
+                    user: user._id,
+                    payment: {
+                        totalprice: Number(allPayment),
+                        totalpriceuzs: Number(allPaymentUzs),
+                        type: paymentType,
+                        cash: Number(paymentCash),
+                        cashuzs: Number(paymentCashUzs),
+                        card: Number(paymentCard),
+                        carduzs: Number(paymentCardUzs),
+                        transfer: Number(paymentTransfer),
+                        transferuzs: Number(paymentTransferUzs),
+                    },
+                })
+            ).then(({ error }) => {
+                removeTemporary()
+                dispatch(getProducts())
+                !error && navigate('/maxsulotlar/qabul/qabullar')
+            })
+        }
     }
     const changeComment = (e) => {
         setSaleComment(e)
@@ -657,7 +662,7 @@ const RegisterIncoming = () => {
     }, [dispatch, _id, suppliers])
 
     useEffect(() => {
-        products.length < 1 && dispatch(getProducts({market: _id}))
+        products.length < 1 && dispatch(getProducts({ market: _id }))
         products.length > 0 && changeProductsData(products)
     }, [dispatch, _id, products])
 
@@ -697,92 +702,96 @@ const RegisterIncoming = () => {
     }, [dispatch])
 
     return (
-        <div className={'relative grow overflow-auto'}>
-            <CustomerPayment
-                returned={true}
-                type={paymentType}
-                active={paymentModalVisible}
-                togglePaymentModal={togglePaymentModal}
-                changePaymentType={handleChangePaymentType}
-                onChange={handleChangePaymentInput}
-                client={''}
-                allPayment={currencyType === 'USD' ? allPayment : allPaymentUzs}
-                card={currencyType === 'USD' ? paymentCard : paymentCardUzs}
-                cash={currencyType === 'USD' ? paymentCash : paymentCashUzs}
-                debt={currencyType === 'USD' ? paymentDebt : paymentDebtUzs}
-                hasDiscount={false}
-                transfer={
-                    currencyType === 'USD'
-                        ? paymentTransfer
-                        : paymentTransferUzs
-                }
-                paid={currencyType === 'USD' ? paid : paidUzs}
-                handleClickPay={handleClickPay}
-                changeComment={changeComment}
-                saleComment={saleComment}
-                onDoubleClick={handleDoubleClick}
-            />
-            <div className='flex items-center mainPadding'>
-                <div className='w-full pr-[1.25rem] border-r border-blue-100'>
-                    <SelectInput
-                        options={suppliersData}
-                        onSelect={selectSupplier}
-                        value={selectSupplierValue}
-                        placeholder={t('Yetkazib beruvchi')}
-                    />
-                </div>
-                <div className='w-full pl-[1.25rem]'>
-                    <SelectInput
-                        value={selectProductValue}
-                        options={productsData}
-                        onSelect={selectProduct}
-                        isDisabled={!supplier._id}
-                        placeholder={t('Maxsulotlar')}
-                    />
-                </div>
-            </div>
-            <p className='text-[1.25rem] text-blue-900 mainPadding'>
-                {t('Yetkazib beruvchi')}: {supplier.name}
-            </p>
-            <div
-                className={`${
-                    incomings.length > 0 ? 'tableContainerPadding' : 'hidden'
-                }`}
-            >
-                <Table
-                    page={'registerincoming'}
-                    headers={headers}
-                    data={incomings}
-                    currency={currencyType}
-                    changeHandler={changeIncomings}
-                    Delete={deleteIncoming}
+        <>
+            {loading && <div className='absolute top-0 left-0 z-30'>
+                <Loader />
+            </div>}
+            <div className={'relative grow overflow-auto'}>
+                <CustomerPayment
+                    returned={true}
+                    type={paymentType}
+                    active={paymentModalVisible}
+                    togglePaymentModal={togglePaymentModal}
+                    changePaymentType={handleChangePaymentType}
+                    onChange={handleChangePaymentInput}
+                    client={''}
+                    allPayment={currencyType === 'USD' ? allPayment : allPaymentUzs}
+                    card={currencyType === 'USD' ? paymentCard : paymentCardUzs}
+                    cash={currencyType === 'USD' ? paymentCash : paymentCashUzs}
+                    debt={currencyType === 'USD' ? paymentDebt : paymentDebtUzs}
+                    hasDiscount={false}
+                    transfer={
+                        currencyType === 'USD'
+                            ? paymentTransfer
+                            : paymentTransferUzs
+                    }
+                    paid={currencyType === 'USD' ? paid : paidUzs}
+                    handleClickPay={handleClickPay}
+                    changeComment={changeComment}
+                    saleComment={saleComment}
+                    onDoubleClick={handleDoubleClick}
                 />
-                <div className='flex items-center justify-end gap-[0.625rem] pt-[1.25rem]'>
-                    <SaveBtn text={t('Saqlash')} onClick={createTemporary} />
-                    <ConfirmBtn
-                        text={t('Tasdiqlash')}
-                        onClick={createIncoming}
-                    />
+                <div className='flex items-center mainPadding'>
+                    <div className='w-full pr-[1.25rem] border-r border-blue-100'>
+                        <SelectInput
+                            options={suppliersData}
+                            onSelect={selectSupplier}
+                            value={selectSupplierValue}
+                            placeholder={t('Yetkazib beruvchi')}
+                        />
+                    </div>
+                    <div className='w-full pl-[1.25rem]'>
+                        <SelectInput
+                            value={selectProductValue}
+                            options={productsData}
+                            onSelect={selectProduct}
+                            isDisabled={!supplier._id}
+                            placeholder={t('Maxsulotlar')}
+                        />
+                    </div>
                 </div>
+                <p className='text-[1.25rem] text-blue-900 mainPadding'>
+                    {t('Yetkazib beruvchi')}: {supplier.name}
+                </p>
+                <div
+                    className={`${incomings.length > 0 ? 'tableContainerPadding' : 'hidden'
+                        }`}
+                >
+                    <Table
+                        page={'registerincoming'}
+                        headers={headers}
+                        data={incomings}
+                        currency={currencyType}
+                        changeHandler={changeIncomings}
+                        Delete={deleteIncoming}
+                    />
+                    <div className='flex items-center justify-end gap-[0.625rem] pt-[1.25rem]'>
+                        <SaveBtn text={t('Saqlash')} onClick={createTemporary} />
+                        <ConfirmBtn
+                            text={t('Tasdiqlash')}
+                            onClick={createIncoming}
+                        />
+                    </div>
+                </div>
+                <UniversalModal
+                    isOpen={modalVisible}
+                    body={modalBody}
+                    headerText={t("To'lovni amalga oshirishni tasdiqlaysizmi ?")}
+                    title={t(
+                        "To'lovni amalga oshirgach bu ma`lumotlarni o`zgaritirb bo`lmaydi !"
+                    )}
+                    product={incomingModal}
+                    toggleModal={toggleModal}
+                    changeProduct={changeIncomings}
+                    approveFunction={
+                        modalBody === 'complete'
+                            ? handleApprovePay
+                            : addProductToIncomings
+                    }
+                    currency={currencyType}
+                />
             </div>
-            <UniversalModal
-                isOpen={modalVisible}
-                body={modalBody}
-                headerText={t("To'lovni amalga oshirishni tasdiqlaysizmi ?")}
-                title={t(
-                    "To'lovni amalga oshirgach bu ma`lumotlarni o`zgaritirb bo`lmaydi !"
-                )}
-                product={incomingModal}
-                toggleModal={toggleModal}
-                changeProduct={changeIncomings}
-                approveFunction={
-                    modalBody === 'complete'
-                        ? handleApprovePay
-                        : addProductToIncomings
-                }
-                currency={currencyType}
-            />
-        </div>
+        </>
     )
 }
 

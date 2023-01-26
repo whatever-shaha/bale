@@ -1,3 +1,4 @@
+const { filter } = require("lodash");
 const { Transfer } = require("../../models/FilialProducts/Transfer");
 const {
   TransferProduct,
@@ -536,3 +537,44 @@ module.exports.getAllFilials = async (req, res) => {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
+
+
+module.exports.filialProducts = async (req, res) => {
+  try {
+    const { filial, products } = req.body;
+
+    const marke = await Market.findById(filial);
+    if (!marke) {
+      return res.status(404).json({
+        error: "Diqqat! Do'kon dasturda ro'yxatga olinmagan.",
+      });
+    }
+
+    let filialProducts = []
+
+    for (const product of products) {
+      const prod = await Product.find({ market: filial })
+        .select('total')
+        .populate({
+          path: 'productdata',
+          select: "code",
+          match: { code: product.code }
+        })
+        .populate({
+          path: "category",
+          select: "code"
+        })
+        .then(productsData => filter(productsData, (p) => p.productdata && p.category.code === product.categorycode))
+
+
+      if (prod.length > 0 && prod[0].category && prod[0].productdata) {
+        filialProducts.push(prod[0])
+      }
+    }
+
+    res.status(200).json(filialProducts)
+
+  } catch (error) {
+    res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
+  }
+}

@@ -1,6 +1,6 @@
-import React, {forwardRef} from 'react'
-import {uniqueId, map} from 'lodash'
-import {useSelector} from 'react-redux'
+import React, { forwardRef } from 'react'
+import { uniqueId, map } from 'lodash'
+import { useSelector } from 'react-redux'
 
 export const SaleCheckAll = forwardRef((props, ref) => {
     const {
@@ -14,40 +14,47 @@ export const SaleCheckAll = forwardRef((props, ref) => {
         userInfo,
     } = props
 
-    const {market} = useSelector((state) => state.login)
-    const {currencyType} = useSelector((state) => state.currency)
+    const { market } = useSelector((state) => state.login)
+    const { currencyType } = useSelector((state) => state.currency)
     const calculateAllSum = (data) => {
         return data
             ? data.reduce((acc, pr) => {
-                  return (
-                      acc +
-                      pr[
-                          currencyType === 'USD'
-                              ? 'totalprice'
-                              : 'totalpriceuzs'
-                      ]
-                  )
-              }, 0)
+                return (
+                    acc +
+                    pr[
+                    currencyType === 'USD'
+                        ? 'totalprice'
+                        : 'totalpriceuzs'
+                    ]
+                )
+            }, 0)
             : 0
+    }
+    const calculateAllFilialSum = (data) => {
+        if (currencyType === 'USD') {
+            return data.reduce((prev, el) => prev + ((el.fromFilial || 0) * el.unitprice), 0)
+        } else {
+            return data.reduce((prev, el) => prev + ((el.fromFilial || 0) * el.unitpriceuzs), 0)
+        }
     }
     const calculateAllDiscounts = (data) => {
         return data
             ? data.reduce((acc, pr) => {
-                  return (
-                      acc +
-                      pr[currencyType === 'USD' ? 'discount' : 'discountuzs']
-                  )
-              }, 0)
+                return (
+                    acc +
+                    pr[currencyType === 'USD' ? 'discount' : 'discountuzs']
+                )
+            }, 0)
             : 0
     }
     const calculateAllPayments = (data) => {
         return data
             ? data.reduce((acc, pr) => {
-                  return (
-                      acc +
-                      pr[currencyType === 'USD' ? 'payment' : 'paymentuzs']
-                  )
-              }, 0)
+                return (
+                    acc +
+                    pr[currencyType === 'USD' ? 'payment' : 'paymentuzs']
+                )
+            }, 0)
             : 0
     }
 
@@ -120,6 +127,7 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                                 <td className='check-table-rtr'>Kodi</td>
                                 <td className='check-table-rtr'>Maxsulot</td>
                                 <td className='check-table-rtr'>Soni</td>
+                                {selled.some(el => el.fromFilial > 0) && <td style={{ backgroundColor: "grey" }} className='check-table-rtr'>Ombordan</td>}
                                 <td className='check-table-rtr'>Narxi(dona)</td>
                                 <td className='check-table-rtr'>Jami</td>
                                 <td className='check-table-rtr'>Sotuvchi</td>
@@ -146,31 +154,34 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                                         <td className='check-table-body'>
                                             {item?.pieces}
                                         </td>
+                                        {selled.some(el => el.fromFilial > 0) && <td style={{ backgroundColor: item?.fromFilial ? "grey" : 'white' }} className='check-table-body'>
+                                            {item?.fromFilial}
+                                        </td>}
                                         <td className='check-table-body'>
                                             {currencyType === 'USD'
                                                 ? item?.unitprice.toLocaleString(
-                                                      'ru-Ru'
-                                                  )
+                                                    'ru-Ru'
+                                                )
                                                 : item?.unitpriceuzs.toLocaleString(
-                                                      'ru-Ru'
-                                                  )}{' '}
+                                                    'ru-Ru'
+                                                )}{' '}
                                             {currencyType}
                                         </td>
                                         <td className='check-table-body'>
                                             {currencyType === 'USD'
                                                 ? item?.totalprice.toLocaleString(
-                                                      'ru-Ru'
-                                                  )
+                                                    'ru-Ru'
+                                                )
                                                 : item?.totalpriceuzs.toLocaleString(
-                                                      'ru-Ru'
-                                                  )}{' '}
+                                                    'ru-Ru'
+                                                )}{' '}
                                             {currencyType}
                                         </td>
                                         <td className='check-table-body'>
                                             {item?.user
                                                 ? item.user.firstname +
-                                                  ' ' +
-                                                  item.user.lastname[0]
+                                                ' ' +
+                                                item.user.lastname[0]
                                                 : ''}
                                         </td>
                                     </tr>
@@ -188,6 +199,13 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                         {currencyType}
                     </span>
                 </h3>
+                {selled.some(el => el.fromFilial > 0) && <h3 className='text-[14px] text-black-700 font-bold pt-4'>
+                    Ombordagi jami :{' '}
+                    <span>
+                        {calculateAllFilialSum(selled).toLocaleString('ru-Ru')}{' '}
+                        {currencyType}
+                    </span>
+                </h3>}
             </div>
             {returned?.length > 0 && (
                 <>
@@ -241,21 +259,21 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                                             <td className='check-table-body'>
                                                 {currencyType === 'USD'
                                                     ? item?.unitprice.toLocaleString(
-                                                          'ru-Ru'
-                                                      )
+                                                        'ru-Ru'
+                                                    )
                                                     : item?.unitpriceuzs.toLocaleString(
-                                                          'ru-Ru'
-                                                      )}{' '}
+                                                        'ru-Ru'
+                                                    )}{' '}
                                                 {currencyType}
                                             </td>
                                             <td className='check-table-body'>
                                                 {currencyType === 'USD'
                                                     ? item?.totalprice.toLocaleString(
-                                                          'ru-Ru'
-                                                      )
+                                                        'ru-Ru'
+                                                    )
                                                     : item?.totalpriceuzs.toLocaleString(
-                                                          'ru-Ru'
-                                                      )}{' '}
+                                                        'ru-Ru'
+                                                    )}{' '}
                                                 {currencyType}
                                             </td>
                                         </tr>

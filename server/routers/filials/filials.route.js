@@ -45,4 +45,9 @@ router.delete("/temporary/delete", auth, (req, res) => {
   require("./temporarytransfer").deleteTemporary(req, res);
 });
 
+
+router.post('/products/get', auth, (req, res) => {
+  require('./products').filialProducts(req, res)
+})
+
 module.exports = router;
