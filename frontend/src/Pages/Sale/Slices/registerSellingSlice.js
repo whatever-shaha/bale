@@ -72,7 +72,7 @@ export const getFilials = createAsyncThunk(
     'registerSelling/getFilials',
     async (body = {}, { rejectWithValue }) => {
         try {
-            const { data } = await Api.post('/filials/filials/getallfilials')
+            const { data } = await Api.post('/filials/filialsforsale/get', body)
             return data
         } catch (error) {
             return rejectWithValue(error)

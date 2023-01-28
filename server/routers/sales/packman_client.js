@@ -134,4 +134,8 @@ router.post('/sellers/getreports', auth, (req, res) => {
   require('./sellersreport').getSellersReport(req, res);
 });
 
+router.post('/comment/update', auth, (req, res) => {
+  require('./saleproduct').chnageComment(req, res);
+})
+
 module.exports = router;

@@ -18,9 +18,29 @@ const { Category } = require('../../models/Products/Category');
 const { DailySaleConnector } = require('../../models/Sales/DailySaleConnector');
 const ObjectId = require('mongodb').ObjectId;
 const { filter } = require('lodash');
+const { WarhouseProduct } = require('../../models/WarhouseProduct/WarhouseProduct');
 
 const convertToUsd = (value) => Math.round(value * 1000) / 1000;
 const convertToUzs = (value) => Math.round(value);
+
+
+const transferWarhouseProducts = async (products) => {
+  for (const product of products) {
+    const category = await Category.findOne({ market: product.filial, code: product.categorycode })
+    const productdata = await ProductData.findOne({ market: product.filial, code: product.product.code, category: category._id })
+    const productFilial = await Product.findOne({ market: product.filial, productdata: productdata._id })
+
+    productFilial.total = productFilial.total - product.fromFilial;
+    await productFilial.save()
+
+    const warhouseproduct = new WarhouseProduct({
+      market: product.market,
+      filial: product.filial,
+      product
+    })
+    await warhouseproduct.save()
+  }
+}
 
 module.exports.register = async (req, res) => {
   try {
@@ -70,6 +90,9 @@ module.exports.register = async (req, res) => {
 
     let all = [];
 
+
+    const productsForTransfer = [];
+
     // Create SaleProducts
     for (const saleproduct of saleproducts) {
       const {
@@ -79,7 +102,7 @@ module.exports.register = async (req, res) => {
         unitpriceuzs,
         pieces,
         product,
-        fromFilial
+        fromFilial,
       } = saleproduct;
       const { error } = validateSaleProduct({
         totalprice,
@@ -93,7 +116,7 @@ module.exports.register = async (req, res) => {
         'productdata',
         'name'
       );
-      if (produc.total < pieces) {
+      if (fromFilial <= 0 && produc.total < pieces) {
         return res.status(400).json({
           error: `Diqqat! ${produc.productdata.name} mahsuloti omborda yetarlicha mavjud emas. Qolgan mahsulot soni ${produc.total} ta`,
         });
@@ -119,7 +142,16 @@ module.exports.register = async (req, res) => {
       });
 
       all.push(newSaleProduct);
+
+      if (saleproduct.fromFilial > 0) {
+        productsForTransfer.push({ ...saleproduct, market });
+      }
     }
+
+    if (productsForTransfer.length > 0) {
+      transferWarhouseProducts(productsForTransfer)
+    }
+
 
     const saleconnector = new SaleConnector({
       user,
@@ -148,7 +180,11 @@ module.exports.register = async (req, res) => {
       products.push(saleproduct._id);
 
       const updateproduct = await Product.findById(saleproduct.product);
-      updateproduct.total -= saleproduct.pieces;
+      if (saleproduct.fromFilial > 0) {
+        updateproduct.total -= (saleproduct.pieces - saleproduct.fromFilial)
+      } else {
+        updateproduct.total -= saleproduct.pieces
+      }
       await updateproduct.save();
     }
 
@@ -1272,3 +1308,20 @@ const editSaleConnector = async (client, saleconnectorid) => {
   saleconnector.client = client._id;
   await saleconnector.save();
 };
+
+
+module.exports.chnageComment = async (req, res) => {
+  try {
+    const { comment, dailyid } = req.body;
+
+    const dailyconnector = await DailySaleConnector.findById(dailyid);
+    dailyconnector.comment = comment;
+    await dailyconnector.save()
+
+    res.status(200).json({ message: "Izoh o'zgardi!" })
+
+  } catch (error) {
+    console.log(error);
+    res.status(400).json({ error: 'Serverda xatolik yuz berdi...', description: error.message });
+  }
+}

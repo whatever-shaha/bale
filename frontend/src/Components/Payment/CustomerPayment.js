@@ -31,6 +31,7 @@ function CustomerPayment({
     changeComment,
     onDoubleClick
 }) {
+
     const defineLabel = () => {
         switch (type) {
             case 'card':
@@ -123,7 +124,7 @@ function CustomerPayment({
                         {allPayment.toLocaleString('ru-Ru')} {currencyType}
                     </div>
                     <ul className='w-full pb-[1.25rem]'>
-                        {defineLabel()}
+                        {!returned && defineLabel()}
                         <PaymentInput
                             value={saleComment}
                             key={'sale-card'}

@@ -292,7 +292,7 @@ module.exports.login = async (req, res) => {
 
     const userr = await User.findById(user._id)
       .select('firstname type lastname image')
-      .populate('market', 'name phone1 phone2 phone3 image permission address');
+      .populate('market', 'name phone1 phone2 phone3 image permission address mainmarket');
 
     const hashType = await bcrypt.hash(userr.type, 8);
 

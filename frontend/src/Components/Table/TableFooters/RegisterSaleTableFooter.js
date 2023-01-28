@@ -2,16 +2,16 @@ import React from 'react'
 import { reduce } from 'lodash'
 
 export const RegisterSaleTableFooter = ({ saleproducts, currency }) => {
-    console.log(saleproducts);
+
     const totalprice = reduce(
         saleproducts,
-        (summ, product) => summ + (Number(product.pieces) + (product.fromFilial || 0)) * product.unitprice,
+        (summ, product) => summ + product.totalprice,
         0
     )
 
     const totalpriceuzs = reduce(
         saleproducts,
-        (summ, product) => summ + (Number(product.pieces) + (product.fromFilial || 0)) * product.unitpriceuzs,
+        (summ, product) => summ + product.totalpriceuzs,
         0
     )
     return (

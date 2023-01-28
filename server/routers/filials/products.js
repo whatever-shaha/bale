@@ -1,4 +1,4 @@
-const { filter } = require("lodash");
+const { filter, matches } = require("lodash");
 const { Transfer } = require("../../models/FilialProducts/Transfer");
 const {
   TransferProduct,
@@ -541,7 +541,7 @@ module.exports.getAllFilials = async (req, res) => {
 
 module.exports.filialProducts = async (req, res) => {
   try {
-    const { filial, products } = req.body;
+    const { filial, productcode, categorycode } = req.body;
 
     const marke = await Market.findById(filial);
     if (!marke) {
@@ -550,31 +550,55 @@ module.exports.filialProducts = async (req, res) => {
       });
     }
 
-    let filialProducts = []
+    const category = await Category.findOne({ market: filial, code: categorycode })
+    const productdata = await ProductData.findOne({ market: filial, category: category._id, code: productcode })
+    const product = await Product.findOne({ market: filial, productdata: productdata._id })
+      .select('total')
 
-    for (const product of products) {
-      const prod = await Product.find({ market: filial })
-        .select('total')
-        .populate({
-          path: 'productdata',
-          select: "code",
-          match: { code: product.code }
-        })
-        .populate({
-          path: "category",
-          select: "code"
-        })
-        .then(productsData => filter(productsData, (p) => p.productdata && p.category.code === product.categorycode))
-
-
-      if (prod.length > 0 && prod[0].category && prod[0].productdata) {
-        filialProducts.push(prod[0])
-      }
-    }
-
-    res.status(200).json(filialProducts)
+    res.status(200).json({ total: product.total })
 
   } catch (error) {
+    res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
+  }
+}
+
+// getFilials For sale
+module.exports.getFilialsForSale = async (req, res) => {
+  try {
+    const { marketData } = req.body;
+
+    const marke = await Market.findById(marketData._id);
+    if (!marke) {
+      return res.status(404).json({
+        error: "Diqqat! Do'kon dasturda ro'yxatga olinmagan.",
+      });
+    }
+
+    let markets = []
+
+    if (marketData.mainmarket) {
+      const filials = await Market.find({
+        mainmarket: marketData.mainmarket
+      })
+        .select('name')
+        .lean()
+        .then(filials => filials.filter(f => f._id !== marketData._id))
+      const mainmarket = await Market.findById(marketData.mainmarket)
+        .select('name')
+        .lean()
+      markets = [...filials, mainmarket]
+    } else {
+      const mainmarket = await Market.findById(marketData._id)
+        .select('filials name')
+        .populate('filials', 'name')
+        .lean()
+      markets = [mainmarket, ...mainmarket.filials];
+    }
+
+    res.status(200).json({ filials: markets })
+
+  } catch (error) {
+    console.log(error);
     res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
   }
 }

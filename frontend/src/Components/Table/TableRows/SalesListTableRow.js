@@ -1,7 +1,7 @@
 import React from 'react'
 import TableBtn from '../../Buttons/TableBtn'
-import {uniqueId, map} from 'lodash'
-import {useNavigate} from 'react-router-dom'
+import { uniqueId, map } from 'lodash'
+import { useNavigate } from 'react-router-dom'
 
 export const SalesListTableRow = ({
     data,
@@ -11,6 +11,7 @@ export const SalesListTableRow = ({
     Print,
     sellers,
     addPlus,
+    editComment
 }) => {
     const result = (prev, usd, uzs) => {
         return currency === 'USD' ? prev + usd : prev + uzs
@@ -26,7 +27,7 @@ export const SalesListTableRow = ({
     const linkToSale = (saleconnector, returnProducts) => {
         navigate(`${sellers ? '/' : '/sotuv/sotish'}`, {
             replace: true,
-            state: {saleconnector, returnProducts},
+            state: { saleconnector, returnProducts },
         })
     }
 
@@ -108,20 +109,26 @@ export const SalesListTableRow = ({
                         ).toLocaleString('ru-Ru')}{' '}
                         {currency}
                     </td>
-                    <td className='text-left td py-[1rem] '>
-                        {map(
-                            saleconnector.dailyconnectors,
-                            (connector, index) => {
-                                if (connector.comment) {
-                                    return (
-                                        <p key={uniqueId('sale-list-table')}>
-                                            {connector.comment}
-                                        </p>
-                                    )
-                                }
-                                return ''
-                            }
+                    <td className='text-left td  '>
+                        {saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1].comment ? (
+                            <div className='flex justify-between items-center'>
+                                <span>{saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1].comment}</span>
+                                <TableBtn
+                                    type={'edit'}
+                                    bgcolor={'bg-success-500'}
+                                    onClick={() => editComment(saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1], saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1].comment)}
+                                />
+                            </div>
+                        ) : (
+                            <div className='flex justify-center items-center'>
+                                <TableBtn
+                                    type={'add'}
+                                    bgcolor={'bg-success-500'}
+                                    onClick={() => editComment(saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1], saleconnector.dailyconnectors[saleconnector.dailyconnectors.length - 1].comment)}
+                                />
+                            </div>
                         )}
+
                     </td>
 
                     <td className='py-[0.375rem] td border-r-0'>

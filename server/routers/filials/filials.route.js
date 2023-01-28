@@ -50,4 +50,12 @@ router.post('/products/get', auth, (req, res) => {
   require('./products').filialProducts(req, res)
 })
 
+router.post('/warhouseproducts/get', auth, (req, res) => {
+  require('./warhouse').getWarhouseTransferProducts(req, res);
+})
+
+router.post('/filialsforsale/get', auth, (req, res) => {
+  require('./products').getFilialsForSale(req, res);
+})
+
 module.exports = router;

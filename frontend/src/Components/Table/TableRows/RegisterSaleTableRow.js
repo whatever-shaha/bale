@@ -4,6 +4,8 @@ import TableInput from '../../Inputs/TableInput'
 import { filter, map } from 'lodash'
 import { IoAdd, IoEye, IoEyeOff, IoRemove } from 'react-icons/io5'
 import { useSelector } from 'react-redux'
+import SelectInput from '../../SelectInput/SelectInput'
+import Select from 'react-select'
 
 export const RegisterSaleTableRow = (
     {
@@ -15,8 +17,10 @@ export const RegisterSaleTableRow = (
         decrement,
         lowUnitpriceProducts,
         wholeSale,
-        selectedFilial
     }) => {
+
+    const { filials } = useSelector((state) => state.registerSelling)
+
     const { market } = useSelector((state) => state.login)
     const [showIncomingPrice, setShowIncomingPrice] = useState([])
     const changeShow = (i) => {
@@ -34,7 +38,22 @@ export const RegisterSaleTableRow = (
                 <tr className={`tr ${filter(lowUnitpriceProducts, id => id === product.product._id).length > 0 ? 'bg-warning-200' : ''}`}
                     key={'salerow-' + index + 1}>
                     <td className='text-left td'>{index + 1}</td>
-                    <td className='text-right td'>{selectedFilial?.value === market._id ? product.total : product.filialProductsTotal}</td>
+                    <td className='td w-[100px]'>
+                        <select onChange={(e) => changeHandler(
+                            product.product._id,
+                            {
+                                filial: e.target.value,
+                                productcode: product.product.code,
+                                categorycode: product.categorycode
+                            },
+                            'select'
+                        )} value={product.filial} className='w-full outline-none border-[1px] rounded h-[30px]'>
+                            {filials.length > 0 && filials.map((filial, ind) =>
+                                <option key={ind} value={filial.value}>{filial.label}</option>
+                            )}
+                        </select>
+                    </td>
+                    <td className='text-right td font-bold'><span style={{ color: product?.filialProductsTotal > 0 ? "green" : 'red' }} >{product?.filialProductsTotal}</span></td>
                     <td className='text-left td'>{product.product.name}</td>
                     <td className='text-right td'>
                         <span className={'flex gap-[0.6rem] items-center'}>
@@ -70,6 +89,7 @@ export const RegisterSaleTableRow = (
                                 )
                             }
                             type={'number'}
+                            disabled={product.filial === market._id && true}
                         />
                     </td>
                     <td className='text-right td'>

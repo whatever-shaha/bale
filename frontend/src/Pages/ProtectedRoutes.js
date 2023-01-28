@@ -1,6 +1,6 @@
-import {lazy} from 'react'
-import {map, uniqueId} from 'lodash'
-import {Route} from 'react-router-dom'
+import { lazy } from 'react'
+import { map, uniqueId } from 'lodash'
+import { Route } from 'react-router-dom'
 // pages -->
 const SellersReport = lazy(() => import('./Seller/SellersReport.js'))
 const ProductReport = lazy(() => import('./ProductReport/ProductReport.js'))
@@ -74,6 +74,10 @@ const RegisterOrdersSend = lazy(() =>
     import('./Orders/SendingOrders/Routes/Orders.js')
 )
 
+const WarhouseProducts = lazy(() =>
+    import('./WarhouseProducts/WarhouseProducts')
+)
+
 // <-- pages
 
 const directorRoutes = [
@@ -110,6 +114,10 @@ const directorRoutes = [
     {
         path: '/maxsulotlar/maxsulotlar',
         element: <Products />,
+    },
+    {
+        path: '/maxsulotlar/omborxona',
+        element: <WarhouseProducts />,
     },
     {
         path: '/maxsulotlar/hisobot/sotilganlar',

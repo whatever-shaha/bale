@@ -11,7 +11,7 @@ import {
     IoSettingsOutline,
     IoWallet,
 } from 'react-icons/io5'
-import {FaCashRegister, FaHandHoldingUsd} from 'react-icons/fa'
+import { FaCashRegister, FaHandHoldingUsd } from 'react-icons/fa'
 
 const navListForDirector = [
     {
@@ -39,29 +39,34 @@ const navListForDirector = [
                 icon: 'home',
                 path: 'maxsulotlar/maxsulotlar',
             },
-
             {
                 id: 3,
+                label: 'Omborxona',
+                icon: 'home',
+                path: 'maxsulotlar/omborxona',
+            },
+            {
+                id: 4,
                 label: "O'lchov birliklari",
                 icon: 'home',
                 path: 'maxsulotlar/ulchov',
             },
             {
-                id: 4,
+                id: 5,
                 label: 'Etiketka',
                 icon: '',
                 path: 'maxsulotlar/etiketka',
                 submenu: false,
             },
             {
-                id: 5,
+                id: 6,
                 label: 'Qabul qilish',
                 icon: '',
                 path: 'maxsulotlar/qabul/qabulqilish',
                 submenu: false,
             },
             {
-                id: 6,
+                id: 7,
                 label: 'Maxsulotlar hisoboti',
                 icon: 'home',
                 path: 'maxsulotlar/hisobot',
@@ -81,7 +86,7 @@ const navListForDirector = [
                 ],
             },
             {
-                id: 7,
+                id: 8,
                 label: 'Inventarizatsiya',
                 icon: true,
                 path: 'maxsulotlar/inventarizatsiya',

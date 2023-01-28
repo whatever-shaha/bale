@@ -84,7 +84,8 @@ function Table({
     updatePosition,
     handleCountProduct,
     handleUnitPrice,
-    selectedFilial
+    selectedFilial,
+    editComment
 }) {
     const checkRows = () => {
         switch (page) {
@@ -256,6 +257,7 @@ function Table({
                         ReturnPayment={ReturnPayment}
                         sellers={sellers}
                         addPlus={addPlus}
+                        editComment={editComment}
                     />
                 )
             case 'client':
