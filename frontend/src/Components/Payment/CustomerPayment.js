@@ -184,12 +184,12 @@ function CustomerPayment({
                             active={type === 'transfer'}
                             onClick={changePaymentType}
                         />
-                        <SaleBtn
+                        {!returned && <SaleBtn
                             text={t(`Aralash`)}
                             type='mixed'
                             active={type === 'mixed'}
                             onClick={changePaymentType}
-                        />
+                        />}
                     </div>
                     {!returned && (
                         <DiscountBtn

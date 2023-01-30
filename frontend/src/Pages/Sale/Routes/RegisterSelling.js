@@ -646,19 +646,19 @@ const RegisterSelling = () => {
                 totalprice: Number(allPayment),
                 totalpriceuzs: Number(allPaymentUzs),
                 type: paymentType,
-                cash: Number(allPayment < 0 ? -1 * paymentCash : paymentCash),
+                cash: Number(paymentCash > 0 ? -1 * paymentCash : paymentCash),
                 cashuzs: Number(
-                    allPaymentUzs < 0 ? -1 * paymentCashUzs : paymentCashUzs
+                    paymentCashUzs > 0 ? -1 * paymentCashUzs : paymentCashUzs
                 ),
-                card: Number(allPayment < 0 ? -1 * paymentCard : paymentCard),
+                card: Number(paymentCard > 0 ? -1 * paymentCard : paymentCard),
                 carduzs: Number(
-                    allPayment < 0 ? -1 * paymentCardUzs : paymentCardUzs
+                    paymentCardUzs > 0 ? -1 * paymentCardUzs : paymentCardUzs
                 ),
                 transfer: Number(
-                    allPayment < 0 ? -1 * paymentTransfer : paymentTransfer
+                    paymentTransfer > 0 ? -1 * paymentTransfer : paymentTransfer
                 ),
                 transferuzs: Number(
-                    allPayment < 0 ? -1 * paymentTransferUzs : paymentTransfer
+                    allPayment > 0 ? -1 * paymentTransferUzs : paymentTransfer
                 ),
             },
             debt: {
@@ -1166,6 +1166,7 @@ const RegisterSelling = () => {
             const paymentUzs = convertToUzs(
                 totalPaymentsUzs - totalPaysUzs - totalDiscountsUzs - allUzs
             )
+
             setReturnDiscounts(newRelease)
             setAllPayment(payment)
             setAllPaymentUzs(paymentUzs)
@@ -1187,13 +1188,14 @@ const RegisterSelling = () => {
                     0
                 ) || 0
             const debt = totalprice - totalpayment - totaldiscounts
-            if (debt !== 0) {
-                setPaymentCash(0)
-                setPaymentCashUzs(0)
-            } else {
-                setPaymentCash(Math.abs(payment))
-                setPaymentCashUzs(Math.abs(paymentUzs))
-            }
+
+            setPaymentCash(Math.abs(payment))
+            setPaymentCashUzs(Math.abs(paymentUzs))
+            setPaymentCard(0)
+            setPaymentCardUzs(0)
+            setPaymentTransfer(0)
+            setPaymentTransferUzs(0);
+
             setPaymentModalVisible(true)
         } else {
             warningReturnProductsEmpty()
