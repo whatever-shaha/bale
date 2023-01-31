@@ -183,13 +183,13 @@ module.exports.getReport = async (req, res) => {
 
     reports.income.income = roundUsd(
       Number(reports.sale.sale) -
-        Number(incomingprice) -
-        Number(reports.discounts.discounts)
+      Number(incomingprice) -
+      Number(reports.discounts.discounts)
     );
     reports.income.incomeuzs = roundUzs(
       Number(reports.sale.saleuzs) -
-        Number(incomingpriceuzs) -
-        Number(reports.discounts.discountsuzs)
+      Number(incomingpriceuzs) -
+      Number(reports.discounts.discountsuzs)
     );
 
     // Get debts report functions  START
@@ -490,83 +490,53 @@ module.exports.getDebtsReport = async (req, res) => {
         .json({ message: `Diqqat! Do'kon haqida malumotlar topilmadi!` });
     }
 
-    const saleconnector = await SaleConnector.find({
+    const connectors = await DailySaleConnector.find({
       market,
       createdAt: {
         $gte: startDate,
         $lte: endDate,
       },
     })
+      .sort({ createdAt: -1 })
       .select('-isArchive -updatedAt -__v -packman')
-      .populate(
-        'payments',
-        'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
-      )
+      .populate('products', '-__v -isArchive -updatedAt')
+      .populate('debt', '-__v -isArchive -updatedAt')
+      .populate('discount', '-__v -isArchive -updatedAt')
+      .populate('payment', '-__v -isArchive -updatedAt')
       .populate({
-        path: 'products',
-        select:
-          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
-        options: { sort: { createdAt: -1 } },
+        path: 'saleconnector',
+        select: "id client",
         populate: {
-          path: 'product',
-          select: 'productdata',
-          populate: { path: 'productdata', select: 'name code' },
-        },
+          path: 'client',
+          select: "-__v -isArchive -updatedAt"
+        }
       })
-      .populate({
-        path: 'products',
-        select:
-          'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
-        options: { sort: { createdAt: -1 } },
-        populate: {
-          path: 'user',
-          select: 'firstname lastname',
-        },
-      })
-      .populate('client', 'name')
-      .populate(
-        'payments',
-        'payment paymentuzs comment totalprice totalpriceuzs'
-      )
-      .populate('debts', 'comment')
-      .populate(
-        'discounts',
-        'discount discountuzs procient products totalprice totalpriceuzs'
-      )
-      .populate('user', 'firstname lastname')
-      .populate('dailyconnectors', 'comment debt')
-      .lean();
+      .lean()
 
-    const debtsreport = saleconnector
+    const debtsreport = connectors
       .map((sale) => {
         const reduce = (arr, el) =>
           arr.reduce((prev, item) => prev + (item[el] || 0), 0);
-        const discount = reduce(sale.discounts, 'discount');
-        const discountuzs = reduce(sale.discounts, 'discountuzs');
-        const payment = reduce(sale.payments, 'payment');
-        const paymentuzs = reduce(sale.payments, 'paymentuzs');
+        const discount = sale.discount && sale.discount.discount || 0
+        const discountuzs = sale.discount && sale.discount.discountuzs || 0
+        console.log(sale._id, sale.payment);
+        const payment = sale.payment.payment;
+        const paymentuzs = sale.payment.paymentuzs;
         const totalprice = reduce(sale.products, 'totalprice');
         const totalpriceuzs = reduce(sale.products, 'totalpriceuzs');
 
-        const debtComment =
-          sale.debts.length > 0
-            ? sale.debts[sale.debts.length - 1].comment
-            : '';
-        const debtId =
-          sale.debts.length > 0 ? sale.debts[sale.debts.length - 1]._id : '';
-
         return {
           _id: sale._id,
-          id: sale.id,
+          id: sale.saleconnector.id,
           createdAt: sale.createdAt,
-          client: sale.client && sale.client,
+          client: sale.saleconnector.client && sale.saleconnector.client,
           totalprice,
           totalpriceuzs,
           debt: Math.round((totalprice - payment - discount) * 1000) / 1000,
           debtuzs:
             Math.round((totalpriceuzs - paymentuzs - discountuzs) * 1) / 1,
-          debtid: debtId,
-          comment: debtComment,
+          debtid: sale.debt && sale.debt._id,
+          comment: sale.debt && sale.debt.comment,
           saleconnector: { ...sale },
         };
       })
@@ -574,6 +544,7 @@ module.exports.getDebtsReport = async (req, res) => {
 
     res.status(201).json({ data: debtsreport });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
