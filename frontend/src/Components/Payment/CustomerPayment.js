@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux'
 import PaymentInput from './PaymentInput/PaymentInput.js'
 import { t } from 'i18next'
 import { useLocation } from 'react-router-dom'
+import { useEffect } from 'react'
 
 function CustomerPayment({
     returned,

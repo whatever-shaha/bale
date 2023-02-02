@@ -169,9 +169,9 @@ module.exports.getReport = async (req, res) => {
       sale.products.map((product) => {
         reports.sale.sale += roundUsd(product.totalprice);
         reports.sale.saleuzs += roundUzs(product.totalpriceuzs);
-        incomingprice += roundUsd(product.price.incomingprice * product.pieces);
+        incomingprice += roundUsd((product.price && product.price.incomingprice || 0) * product.pieces);
         incomingpriceuzs += roundUzs(
-          product.price.incomingpriceuzs * product.pieces
+          (product.price && product.price.incomingpriceuzs || 0) * product.pieces
         );
         if (product.totalprice < 0) {
           backproduct += roundUsd(product.totalprice);
@@ -250,6 +250,7 @@ module.exports.getReport = async (req, res) => {
 
     res.status(201).send(reports);
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };

@@ -1166,15 +1166,42 @@ const RegisterSelling = () => {
             const paymentUzs = convertToUzs(
                 totalPaymentsUzs - totalPaysUzs - totalDiscountsUzs - allUzs
             )
+
             setReturnDiscounts(newRelease)
-            setAllPayment(payment)
-            setAllPaymentUzs(paymentUzs)
-            setPaymentCash(Math.abs(payment))
-            setPaymentCashUzs(Math.abs(paymentUzs))
-            setPaid(Math.abs(payment))
-            setPaidUzs(Math.abs(paymentUzs))
+            if (payment <= 0) {
+                setAllPayment(payment)
+                setAllPaymentUzs(paymentUzs)
+                setPaymentCash(Math.abs(payment))
+                setPaymentCashUzs(Math.abs(paymentUzs))
+                setPaid(Math.abs(payment))
+                setPaidUzs(Math.abs(paymentUzs))
+            } else {
+                setPaymentCash(0)
+                setPaymentCashUzs(UsdToUzs(0, exchangerate))
+                setPaymentDebt(convertToUsd(payment))
+                setPaymentDebtUzs(convertToUzs(paymentUzs))
+                setAllPayment(all)
+                setAllPaymentUzs(allUzs)
+                setPaid(all)
+                setPaidUzs(allUzs);
+            }
             setPaymentModalVisible(true)
             currentEchangerate(allUzs, all)
+            // const maxSum = Math.abs(payment) - Number(paymentDiscount)
+            // const maxSumUzs = Math.abs(paymentUzs) - Number(paymentDiscountUzs)
+
+            // const all2 =
+            //     Number(0) +
+            //     Number(paymentCard) +
+            //     Number(paymentTransfer)
+            // const all2Uzs =
+            //     Number(UsdToUzs(0, exchangerate)) +
+            //     Number(paymentCardUzs) +
+            //     Number(paymentTransferUzs)
+            // if (all <= maxSum) {
+
+            // }
+
         } else {
             warningReturnProductsEmpty()
         }

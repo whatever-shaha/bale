@@ -96,10 +96,10 @@ module.exports.getSalesDataByMonth = async (req, res) => {
     };
     while (count <= currentMonth) {
       const startDate = new Date(
-          new Date(new Date().setMonth(count, 1)).setHours(0, 0, 0, 0)
+        new Date(new Date().setMonth(count, 1)).setHours(0, 0, 0, 0)
       ).toISOString()
       const endDate = new Date(
-          new Date(new Date().setMonth(count + 1, 1)).setHours(0, 0, 0, 0)
+        new Date(new Date().setMonth(count + 1, 1)).setHours(0, 0, 0, 0)
       ).toISOString()
       const dailysales = await DailySaleConnector.find({
         market,
@@ -134,7 +134,7 @@ module.exports.getSalesDataByMonth = async (req, res) => {
             reduce(
               dailysale.products,
               (summ, product) =>
-                summ + product.price[property] * product.pieces,
+                summ + (product.price && product.price[property] || 0) * product.pieces,
               0
             ),
           0
@@ -194,6 +194,7 @@ module.exports.getSalesDataByMonth = async (req, res) => {
       monthExpense,
     });
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+    console.log(error);
+    res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
   }
 };
