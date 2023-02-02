@@ -793,6 +793,8 @@ module.exports.registeredit = async (req, res) => {
       saleconnectorid,
       comment,
     } = req.body;
+
+
     const marke = await Market.findById(market);
     if (!marke) {
       return res.status(400).json({
@@ -892,13 +894,14 @@ module.exports.registeredit = async (req, res) => {
     let products = [];
 
     for (const saleproduct of all) {
-      saleproduct.saleconnector = saleconnector._id;
-      saleproduct.dailysaleconnector = dailysaleconnector._id;
-      await saleproduct.save();
-      products.push(saleproduct._id);
+      const saleprod = await SaleProduct.findById(saleproduct._id)
+      saleprod.saleconnector = saleconnector._id;
+      saleprod.dailysaleconnector = dailysaleconnector._id;
+      await saleprod.save();
+      products.push(saleprod._id);
 
-      const updateproduct = await Product.findById(saleproduct.product);
-      updateproduct.total -= saleproduct.pieces;
+      const updateproduct = await Product.findById(saleprod.product);
+      updateproduct.total -= saleprod.pieces;
       await updateproduct.save();
     }
 

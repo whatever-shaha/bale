@@ -4,6 +4,7 @@ import { DiscountInput } from '../Inputs/DiscountInputs.js'
 import { useSelector } from 'react-redux'
 import PaymentInput from './PaymentInput/PaymentInput.js'
 import { t } from 'i18next'
+import { useLocation } from 'react-router-dom'
 
 function CustomerPayment({
     returned,
@@ -31,7 +32,7 @@ function CustomerPayment({
     changeComment,
     onDoubleClick
 }) {
-
+    const location = useLocation()
     const defineLabel = () => {
         switch (type) {
             case 'card':
@@ -125,6 +126,7 @@ function CustomerPayment({
                     </div>
                     <ul className='w-full pb-[1.25rem]'>
                         {!returned && defineLabel()}
+                        {location.pathname.includes('/kassa/debts') && defineLabel()}
                         <PaymentInput
                             value={saleComment}
                             key={'sale-card'}
@@ -185,6 +187,12 @@ function CustomerPayment({
                             onClick={changePaymentType}
                         />
                         {!returned && <SaleBtn
+                            text={t(`Aralash`)}
+                            type='mixed'
+                            active={type === 'mixed'}
+                            onClick={changePaymentType}
+                        />}
+                        {location.pathname.includes('/kassa/debts') && <SaleBtn
                             text={t(`Aralash`)}
                             type='mixed'
                             active={type === 'mixed'}

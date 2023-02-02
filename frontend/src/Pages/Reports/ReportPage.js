@@ -1,7 +1,7 @@
-import React, {useEffect, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {useParams} from 'react-router-dom'
-import {roundUsd, roundUzs, UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { useParams } from 'react-router-dom'
+import { roundUsd, roundUzs, UsdToUzs, UzsToUsd } from '../../App/globalFunctions'
 import LinkToBack from '../../Components/LinkToBack/LinkToBack'
 import UniversalModal from '../../Components/Modal/UniversalModal'
 import Pagination from '../../Components/Pagination/Pagination'
@@ -25,20 +25,20 @@ import {
     payDebt,
     setDebtComment,
 } from './reportsSlice'
-import {ReportsTableHeaders} from './ReportsTableHeaders'
-import {filter} from 'lodash'
-import {universalSort} from './../../App/globalFunctions'
-import {changeStartDate, changeEndDate} from './reportsSlice'
+import { ReportsTableHeaders } from './ReportsTableHeaders'
+import { filter } from 'lodash'
+import { universalSort } from './../../App/globalFunctions'
+import { changeStartDate, changeEndDate } from './reportsSlice'
 const ReportPage = () => {
-    const {id} = useParams()
+    const { id } = useParams()
 
     const dispatch = useDispatch()
 
-    const {market: _id, user} = useSelector((state) => state.login)
-    const {datas, count, startDate, endDate, successDebtComment} = useSelector(
+    const { market: _id, user } = useSelector((state) => state.login)
+    const { datas, count, startDate, endDate, successDebtComment } = useSelector(
         (state) => state.reports
     )
-    const {currencyType, currency} = useSelector((state) => state.currency)
+    const { currencyType, currency } = useSelector((state) => state.currency)
     const [currentPage, setCurrentPage] = useState(0)
     const [countPage, setCountPage] = useState(10)
     const [totalPage, setTotalPage] = useState(1)
@@ -97,13 +97,13 @@ const ReportPage = () => {
     const [endDay, setEndDay] = useState(new Date())
 
     const headers = [
-        {title: '№'},
-        {title: 'Kodi'},
-        {title: 'Nomi'},
-        {title: 'Soni'},
-        {title: 'Narxi'},
-        {title: 'Jami', styles: 'w-[10rem]'},
-        {title: ''},
+        { title: '№' },
+        { title: 'Kodi' },
+        { title: 'Nomi' },
+        { title: 'Soni' },
+        { title: 'Narxi' },
+        { title: 'Jami', styles: 'w-[10rem]' },
+        { title: '' },
     ]
 
     // payment
@@ -118,7 +118,7 @@ const ReportPage = () => {
         setPaymentDiscountPercent('')
         setPaymentDebt(0)
         setPaymentDebtUzs(0)
-        setDiscountSelectOption({label: '%', value: '%'})
+        setDiscountSelectOption({ label: '%', value: '%' })
     }
     const toggleCheckModal = () => {
         setModalVisible(!modalVisible)
@@ -474,7 +474,7 @@ const ReportPage = () => {
             user: user._id,
             saleconnectorid: saleConnectorId,
         }
-        dispatch(payDebt(body)).then(({payload}) => {
+        dispatch(payDebt(body)).then(({ payload }) => {
             setModalData(payload)
             dispatch(getDebts())
             setTimeout(() => {
@@ -549,10 +549,10 @@ const ReportPage = () => {
         }
     }
     const handleStartDate = (e) => {
-        dispatch(changeStartDate({start: e.toISOString()}))
+        dispatch(changeStartDate({ start: e.toISOString() }))
     }
     const handleEndDate = (e) => {
-        dispatch(changeEndDate({end: e.toISOString()}))
+        dispatch(changeEndDate({ end: e.toISOString() }))
     }
 
     const handleBeginDay = (e) => {
@@ -617,13 +617,13 @@ const ReportPage = () => {
     }
 
     const handleModalDebtComment = (comment, debtid) => {
-        dispatch(setDebtComment({comment, debtid}))
+        dispatch(setDebtComment({ comment, debtid }))
         setModalBody('debtcomment')
         setModalVisible(!modalVisible)
     }
 
     const toggleDebtCommentModal = () => {
-        dispatch(setDebtComment({comment: null, debtid: null}))
+        dispatch(setDebtComment({ comment: null, debtid: null }))
         setModalBody('')
         setModalVisible(!modalVisible)
     }
@@ -686,9 +686,9 @@ const ReportPage = () => {
     useEffect(() => {
         if (id === 'debts') {
             setTotalDebt({
-                usd: roundUsd(datas.reduce((prev, {debt}) => prev + debt, 0)),
+                usd: roundUsd(datas.reduce((prev, { debt }) => prev + debt, 0)),
                 uzs: roundUzs(
-                    datas.reduce((prev, {debtuzs}) => prev + debtuzs, 0)
+                    datas.reduce((prev, { debtuzs }) => prev + debtuzs, 0)
                 ),
             })
         }
@@ -738,8 +738,8 @@ const ReportPage = () => {
                         id === 'debts'
                             ? ['startDate', 'endDate', 'id', 'clientName']
                             : id === 'expenses'
-                            ? ['total']
-                            : ['total', 'id', 'clientName']
+                                ? ['total']
+                                : ['total', 'id', 'clientName']
                     }
                     filterByTotal={(e) => setCountPage(e.value)}
                     filterById={searchId}
@@ -781,16 +781,14 @@ const ReportPage = () => {
                 {id === 'debts' && (
                     <ul className='w-full grid grid-cols-12 tr'>
                         <li
-                            className={`col-span-8 ${
-                                currentData.length === 0 && 'border-t-2'
-                            } td py-[0.625rem] text-right`}
+                            className={`col-span-8 ${currentData.length === 0 && 'border-t-2'
+                                } td py-[0.625rem] text-right`}
                         >
                             Jami:
                         </li>
                         <li
-                            className={`col-span-4 ${
-                                currentData.length === 0 && 'border-t-2'
-                            } td py-[0.625rem] font-bold`}
+                            className={`col-span-4 ${currentData.length === 0 && 'border-t-2'
+                                } td py-[0.625rem] font-bold`}
                         >
                             {currencyType === 'USD'
                                 ? totalDebt.usd
@@ -821,8 +819,8 @@ const ReportPage = () => {
                                 ? paymentDiscount
                                 : paymentDiscountPercent
                             : discountSelectOption.value === 'UZS'
-                            ? paymentDiscountUzs
-                            : paymentDiscountPercent
+                                ? paymentDiscountUzs
+                                : paymentDiscountPercent
                     }
                     handleChangeDiscount={handleChangeDiscount}
                     hasDiscount={hasDiscount}
@@ -846,12 +844,12 @@ const ReportPage = () => {
                     modalBody === 'sell'
                         ? toggleModal
                         : modalBody === 'complete'
-                        ? handleClosePay
-                        : modalBody === 'allChecks'
-                        ? toggleSaleCheck
-                        : modalBody === 'debtcomment'
-                        ? toggleDebtCommentModal
-                        : toggleCheckModal
+                            ? handleClosePay
+                            : modalBody === 'allChecks'
+                                ? toggleSaleCheck
+                                : modalBody === 'debtcomment'
+                                    ? toggleDebtCommentModal
+                                    : toggleCheckModal
                 }
                 approveFunction={handleApprovePay}
                 isOpen={modalVisible}

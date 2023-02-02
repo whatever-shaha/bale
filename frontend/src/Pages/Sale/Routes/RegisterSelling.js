@@ -646,19 +646,19 @@ const RegisterSelling = () => {
                 totalprice: Number(allPayment),
                 totalpriceuzs: Number(allPaymentUzs),
                 type: paymentType,
-                cash: Number(paymentCash > 0 ? -1 * paymentCash : paymentCash),
+                cash: Number(allPayment < 0 ? -1 * paymentCash : paymentCash),
                 cashuzs: Number(
-                    paymentCashUzs > 0 ? -1 * paymentCashUzs : paymentCashUzs
+                    allPaymentUzs < 0 ? -1 * paymentCashUzs : paymentCashUzs
                 ),
-                card: Number(paymentCard > 0 ? -1 * paymentCard : paymentCard),
+                card: Number(allPayment < 0 ? -1 * paymentCard : paymentCard),
                 carduzs: Number(
-                    paymentCardUzs > 0 ? -1 * paymentCardUzs : paymentCardUzs
+                    allPayment < 0 ? -1 * paymentCardUzs : paymentCardUzs
                 ),
                 transfer: Number(
-                    paymentTransfer > 0 ? -1 * paymentTransfer : paymentTransfer
+                    allPayment < 0 ? -1 * paymentTransfer : paymentTransfer
                 ),
                 transferuzs: Number(
-                    allPayment > 0 ? -1 * paymentTransferUzs : paymentTransfer
+                    allPayment < 0 ? -1 * paymentTransferUzs : paymentTransfer
                 ),
             },
             debt: {
@@ -1166,37 +1166,15 @@ const RegisterSelling = () => {
             const paymentUzs = convertToUzs(
                 totalPaymentsUzs - totalPaysUzs - totalDiscountsUzs - allUzs
             )
-
             setReturnDiscounts(newRelease)
             setAllPayment(payment)
             setAllPaymentUzs(paymentUzs)
-            setPaid(Math.abs(payment))
-            setPaidUzs(Math.abs(paymentUzs))
-            currentEchangerate(allUzs, all)
-            const data = location.state
-            const totalprice = data.saleconnector.products.reduce(
-                (prev, prod) => prev + prod.totalprice,
-                0
-            )
-            const totalpayment = data.saleconnector.payments.reduce(
-                (prev, payment) => prev + payment.payment,
-                0
-            )
-            const totaldiscounts =
-                data.saleconnector.discounts.reduce(
-                    (prev, discount) => prev + discount.discount,
-                    0
-                ) || 0
-            const debt = totalprice - totalpayment - totaldiscounts
-
             setPaymentCash(Math.abs(payment))
             setPaymentCashUzs(Math.abs(paymentUzs))
-            setPaymentCard(0)
-            setPaymentCardUzs(0)
-            setPaymentTransfer(0)
-            setPaymentTransferUzs(0);
-
+            setPaid(Math.abs(payment))
+            setPaidUzs(Math.abs(paymentUzs))
             setPaymentModalVisible(true)
+            currentEchangerate(allUzs, all)
         } else {
             warningReturnProductsEmpty()
         }
