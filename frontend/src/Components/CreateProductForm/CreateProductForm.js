@@ -1,6 +1,6 @@
 import FieldContainer from '../FieldContainer/FieldContainer'
 import Button from '../Buttons/BtnAddRemove'
-import {useTranslation} from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 
 function CreateProductForm({
     searchBarcode,
@@ -33,13 +33,14 @@ function CreateProductForm({
     handleChangeMinimumCount,
     sellingPriceOfProcient,
     handleChangeSellingPriceOfProcient,
+    handleChangeTradePriceProcient,
+    tradePriceProcient
 }) {
-    const {t} = useTranslation(['common'])
+    const { t } = useTranslation(['common'])
     return (
         <form
-            className={`flex gap-[1.25rem] bg-background flex-col mainPadding transition ease-linear duration-200 ${
-                stickyForm ? 'stickyForm' : ''
-            }`}
+            className={`flex gap-[1.25rem] bg-background flex-col mainPadding transition ease-linear duration-200 ${stickyForm ? 'stickyForm' : ''
+                }`}
         >
             <div className={'flex gap-[2.5rem]'}>
                 {/* -- maxsulotlar checki -- */}
@@ -137,6 +138,13 @@ function CreateProductForm({
                 )}
             </div>
             <div className='flex flex gap-[2.5rem] items-end'>
+                <FieldContainer
+                    value={tradePriceProcient}
+                    onChange={handleChangeTradePriceProcient}
+                    label={t('Optom foizi')}
+                    placeholder={`${t('misol')}: 30 %`}
+                    type={'text'}
+                />
                 <FieldContainer
                     value={tradePrice}
                     onChange={handleChangeTradePrice}
