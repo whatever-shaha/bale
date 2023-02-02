@@ -385,11 +385,11 @@ module.exports.getClients = async (req, res) => {
           0
         );
         const incomings = [...products].reduce(
-          (prev, el) => prev + el.pieces * el.price.incomingprice || 0,
+          (prev, el) => prev + el.pieces * (el.price && el.price.incomingprice || 0),
           0
         );
         const incomingsuzs = [...products].reduce(
-          (prev, el) => prev + el.pieces * el.price.incomingpriceuzs || 0,
+          (prev, el) => prev + el.pieces * (el.price && el.price.incomingpriceuzs || 0),
           0
         );
 
@@ -412,6 +412,7 @@ module.exports.getClients = async (req, res) => {
 
     res.status(201).json({ clients: filterClients, count: filterCount.length });
   } catch (error) {
+    console.log(error);
     res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
