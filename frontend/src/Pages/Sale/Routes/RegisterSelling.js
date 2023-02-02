@@ -190,46 +190,87 @@ const RegisterSelling = () => {
         }
     }
     const handleChangePaymentType = (type) => {
-        const all = allPayment - Number(paymentDiscount)
-        const allUzs = allPaymentUzs - Number(paymentDiscountUzs)
+        const all = returnProducts.reduce(
+            (summ, product) => convertToUsd(summ + product.totalprice),
+            0
+        )
+        const allUzs = returnProducts.reduce(
+            (summ, product) => convertToUzs(summ + product.totalpriceuzs),
+            0
+        )
+        const payment = convertToUsd(
+            totalPaymentsUsd - totalPaysUsd - all
+        )
+        const paymentUzs = convertToUzs(
+            totalPaymentsUzs - totalPaysUzs - allUzs
+        )
         if (paymentType !== type) {
             setPaymentType(type)
             switch (type) {
                 case 'cash':
-                    setPaymentCash(all)
-                    setPaymentCashUzs(allUzs)
-                    setPaymentCard('')
-                    setPaymentCardUzs('')
-                    setPaymentTransfer('')
-                    setPaymentTransferUzs('')
-                    setPaid(all)
-                    setPaidUzs(allUzs)
-                    setPaymentDebt(0)
-                    setPaymentDebtUzs(0)
+                    if (payment <= 0) {
+                        setAllPayment(payment)
+                        setAllPaymentUzs(paymentUzs)
+                        setPaymentCash(Math.abs(payment))
+                        setPaymentCashUzs(Math.abs(paymentUzs))
+                        setPaid(Math.abs(payment))
+                        setPaidUzs(Math.abs(paymentUzs))
+                    } else {
+                        setPaymentCash(0)
+                        setPaymentCashUzs(UsdToUzs(0, exchangerate))
+                        setPaymentDebt(convertToUsd(payment))
+                        setPaymentDebtUzs(convertToUzs(paymentUzs))
+                        setAllPayment(all)
+                        setAllPaymentUzs(allUzs)
+                        setPaid(all)
+                        setPaidUzs(allUzs);
+                    }
                     break
                 case 'card':
-                    setPaymentCard(all)
-                    setPaymentCardUzs(allUzs)
+                    if (payment <= 0) {
+                        setAllPayment(payment)
+                        setAllPaymentUzs(paymentUzs)
+                        setPaymentCard(Math.abs(payment))
+                        setPaymentCardUzs(Math.abs(paymentUzs))
+                        setPaid(Math.abs(payment))
+                        setPaidUzs(Math.abs(paymentUzs))
+                    } else {
+                        setPaymentCard(0)
+                        setPaymentCardUzs(UsdToUzs(0, exchangerate))
+                        setPaymentDebt(convertToUsd(payment))
+                        setPaymentDebtUzs(convertToUzs(paymentUzs))
+                        setAllPayment(all)
+                        setAllPaymentUzs(allUzs)
+                        setPaid(all)
+                        setPaidUzs(allUzs);
+                    }
                     setPaymentCash('')
                     setPaymentCashUzs('')
                     setPaymentTransfer('')
                     setPaymentTransferUzs('')
-                    setPaid(all)
-                    setPaidUzs(allUzs)
-                    setPaymentDebt(0)
-                    setPaymentDebtUzs(0)
                     break
                 case 'transfer':
-                    setPaymentTransfer(all)
-                    setPaymentTransferUzs(allUzs)
+                    if (payment <= 0) {
+                        setAllPayment(payment)
+                        setAllPaymentUzs(paymentUzs)
+                        setPaymentTransfer(Math.abs(payment))
+                        setPaymentTransferUzs(Math.abs(paymentUzs))
+                        setPaid(Math.abs(payment))
+                        setPaidUzs(Math.abs(paymentUzs))
+                    } else {
+                        setPaymentTransfer(0)
+                        setPaymentTransferUzs(UsdToUzs(0, exchangerate))
+                        setPaymentDebt(convertToUsd(payment))
+                        setPaymentDebtUzs(convertToUzs(paymentUzs))
+                        setAllPayment(all)
+                        setAllPaymentUzs(allUzs)
+                        setPaid(all)
+                        setPaidUzs(allUzs);
+                    }
                     setPaymentCash('')
                     setPaymentCashUzs('')
                     setPaymentCard('')
                     setPaymentCardUzs('')
-                    setPaid(all)
-                    setPaidUzs(allUzs)
-                    setPaymentDebt(0)
-                    setPaymentDebtUzs(0)
                     break
                 default:
                     setPaymentCash('')
@@ -1187,20 +1228,7 @@ const RegisterSelling = () => {
             }
             setPaymentModalVisible(true)
             currentEchangerate(allUzs, all)
-            // const maxSum = Math.abs(payment) - Number(paymentDiscount)
-            // const maxSumUzs = Math.abs(paymentUzs) - Number(paymentDiscountUzs)
 
-            // const all2 =
-            //     Number(0) +
-            //     Number(paymentCard) +
-            //     Number(paymentTransfer)
-            // const all2Uzs =
-            //     Number(UsdToUzs(0, exchangerate)) +
-            //     Number(paymentCardUzs) +
-            //     Number(paymentTransferUzs)
-            // if (all <= maxSum) {
-
-            // }
 
         } else {
             warningReturnProductsEmpty()
