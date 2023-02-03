@@ -896,14 +896,13 @@ module.exports.registeredit = async (req, res) => {
     let products = [];
 
     for (const saleproduct of all) {
-      const saleprod = await SaleProduct.findById(saleproduct._id)
-      saleprod.saleconnector = saleconnector._id;
-      saleprod.dailysaleconnector = dailysaleconnector._id;
-      await saleprod.save();
-      products.push(saleprod._id);
+      saleproduct.saleconnector = saleconnector._id;
+      saleproduct.dailysaleconnector = dailysaleconnector._id;
+      await saleproduct.save();
+      products.push(saleproduct._id);
 
-      const updateproduct = await Product.findById(saleprod.product);
-      updateproduct.total -= saleprod.pieces;
+      const updateproduct = await Product.findById(saleproduct.product);
+      updateproduct.total -= saleproduct.pieces;
       await updateproduct.save();
     }
 

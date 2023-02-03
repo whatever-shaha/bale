@@ -371,11 +371,11 @@ module.exports.getProfitData = async (req, res) => {
     const profitData = saleconnector
       .map((sale) => {
         const totalincomingprice = sale.products.reduce(
-          (prev, item) => prev + item.pieces * item.price.incomingprice,
+          (prev, item) => prev + item.pieces * (item.price && item.price.incomingprice || 0),
           0
         );
         const totalincomingpriceuzs = sale.products.reduce(
-          (prev, item) => prev + item.pieces * item.price.incomingpriceuzs,
+          (prev, item) => prev + item.pieces * (item.price && item.price.incomingpriceuzs || 0),
           0
         );
         const totalprice = sale.products.reduce(
@@ -413,6 +413,7 @@ module.exports.getProfitData = async (req, res) => {
 
     res.status(201).json({ data: profitreport, count });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };
