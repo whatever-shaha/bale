@@ -661,7 +661,7 @@ module.exports.getsaleconnectors = async (req, res) => {
       })
       .populate(
         'payments',
-        'payment paymentuzs comment totalprice totalpriceuzs createdAt'
+        'payment paymentuzs comment totalprice totalpriceuzs createdAt cash cashuzs card carduzs transfer transferuzs'
       )
       .populate(
         'discounts',

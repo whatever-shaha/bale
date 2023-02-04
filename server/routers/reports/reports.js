@@ -43,10 +43,14 @@ module.exports.getReport = async (req, res) => {
       )
       .populate({
         path: 'products',
-        select: 'totalprice totalpriceuzs pieces price',
+        select: 'totalprice totalpriceuzs pieces price product',
         populate: {
-          path: 'price',
-          select: 'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
+          path: 'product',
+          select: 'price',
+          populate: {
+            path: 'price',
+            select: "incomingprice incomingpriceuzs sellingprice sellingpriceuzs"
+          }
         },
       })
       .populate('discount', 'discount discountuzs procient');
@@ -54,10 +58,10 @@ module.exports.getReport = async (req, res) => {
     // qarz uchun saleconnector ishlatiyapman
     const saleconnector = await SaleConnector.find({
       market,
-      // createdAt: {
-      //   $gte: startDate,
-      //   $lt: endDate,
-      // },
+      createdAt: {
+        $gte: startDate,
+        $lt: endDate,
+      },
     })
       .select('-isArchive -updatedAt -user -market -__v')
       .populate('products', 'totalprice totalpriceuzs')
@@ -68,13 +72,15 @@ module.exports.getReport = async (req, res) => {
       .populate('discounts', 'discount discountuzs procient');
 
     const payments = await Payment.find({
-      payment: { $ne: 0 },
       market,
       createdAt: {
         $gte: startDate,
-        $lt: endDate,
+        $lte: endDate,
       },
-    });
+    })
+      .select('-__v -updatedAt -isArchive')
+      .lean()
+
 
     const discounts = await Discount.find({
       discount: { $ne: 0 },
@@ -83,7 +89,7 @@ module.exports.getReport = async (req, res) => {
         $gte: startDate,
         $lt: endDate,
       },
-    });
+    })
 
     let reports = {
       sale: {
@@ -136,23 +142,36 @@ module.exports.getReport = async (req, res) => {
         debtsuzs: 0,
         debtscount: 0,
       },
+      payments: {
+        payments: 0,
+        paymentsuzs: 0,
+        paymentscount: 0
+      }
     };
 
-    payments.forEach((payment) => {
-      reports.cash.cash += payment.cash;
-      reports.cash.cashuzs += payment.cashuzs;
-      reports.card.card += payment.card;
-      reports.card.carduzs += payment.carduzs;
-      reports.transfer.transfer += payment.transfer;
-      reports.transfer.transferuzs += payment.transferuzs;
-      if (payment.type === 'mixed') {
-        payment.cash !== 0 && reports.cash.cashcount++;
-        payment.card !== 0 && reports.card.cardcount++;
-        payment.transfer !== 0 && reports.transfer.transfercount++;
-      } else {
-        reports[payment.type][payment.type + 'count']++;
-      }
-    });
+
+    reports.payments.payments = payments.reduce((prev, payment) => {
+
+      reports.payments.paymentscount++;
+      reports.payments.paymentsuzs += (payment.cashuzs + payment.carduzs + payment.transferuzs);
+      prev += (payment.cash + payment.card + payment.transfer)
+
+      return prev;
+    }, 0)
+
+    // reports.payments.payments = saleconnector.reduce((prev, sale) => {
+    //   const payments = sale.payments.reduce((prev, payment) => {
+    //     if (payment.cash !== 0 || payment.card !== 0 || payment.transfer !== 0) {
+    //       reports.payments.paymentsuzs += payment.cashuzs + payment.carduzs + payment.transferuzs;
+    //       reports.payments.paymentscount++;
+    //       prev += payment.cash + payment.card + payment.transfer
+    //     }
+    //     return prev;
+    //   }, 0)
+    //   prev += payments;
+    //   return prev;
+    // }, 0)
+
 
     let incomingprice = 0;
     let incomingpriceuzs = 0;
@@ -169,9 +188,9 @@ module.exports.getReport = async (req, res) => {
       sale.products.map((product) => {
         reports.sale.sale += roundUsd(product.totalprice);
         reports.sale.saleuzs += roundUzs(product.totalpriceuzs);
-        incomingprice += roundUsd((product.price && product.price.incomingprice || 0) * product.pieces);
+        incomingprice += roundUsd(product.product.price.incomingprice * product.pieces);
         incomingpriceuzs += roundUzs(
-          (product.price && product.price.incomingpriceuzs || 0) * product.pieces
+          product.product.price.incomingpriceuzs * product.pieces
         );
         if (product.totalprice < 0) {
           backproduct += roundUsd(product.totalprice);
@@ -340,7 +359,8 @@ module.exports.getProfitData = async (req, res) => {
         $lte: endDate,
       },
     })
-      .select('-isArchive -updatedAt -user -market -__v')
+      .sort({ createdAt: -1 })
+      .select('-isArchive -updatedAt -market -__v')
       .populate(
         'payment',
         'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
@@ -356,12 +376,48 @@ module.exports.getProfitData = async (req, res) => {
         match: { name: client },
       })
       .populate({
+        path: 'user',
+        select: "firstname lastname"
+      })
+      .populate({
         path: 'products',
-        select: 'totalprice totalpriceuzs pieces price',
+        select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
         populate: {
           path: 'price',
           select: 'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
         },
+      })
+      .populate({
+        path: 'products',
+        select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+        populate: {
+          path: 'user',
+          select: 'firstname lastname',
+        },
+      })
+      .populate({
+        path: 'products',
+        select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+        populate: {
+          path: 'product',
+          select: 'productdata',
+          populate: {
+            path: 'productdata',
+            select: "name code"
+          }
+        }
+      })
+      .populate({
+        path: 'products',
+        select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+        populate: {
+          path: 'product',
+          select: 'price',
+          populate: {
+            path: 'price',
+            select: 'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
+          },
+        }
       })
       .populate(
         'discount',
@@ -370,12 +426,20 @@ module.exports.getProfitData = async (req, res) => {
 
     const profitData = saleconnector
       .map((sale) => {
+        // const totalincomingprice = sale.products.reduce(
+        //   (prev, item) => prev + item.pieces * (item.price && item.price.incomingprice || 0),
+        //   0
+        // );
+        // const totalincomingpriceuzs = sale.products.reduce(
+        //   (prev, item) => prev + item.pieces * (item.price && item.price.incomingpriceuzs || 0),
+        //   0
+        // );
         const totalincomingprice = sale.products.reduce(
-          (prev, item) => prev + item.pieces * (item.price && item.price.incomingprice || 0),
+          (prev, item) => prev + item.pieces * item.product.price.incomingprice,
           0
         );
         const totalincomingpriceuzs = sale.products.reduce(
-          (prev, item) => prev + item.pieces * (item.price && item.price.incomingpriceuzs || 0),
+          (prev, item) => prev + item.pieces * item.product.price.incomingpriceuzs,
           0
         );
         const totalprice = sale.products.reduce(
@@ -404,6 +468,7 @@ module.exports.getProfitData = async (req, res) => {
           discountuzs,
           profit,
           profituzs,
+          dailyconnector: sale
         };
       })
       .filter((sale) => sale.saleconnector !== null && sale.client !== null);
@@ -432,52 +497,233 @@ module.exports.getPayment = async (req, res) => {
         .status(401)
         .json({ message: `Diqqat! Do'kon haqida malumotlar topilmadi!` });
     }
+
+    //========================================
+
     const allpayments = await Payment.find({
-      [type]: { $ne: 0 },
+      // [type]: { $ne: 0 },
       market,
       createdAt: {
         $gte: startDate,
         $lte: endDate,
       },
     })
-
+      .sort({ createdAt: -1 })
       .select(`-isArchive -user -updatedAt -__v -products`)
       .populate({
         path: 'saleconnector',
-        select: 'id client',
+        select: 'id client products payments user dailyconnectors',
         match: { id: id },
         populate: {
           path: 'client',
           select: 'name',
           match: { name: client },
         },
-      });
-
-    const payments = allpayments
-      .map((payment) => {
-        return {
-          id: payment.saleconnector && payment.saleconnector.id,
-          saleconnector: payment.saleconnector,
-          createdAt: payment.createdAt,
-          client:
-            payment.saleconnector &&
-            payment.saleconnector.client &&
-            payment.saleconnector.client,
-          cash: payment.cash,
-          cashuzs: payment.cashuzs,
-          card: payment.card,
-          carduzs: payment.carduzs,
-          transfer: payment.transfer,
-          transferuzs: payment.transferuzs,
-          totalprice: (payment.totalprice && payment.totalprice) || 0,
-          totalpriceuzs: (payment.totalpriceuzs && payment.totalpriceuzs) || 0,
-        };
       })
-      .filter((product) => product.saleconnector !== null);
-    const count = payments.length;
-    let paymentsreport = payments.splice(currentPage * countPage, countPage);
-    res.status(201).json({ data: paymentsreport, count });
+      .populate({
+        path: 'saleconnector',
+        select: 'id client createdAt products payments user dailyconnectors',
+        populate: {
+          path: 'user',
+          select: 'firstname lastname',
+        },
+      })
+      .populate({
+        path: 'saleconnector',
+        select: 'id client createdAt products payments user dailyconnectors',
+        populate: {
+          path: 'payments',
+          select: 'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs',
+        },
+      })
+      .populate({
+        path: 'saleconnector',
+        select: 'id client createdAt products payments user dailyconnectors',
+        populate: {
+          path: 'products',
+          select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+          populate: {
+            path: 'product',
+            select: 'productdata',
+            populate: {
+              path: 'productdata',
+              select: "name code"
+            }
+          }
+        }
+      })
+      .populate({
+        path: 'saleconnector',
+        select: 'id client createdAt products payments user dailyconnectors',
+        populate: {
+          path: 'products',
+          select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+          populate: {
+            path: 'user',
+            select: 'firstname lastname'
+          }
+        }
+      })
+      .populate({
+        path: 'saleconnector',
+        select: 'id client createdAt products payments user dailyconnectors',
+        populate: {
+          path: 'dailyconnectors',
+          select: "payment"
+        }
+      })
+      .lean()
+
+    const respayments = []
+
+    const total = {
+      payment: {
+        cash: 0,
+        cashuzs: 0,
+        card: 0,
+        carduzs: 0,
+        transfer: 0,
+        transferuzs: 0,
+      },
+      back: {
+        cash: 0,
+        cashuzs: 0,
+        card: 0,
+        carduzs: 0,
+        transfer: 0,
+        transferuzs: 0,
+      },
+      result: {
+        cash: 0,
+        cashuzs: 0,
+        card: 0,
+        carduzs: 0,
+        transfer: 0,
+        transferuzs: 0,
+      },
+    }
+
+    for (const payment of allpayments) {
+      // if (payment.totalprice !== 0) {
+      //   const dailyconnectors = await DailySaleConnector.findOne({
+      //     payment: payment._id
+      //   })
+      //     .select('-isArchive -updatedAt -market -__v')
+      //     .populate(
+      //       'payment',
+      //       'cash cashuzs card carduzs transfer transferuzs payment paymentuzs totalprice totalpriceuzs'
+      //     )
+      //     .populate({
+      //       path: 'saleconnector',
+      //       select: 'id',
+      //     })
+      //     .populate({
+      //       path: 'client',
+      //       select: 'name',
+      //     })
+      //     .populate({
+      //       path: 'user',
+      //       select: "firstname lastname"
+      //     })
+      //     .populate({
+      //       path: 'products',
+      //       select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+      //       populate: {
+      //         path: 'price',
+      //         select: 'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
+      //       },
+      //     })
+      //     .populate({
+      //       path: 'products',
+      //       select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+      //       populate: {
+      //         path: 'user',
+      //         select: 'firstname lastname',
+      //       },
+      //     })
+      //     .populate({
+      //       path: 'products',
+      //       select: 'totalprice totalpriceuzs pieces price unitprice unitpriceuzs product createdAt user',
+      //       populate: {
+      //         path: 'product',
+      //         select: 'productdata',
+      //         populate: {
+      //           path: 'productdata',
+      //           select: "name code"
+      //         }
+      //       }
+      //     })
+      //     .populate(
+      //       'discount',
+      //       'discount discountuzs totalprice totalpriceuzs procient'
+      //     )
+      //     .lean()
+      //   respayments.push({
+      //     id: payment.saleconnector && payment.saleconnector.id,
+      //     saleconnector: dailyconnectors,
+      //     createdAt: payment.createdAt,
+      //     client:
+      //       payment.saleconnector &&
+      //       payment.saleconnector.client &&
+      //       payment.saleconnector.client,
+      //     cash: payment.cash,
+      //     cashuzs: payment.cashuzs,
+      //     card: payment.card,
+      //     carduzs: payment.carduzs,
+      //     transfer: payment.transfer,
+      //     transferuzs: payment.transferuzs,
+      //     totalprice: (payment.totalprice && payment.totalprice) || 0,
+      //     totalpriceuzs: (payment.totalpriceuzs && payment.totalpriceuzs) || 0,
+      //   })
+      // } else {
+      respayments.push({
+        id: payment.saleconnector && payment.saleconnector.id,
+        saleconnector: payment.saleconnector,
+        createdAt: payment.createdAt,
+        client:
+          payment.saleconnector &&
+          payment.saleconnector.client &&
+          payment.saleconnector.client,
+        cash: payment.cash,
+        cashuzs: payment.cashuzs,
+        card: payment.card,
+        carduzs: payment.carduzs,
+        transfer: payment.transfer,
+        transferuzs: payment.transferuzs,
+        totalprice: (payment.totalprice && payment.totalprice) || 0,
+        totalpriceuzs: (payment.totalpriceuzs && payment.totalpriceuzs) || 0,
+      })
+
+      if (payment.cash < 0 || payment.card < 0 || payment.transfer < 0) {
+        total.back.cash += payment.cash;
+        total.back.cashuzs += payment.cashuzs;
+        total.back.card += payment.card;
+        total.back.carduzs += payment.carduzs;
+        total.back.transfer += payment.transfer
+        total.back.transferuzs += payment.transferuzs
+      } else {
+        total.payment.cash += payment.cash;
+        total.payment.cashuzs += payment.cashuzs;
+        total.payment.card += payment.card;
+        total.payment.carduzs += payment.carduzs;
+        total.payment.transfer += payment.transfer
+        total.payment.transferuzs += payment.transferuzs
+      }
+    }
+
+    total.result.cash = total.payment.cash + total.back.cash;
+    total.result.cashuzs = total.payment.cashuzs + total.back.cashuzs;
+    total.result.card = total.payment.card + total.back.card;
+    total.result.carduzs = total.payment.carduzs + total.back.carduzs;
+    total.result.transfer = total.payment.transfer + total.back.transfer
+    total.result.transferuzs = total.payment.transferuzs + total.back.transferuzs
+
+    const response = respayments.filter((product) => product.saleconnector !== null);
+    const count = response.length;
+    let paymentsreport = response.splice(currentPage * countPage, countPage);
+    res.status(201).json({ data: paymentsreport, count, total });
   } catch (error) {
+    console.log(error);
     res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
   }
 };

@@ -1,21 +1,18 @@
 import React from 'react'
-import {Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 
 const CheckoutCards = ({
-                           type,
-                           onClick,
-                           name,
-                           active,
-                           currency,
-                           report,
-                           path,
-                       }) => {
-    const chooseCardName = `cardContainer ${
-        type === 'sale' ||
-        type === 'income' ||
-        type === 'cash' ||
-        type === 'card' ||
-        type === 'transfer'
+    type,
+    onClick,
+    name,
+    active,
+    currency,
+    report,
+    path,
+}) => {
+    const chooseCardName = `cardContainer ${type === 'sale' ||
+            type === 'income' ||
+            type === 'payments'
             ? 'tradeCard'
             : type === 'expenses' || type === 'debts'
                 ? 'debts'
@@ -24,7 +21,7 @@ const CheckoutCards = ({
                     : type === 'discounts'
                         ? 'discountCard'
                         : ''
-    } ${active ? 'activeCard' : ''}`
+        } ${active ? 'activeCard' : ''}`
 
     return (
         <Link to={`/kassa/${path}`} onClick={onClick}>

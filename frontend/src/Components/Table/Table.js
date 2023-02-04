@@ -322,7 +322,7 @@ function Table({
                         Print={Print}
                     />
                 )
-            case 'cash':
+            case 'payments':
                 return (
                     <PaymentsTableRow
                         currentPage={currentPage}
@@ -330,6 +330,7 @@ function Table({
                         currency={currency}
                         data={data}
                         type={type}
+                        Print={Print}
                     />
                 )
             case 'card':
@@ -359,6 +360,7 @@ function Table({
                         countPage={countPage}
                         currency={currency}
                         data={data}
+                        Print={Print}
                     />
                 )
             case 'debts':

@@ -21,7 +21,6 @@ import {
     getExpensesReport,
     getPaymentReport,
     getProfit,
-    getSales,
     payDebt,
     setDebtComment,
 } from './reportsSlice'
@@ -29,15 +28,19 @@ import { ReportsTableHeaders } from './ReportsTableHeaders'
 import { filter } from 'lodash'
 import { universalSort } from './../../App/globalFunctions'
 import { changeStartDate, changeEndDate } from './reportsSlice'
+import { getSellings } from '../Sale/Slices/sellingsSlice'
 const ReportPage = () => {
     const { id } = useParams()
 
     const dispatch = useDispatch()
 
     const { market: _id, user } = useSelector((state) => state.login)
-    const { datas, count, startDate, endDate, successDebtComment } = useSelector(
+    const { datas, count, startDate, endDate, successDebtComment, totalpayment } = useSelector(
         (state) => state.reports
     )
+    const {
+        sellings
+    } = useSelector((state) => state.sellings)
     const { currencyType, currency } = useSelector((state) => state.currency)
     const [currentPage, setCurrentPage] = useState(0)
     const [countPage, setCountPage] = useState(10)
@@ -501,13 +504,29 @@ const ReportPage = () => {
         }
         if (id === 'sale') {
             setModalData(saleconnector)
-            setModalBody('checkSell')
+            setModalBody('allChecks')
             setModalVisible(true)
         }
         if (id === 'backproducts') {
             setModalBody('allChecks')
             setModalData(saleconnector)
             setModalVisible(!modalVisible)
+        }
+        if (id === 'income') {
+            setModalBody('allChecks')
+            setModalData(saleconnector)
+            setModalVisible(!modalVisible)
+        }
+        if (id === 'payments') {
+            if (saleconnector.payment) {
+                setModalBody('checkSell')
+                setModalData(saleconnector)
+                setModalVisible(!modalVisible)
+            } else {
+                setModalBody('allChecks')
+                setModalData(saleconnector)
+                setModalVisible(!modalVisible)
+            }
         }
     }
 
@@ -643,11 +662,9 @@ const ReportPage = () => {
             startDate: beginDay,
             endDate: endDay,
         }
-        check('sale') && dispatch(getSales(body))
+        check('sale') && dispatch(getSellings(body))
         check('income') && dispatch(getProfit(body))
-        check('cash') && dispatch(getPaymentReport(body))
-        check('card') && dispatch(getPaymentReport(body))
-        check('transfer') && dispatch(getPaymentReport(body))
+        check('payments') && dispatch(getPaymentReport(body))
         check('debts') && dispatch(getDebts(debtBody))
         check('discounts') && dispatch(getDiscounts(body))
         check('backproducts') && dispatch(getBackProducts(body))
@@ -671,7 +688,12 @@ const ReportPage = () => {
         if (id === 'cash' || id === 'card' || id === 'transfer') {
             setCurrentData([...datas.filter((item) => item[id] !== 0)])
             setStorageData([...datas.filter((item) => item[id] !== 0)])
-        } else {
+        }
+        if (id === "sale") {
+            setCurrentData(sellings)
+            setStorageData(sellings)
+        }
+        else {
             setCurrentData(datas)
             setStorageData(datas)
         }
@@ -679,7 +701,7 @@ const ReportPage = () => {
             setCurrentData([])
             setStorageData([])
         }
-    }, [datas, id])
+    }, [datas, id, sellings])
     useEffect(() => {
         count > 0 && setTotalPage(count)
     }, [count])
@@ -763,7 +785,7 @@ const ReportPage = () => {
             <div className='tableContainerPadding'>
                 {currentData.length > 0 && (
                     <Table
-                        page={id}
+                        page={id === 'sale' ? "saleslist" : id}
                         headers={ReportsTableHeaders(id)}
                         data={currentData}
                         currentPage={currentPage}
@@ -797,6 +819,82 @@ const ReportPage = () => {
                         </li>
                     </ul>
                 )}
+                {id === 'payments' && totalpayment?.payment?.cash && <div className='flex items-center justify-between mt-6 bg-white p-2'>
+                    <div className='flex flex-col items-start gap-2'>
+                        <div className='text-[18px] font-bold mb-2'>Tushumlar</div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>Naqt:</div>
+                            <div>
+                                {currencyType === 'USD' ? roundUsd(totalpayment.payment.cash).toLocaleString('ru-RU') : roundUzs(totalpayment.payment.cashuzs).toLocaleString('ru-RU')}{' '}{currencyType}
+                            </div>
+                        </div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>Plastik:</div>
+                            <div>
+                                {currencyType === 'USD' ? roundUsd(totalpayment.payment.card).toLocaleString('ru-RU') : roundUzs(totalpayment.payment.carduzs).toLocaleString('ru-RU')}{' '}{currencyType}
+                            </div>
+                        </div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>O'tkazma:</div>
+                            <div>
+                                {currencyType === 'USD' ? roundUsd(totalpayment.payment.transfer).toLocaleString('ru-RU') : roundUzs(totalpayment.payment.transferuzs).toLocaleString('ru-RU')}{' '}{currencyType}
+                            </div>
+                        </div>
+                        <div className='text-[18px] font-semibold w-[200px] flex justify-end'>
+                            {currencyType === 'USD' ?
+                                roundUsd(totalpayment.payment.cash + totalpayment.payment.card + totalpayment.payment.transfer).toLocaleString('ru-RU') :
+                                roundUzs(totalpayment.payment.cashuzs + totalpayment.payment.carduzs + totalpayment.payment.transferuzs).toLocaleString('ru-RU')}{' '}
+                            {currencyType}
+                        </div>
+                    </div>
+                    <div className='flex flex-col items-start gap-2'>
+                        <div className='text-[18px] font-bold mb-2'>Qaytarilganlar</div>
+                        <div className='font-semibold w-[200px] flex justify-between w-[200px] flex justify-between'><div>Naqt:</div> <span>
+                            {currencyType === 'USD' ?
+                                roundUsd(totalpayment.back.cash).toLocaleString('ru-RU')
+                                : roundUzs(totalpayment.back.cashuzs).toLocaleString('ru-RU')}{' '}
+                            {currencyType}
+                        </span></div>
+                        <div className='font-semibold w-[200px] flex justify-between w-[200px] flex justify-between'><div>Plastik:</div>
+                            <span>
+                                {currencyType === 'USD' ?
+                                    roundUsd(totalpayment.back.card).toLocaleString('ru-RU')
+                                    : roundUzs(totalpayment.back.carduzs).toLocaleString('ru-RU')}{' '}
+                                {currencyType}
+                            </span></div>
+                        <div className='font-semibold w-[200px] flex justify-between w-[200px] flex justify-between'>
+                            <div>O'tkazma:</div>
+                            <span>{currencyType === 'USD' ?
+                                roundUsd(totalpayment.back.transfer).toLocaleString('ru-RU')
+                                : roundUzs(totalpayment.back.transferuzs).toLocaleString('ru-RU')}{' '}
+                                {currencyType}</span>
+                        </div>
+                        <div className='text-[18px] font-semibold w-[200px] flex justify-end'>
+                            {currencyType === 'USD' ?
+                                roundUsd(totalpayment.back.cash + totalpayment.back.card + totalpayment.back.transfer).toLocaleString('ru-RU') :
+                                roundUzs(totalpayment.back.cashuzs + totalpayment.back.carduzs + totalpayment.back.transferuzs).toLocaleString('ru-RU')}{' '}
+                            {currencyType}
+                        </div>
+                    </div>
+                    <div className='flex flex-col items-start gap-2'>
+                        <div className='text-[18px] font-bold mb-2'>Kassadagi qoldiq</div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>Naqt:</div>
+                            <span>{currencyType === 'USD' ? roundUsd(totalpayment.result.cash).toLocaleString('ru-RU') : roundUzs(totalpayment.result.cashuzs).toLocaleString('ru-RU')}{' '}{currencyType}</span></div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>Plastik:</div>
+                            <span>{currencyType === 'USD' ? roundUsd(totalpayment.result.card).toLocaleString('ru-RU') : roundUzs(totalpayment.result.carduzs).toLocaleString('ru-RU')}{' '}{currencyType}</span></div>
+                        <div className='font-semibold w-[200px] flex justify-between'>
+                            <div>O'tkazma:</div>
+                            <span>{currencyType === 'USD' ? roundUsd(totalpayment.result.transfer).toLocaleString('ru-RU') : roundUzs(totalpayment.result.transferuzs).toLocaleString('ru-RU')}{' '}{currencyType}</span></div>
+                        <div className='text-[18px] font-semibold w-[200px] flex justify-end'>
+                            {currencyType === 'USD' ?
+                                roundUsd(totalpayment.result.cash + totalpayment.result.card + totalpayment.result.transfer).toLocaleString('ru-RU') :
+                                roundUzs(totalpayment.result.cashuzs + totalpayment.result.carduzs + totalpayment.result.transferuzs).toLocaleString('ru-RU')}{' '}
+                            {currencyType}
+                        </div>
+                    </div>
+                </div>}
             </div>
             <div>
                 <CustomerPayment

@@ -36,16 +36,8 @@ const Reports = () => {
             type: 'expenses',
         },
         {
-            name: 'Naqd',
-            type: 'cash',
-        },
-        {
-            name: 'Plastik',
-            type: 'card',
-        },
-        {
-            name: 'O`tkazmalar',
-            type: 'transfer',
+            name: "Tushumlar",
+            type: 'payments',
         },
         {
             name: 'Qaytarilgan',
