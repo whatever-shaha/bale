@@ -139,12 +139,12 @@ module.exports.registerProducts = async (req, res) => {
         filialProduct.total = filialProduct.total + product.total;
         filialProduct.minimumcount = product.minimumcount;
 
-        const filialproductPrice = await ProductPrice.findById(filialProduct.price)
-        filialproductPrice.incomingprice = Number(incomingprice)
-        filialproductPrice.incomingpriceuzs = Number(incomingpriceuzs)
-        filialproductPrice.sellingprice = Number(sellingprice)
-        filialproductPrice.sellingpriceuzs = Number(sellingpriceuzs)
-        filialproductPrice.save();
+        // const filialproductPrice = await ProductPrice.findById(filialProduct.price)
+        // filialproductPrice.incomingprice = Number(incomingprice)
+        // filialproductPrice.incomingpriceuzs = Number(incomingpriceuzs)
+        // filialproductPrice.sellingprice = Number(sellingprice)
+        // filialproductPrice.sellingpriceuzs = Number(sellingpriceuzs)
+        // filialproductPrice.save();
 
         await filialProduct.save();
 

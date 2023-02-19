@@ -722,7 +722,7 @@
     }
 
     .product-exchange-modal-text {
-        @apply text-[1rem] font-[300] text-black-700 w-full flex items-center justify-between;
+        @apply text-[1rem] font-[300] text-black-700 w-full flex items-center justify-center gap-4;
     }
     .request-application-ul {
         @apply flex justify-between border-b border-b-primary-900 pb-[0.5rem] mb-[1rem] items-center;

@@ -117,7 +117,8 @@ module.exports.register = async (req, res) => {
         .populate(
           'productdata',
           'name'
-        );
+        )
+        .populate('price')
       if (fromFilial <= 0 && produc.total < pieces) {
         return res.status(400).json({
           error: `Diqqat! ${produc.productdata.name} mahsuloti omborda yetarlicha mavjud emas. Qolgan mahsulot soni ${produc.total} ta`,
@@ -316,7 +317,8 @@ module.exports.register = async (req, res) => {
 
     res.status(201).send(connector);
   } catch (error) {
-    res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
+    console.log(error);
+    res.status(400).json({ error: 'Serverda xatolik yuz berdi...', message: error.message });
   }
 };
 
@@ -394,7 +396,9 @@ module.exports.addproducts = async (req, res) => {
       const produc = await Product.findById(product._id).populate(
         'productdata',
         'name'
-      );
+      )
+        .populate('price')
+
       if (produc.total < pieces) {
         return res.status(400).json({
           error: `Diqqat! ${produc.productdata.name} mahsuloti omborda yetarlicha mavjud emas. Qolgan mahsulot soni ${produc.total} ta`,
@@ -570,7 +574,8 @@ module.exports.addproducts = async (req, res) => {
       .populate('saleconnector', 'id');
     res.status(201).send(connector);
   } catch (error) {
-    res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
+    console.log(error);
+    res.status(400).json({ error: 'Serverda xatolik yuz berdi...', message: error.message });
   }
 };
 

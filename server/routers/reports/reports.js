@@ -53,6 +53,14 @@ module.exports.getReport = async (req, res) => {
           }
         },
       })
+      .populate({
+        path: 'products',
+        select: 'totalprice totalpriceuzs pieces price product',
+        populate: {
+          path: 'price',
+          select: "incomingprice incomingpriceuzs sellingprice sellingpriceuzs"
+        },
+      })
       .populate('discount', 'discount discountuzs procient');
 
     // qarz uchun saleconnector ishlatiyapman
@@ -188,9 +196,9 @@ module.exports.getReport = async (req, res) => {
       sale.products.map((product) => {
         reports.sale.sale += roundUsd(product.totalprice);
         reports.sale.saleuzs += roundUzs(product.totalpriceuzs);
-        incomingprice += roundUsd(product.product.price.incomingprice * product.pieces);
+        incomingprice += roundUsd((product.price && product.price.incomingprice || product.product && product.product.price.incomingprice || 0) * product.pieces);
         incomingpriceuzs += roundUzs(
-          product.product.price.incomingpriceuzs * product.pieces
+          (product.price && product.price.incomingpriceuzs || product.product && product.product.price.incomingpriceuzs || 0) * product.pieces
         );
         if (product.totalprice < 0) {
           backproduct += roundUsd(product.totalprice);
@@ -270,7 +278,7 @@ module.exports.getReport = async (req, res) => {
     res.status(201).send(reports);
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(400).json({ error: 'Serverda xatolik yuz berdi...', message: error.message });
   }
 };
 
@@ -435,11 +443,11 @@ module.exports.getProfitData = async (req, res) => {
         //   0
         // );
         const totalincomingprice = sale.products.reduce(
-          (prev, item) => prev + item.pieces * item.product.price.incomingprice,
+          (prev, item) => prev + item.pieces * (item.price && item.price.incomingprice || item.product && item.product.price.incomingprice || 0),
           0
         );
         const totalincomingpriceuzs = sale.products.reduce(
-          (prev, item) => prev + item.pieces * item.product.price.incomingpriceuzs,
+          (prev, item) => prev + item.pieces * (item.price && item.price.incomingpriceuzs || item.product && item.product.price.incomingpriceuzs || 0),
           0
         );
         const totalprice = sale.products.reduce(
@@ -479,7 +487,7 @@ module.exports.getProfitData = async (req, res) => {
     res.status(201).json({ data: profitreport, count });
   } catch (error) {
     console.log(error);
-    res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(400).json({ error: 'Serverda xatolik yuz berdi...', message: error.message });
   }
 };
 

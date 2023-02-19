@@ -1,8 +1,21 @@
-import {IoCheckmarkCircleOutline} from 'react-icons/io5'
+import { IoCheckmarkCircleOutline } from 'react-icons/io5'
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
 
-function Complate({toggleModal, approveFunction, headerText, title}) {
-    const {t} = useTranslation(['common'])
+function Complate({ toggleModal, approveFunction, headerText, title }) {
+    const { t } = useTranslation(['common'])
+
+    const [buttonVisible, setButtonVisible] = useState(false)
+
+    const freezeButton = () => {
+        setButtonVisible(true)
+        setTimeout(() => {
+            setButtonVisible(false)
+        }, 15000)
+    }
+
+    console.log(buttonVisible);
+
     return (
         <div className={'modalContent text-center'}>
             <div className='flex items-center justify-center'>
@@ -27,8 +40,11 @@ function Complate({toggleModal, approveFunction, headerText, title}) {
                     {t("Bekor qilish")}
                 </button>
                 <button
-                    className={'approveBtn bg-primary-800 hover:bg-primary-900'}
-                    onClick={approveFunction}
+                    className={`${buttonVisible ? "pointer-events-none" : ""} approveBtn bg-primary-800 hover:bg-primary-900`}
+                    onClick={() => {
+                        approveFunction()
+                        freezeButton();
+                    }}
                 >
                     {t("Tasdiqlash")}
                 </button>

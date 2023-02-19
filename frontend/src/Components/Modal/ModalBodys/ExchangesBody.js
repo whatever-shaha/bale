@@ -1,9 +1,9 @@
-import React, {useState} from 'react'
-import {useSelector} from 'react-redux'
+import React, { useState } from 'react'
+import { useSelector } from 'react-redux'
 import LabelInput from '../../Inputs/LabelInput'
 
-function ExchangesBody({approveFunction, toggleModal, dataObject}) {
-    const {currencyType} = useSelector((state) => state.currency)
+function ExchangesBody({ approveFunction, toggleModal, dataObject }) {
+    const { currencyType } = useSelector((state) => state.currency)
 
     const [productNumber, setProductNumber] = useState(1)
     const [getProduct, setGetProduct] = useState(dataObject?.get)
@@ -65,7 +65,7 @@ function ExchangesBody({approveFunction, toggleModal, dataObject}) {
             <div className='mb-[2.5rem] text-[1.25rem] text-black-700 leading-[1.5rem] text-center mt-[1.25rem]'>
                 {dataObject?.name}
             </div>
-            <div className='flex items-center gap-[2.5rem] justify-between mb-[2.5rem]'>
+            <div className='flex items-center gap-[2.5rem] justify-evenly mb-[2.5rem]'>
                 <div className='product-exchange-modal-text'>
                     Kodi :
                     <span className='product-exchange-modal-span bg-[#F79009]'>
@@ -73,37 +73,17 @@ function ExchangesBody({approveFunction, toggleModal, dataObject}) {
                     </span>
                 </div>
                 <div className='product-exchange-modal-text'>
-                    Olish :
-                    <span className='product-exchange-modal-span bg-[#86A7E9]'>
-                        {dataObject
-                            ? currencyType === 'UZS'
-                                ? dataObject?.get.toLocaleString('ru-Ru')
-                                : dataObject?.getUSD.toLocaleString('ru-Ru')
-                            : '0'}
-                    </span>
-                </div>
-                <div className='product-exchange-modal-text'>
                     Soni :
                     <span className='product-exchange-modal-span bg-[#00B4CC]'>
                         {dataObject
                             ? (
-                                  dataObject?.number - Math.abs(productNumber)
-                              ).toLocaleString('ru-Ru')
-                            : '0'}
-                    </span>
-                </div>
-                <div className='product-exchange-modal-text'>
-                    Sotish :
-                    <span className='product-exchange-modal-span bg-[#32D583]'>
-                        {dataObject
-                            ? currencyType === 'UZS'
-                                ? dataObject?.sell.toLocaleString('ru-Ru')
-                                : dataObject?.sellUSD.toLocaleString('ru-Ru')
+                                dataObject?.number - Math.abs(productNumber)
+                            ).toLocaleString('ru-Ru')
                             : '0'}
                     </span>
                 </div>
             </div>
-            <div className='flex justify-between gap-[1.25rem] mb-[3.75rem]'>
+            <div className='flex justify-center gap-[1.25rem] mb-[3.75rem]'>
                 <div>
                     <LabelInput
                         label={'Soni'}
@@ -112,7 +92,7 @@ function ExchangesBody({approveFunction, toggleModal, dataObject}) {
                         onChange={(e) => handleNumberProduct(e.target.value)}
                     />
                 </div>
-                <div>
+                {/* <div>
                     <LabelInput
                         label={'Olish'}
                         type={'number'}
@@ -137,7 +117,7 @@ function ExchangesBody({approveFunction, toggleModal, dataObject}) {
                             handleSellProduct(e.target.value, currencyType)
                         }
                     />
-                </div>
+                </div> */}
             </div>
             <div
                 className={'flex mt-7 items-center justify-center gap-[1.5rem]'}

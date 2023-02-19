@@ -521,11 +521,23 @@ module.exports.getsellers = async (req, res) => {
           .populate('client', 'name')
           .populate({
             path: 'products',
-            select: 'totalprice totalpriceuzs pieces price',
+            select: 'totalprice totalpriceuzs pieces price product',
             populate: {
               path: 'price',
               select:
                 'incomingprice incomingpriceuzs sellingprice sellingpriceuzs',
+            },
+          })
+          .populate({
+            path: 'products',
+            select: 'totalprice totalpriceuzs pieces price product',
+            populate: {
+              path: 'product',
+              select: 'price',
+              populate: {
+                path: "price",
+                select: "incomingprice incomingpriceuzs"
+              }
             },
           })
           .populate(
@@ -546,11 +558,11 @@ module.exports.getsellers = async (req, res) => {
 
         const profitData = sales.map((sale) => {
           const totalincomingprice = sale.products.reduce(
-            (prev, item) => prev + item.pieces * item.price.incomingprice,
+            (prev, item) => prev + item.pieces * (item.price && item.price.incomingprice || item.product && item.product.price.incomingprice || 0),
             0
           );
           const totalincomingpriceuzs = sale.products.reduce(
-            (prev, item) => prev + item.pieces * item.price.incomingpriceuzs,
+            (prev, item) => prev + item.pieces * (item.price && item.price.incomingpriceuzs || item.product && item.product.price.incomingpriceuzs || 0),
             0
           );
           const totalprice = sale.products.reduce(

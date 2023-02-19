@@ -1,6 +1,6 @@
 import React from 'react'
 import TableBtn from '../../Buttons/TableBtn'
-import {map} from 'lodash'
+import { map } from 'lodash'
 export const ProductTableRow = ({
     currentPage,
     countPage,
@@ -28,8 +28,8 @@ export const ProductTableRow = ({
                         {product.productdata?.barcode}
                     </td>
                     <td className='td text-center'>
-                        {product.category.code}{' '}
-                        {product.category.name && `- ${product.category.name}`}
+                        {product?.category?.code}{' '}
+                        {product?.category?.name && `- ${product?.category?.name}`}
                     </td>
                     <td className='td text-center'>
                         {product.productdata.code}
@@ -43,22 +43,22 @@ export const ProductTableRow = ({
                         {product.price &&
                             (currency === 'UZS'
                                 ? product?.price?.incomingpriceuzs.toLocaleString(
-                                      'ru-RU'
-                                  )
+                                    'ru-RU'
+                                )
                                 : product?.price?.incomingprice.toLocaleString(
-                                      'ru-RU'
-                                  ))}{' '}
+                                    'ru-RU'
+                                ))}{' '}
                         {currencyType}
                     </td>
                     <td className='td text-right'>
                         {product.price &&
                             (currency === 'UZS'
                                 ? product?.price?.sellingpriceuzs.toLocaleString(
-                                      'ru-RU'
-                                  )
+                                    'ru-RU'
+                                )
                                 : product?.price?.sellingprice.toLocaleString(
-                                      'ru-RU'
-                                  ))}{' '}
+                                    'ru-RU'
+                                ))}{' '}
                         {currencyType}
                     </td>
                     <td className='td text-right'>
@@ -66,11 +66,11 @@ export const ProductTableRow = ({
                             <>
                                 {currency === 'UZS'
                                     ? product?.price?.tradepriceuzs.toLocaleString(
-                                          'ru-RU'
-                                      )
+                                        'ru-RU'
+                                    )
                                     : product?.price?.tradeprice.toLocaleString(
-                                          'ru-RU'
-                                      )}{' '}
+                                        'ru-RU'
+                                    )}{' '}
                                 {currencyType}
                             </>
                         ) : (
@@ -78,11 +78,10 @@ export const ProductTableRow = ({
                         )}
                     </td>
                     <td
-                        className={`td text-right ${
-                            (productminimumpage &&
+                        className={`td text-right ${(productminimumpage &&
                                 'py-[0.625rem] border-r-0') ||
                             ''
-                        }`}
+                            }`}
                     >
                         {product?.minimumcount || ''}
                     </td>
