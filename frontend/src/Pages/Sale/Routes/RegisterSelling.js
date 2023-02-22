@@ -159,6 +159,7 @@ const RegisterSelling = () => {
     // if (product.total === 0) return warningCountSellPayment()
     const handleClickPayment = () => {
         if (tableProducts.length) {
+            console.log(tableProducts);
             if (tableProducts.some(prod => prod.total === 0 && prod.fromFilial === 0)) return warningCountSellPayment()
             const filteredData = tableProducts
                 .filter((item) => item.unitprice <= item.incomingprice)
