@@ -3,6 +3,11 @@ const {
   validateTemporary,
 } = require("../../models/Sales/Temporary");
 const { Market } = require("../../models/MarketAndBranch/Market");
+const { Category } = require("../../models/Products/Category");
+const { ProductData } = require("../../models/Products/Productdata");
+const {
+  Product
+} = require("../../models/Products/Product");
 
 module.exports.register = async (req, res) => {
   try {
@@ -42,7 +47,31 @@ module.exports.getAll = async (req, res) => {
 
     const temporaries = await Temporary.find({ market }).select(
       "temporary createdAt"
-    );
+    )
+      .lean()
+
+    for (const temp of temporaries) {
+      for (const prod of temp.temporary.tableProducts) {
+        if (Number(prod.fromFilial) === prod.filial !== market) {
+          const filialCategory = await Category.findOne({
+            code: prod.categorycode,
+            market: prod.filial
+          })
+          const filialProductData = await ProductData.findOne({
+            market: prod.filial,
+            code: prod.product.code,
+            category: filialCategory._id
+          })
+          const product = await Product.findOne({
+            market: prod.filial,
+            productdata: filialProductData._id
+          })
+          prod.filialProductsTotal = product.total;
+        }
+        const product = await Product.findById(prod.product._id)
+        prod.total = product.total;
+      }
+    }
 
     res.status(201).send(temporaries);
   } catch (error) {
