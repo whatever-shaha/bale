@@ -1,19 +1,19 @@
-import {uniqueId, map} from 'lodash'
+import { uniqueId, map } from 'lodash'
 import React from 'react'
 import TableBtn from '../../Buttons/TableBtn'
-import {useNavigate} from 'react-router-dom'
-import {useSelector} from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
-export const TemporarySaleTableRow = ({data, Delete, currency, Print}) => {
+export const TemporarySaleTableRow = ({ data, Delete, currency, Print }) => {
     const navigate = useNavigate()
-    const {user} = useSelector((state) => state.login)
+    const { user } = useSelector((state) => state.login)
     const link = user?.type?.toLowerCase() === 'seller' ? '/' : '/sotuv/sotish'
     const linkToSale = (temporary) => {
-        navigate(link, {state: {temporary: {...temporary}}})
+        navigate(link, { state: { temporary: { ...temporary } } })
     }
     return (
         <>
-            {map(data, ({_id, temporary, createdAt}, index) => (
+            {map(data, ({ _id, temporary, createdAt }, index) => (
                 <tr className='tr' key={uniqueId('sale')}>
                     <td className='td'>{1 + index}</td>
                     <td className='td text-left'>
@@ -27,8 +27,8 @@ export const TemporarySaleTableRow = ({data, Delete, currency, Print}) => {
                     </td>
                     <td className='text-success-500 td text-right'>
                         {currency === 'USD'
-                            ? temporary.totalPrice.toLocaleString('ru-RU')
-                            : temporary.totalPriceUzs.toLocaleString('ru-RU')}
+                            ? (temporary?.totalPrice || 0).toLocaleString('ru-RU')
+                            : (temporary?.totalPriceUzs || 0).toLocaleString('ru-RU')}
                         {currency}
                     </td>
                     <td className='td text-right'>
@@ -43,13 +43,13 @@ export const TemporarySaleTableRow = ({data, Delete, currency, Print}) => {
                                 type={'print'}
                                 bgcolor={'bg-primary-800'}
                                 onClick={() =>
-                                    Print({_id, temporary, createdAt})
+                                    Print({ _id, temporary, createdAt })
                                 }
                             />
                             <TableBtn
                                 type={'edit'}
                                 bgcolor={'bg-warning-500'}
-                                onClick={() => linkToSale({...temporary, _id})}
+                                onClick={() => linkToSale({ ...temporary, _id })}
                             />
                             <TableBtn
                                 type={'delete'}
