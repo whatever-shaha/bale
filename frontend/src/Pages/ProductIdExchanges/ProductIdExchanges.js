@@ -193,7 +193,6 @@ function ProductIdExchanges({currency}) {
         setFilteredDataTotal(total)
     }, [total])
 
-
     return (
         <motion.section
             key='content'

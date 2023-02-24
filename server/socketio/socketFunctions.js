@@ -5,6 +5,10 @@ const { Category } = require("../models/Products/Category.js");
 const { Unit } = require("../models/Products/Unit.js");
 const { ProductPrice } = require("../models/Products/ProductPrice.js");
 const { User } = require("../models/Users.js");
+const { map, reduce } = require("lodash");
+
+const convertToUsd = (value) => Math.round(value * 1000) / 1000;
+const convertToUzs = (value) => Math.round(value);
 
 const getProductsByCount = async ({ socket, market }) => {
   try {
@@ -60,7 +64,51 @@ const getAllFilials = async ({ socket, market }) => {
     const filials = await Market.find({ mainmarket: market }, { timestamp: 1 })
       .select("director image name phone1 createdAt")
       .populate("director", "firstname lastname");
-    return socket.emit("getAllFilials", { id: market, filials });
+
+    const all = [];
+    for (const i in filials) {
+      const products = await Product.find({ market: filials[i]._id })
+        .select("total price")
+        .populate("price", "incomingpriceuzs incomingprice")
+        .then((products) => {
+          const totalPrice = reduce(
+            products,
+            (summ, product) =>
+              summ + product.price.incomingprice * product.total,
+            0
+          );
+          const totalPriceuzs = reduce(
+            products,
+            (summ, product) =>
+              summ + product.price.incomingpriceuzs * product.total,
+            0
+          );
+          return {
+            totalPrice: convertToUsd(totalPrice),
+            totalPriceuzs: convertToUzs(totalPriceuzs),
+          };
+        });
+      const productCount = await Product.find({
+        market: filials[i]._id,
+      }).count();
+      const productCategory = await Category.find({
+        market: filials[i]._id,
+      }).count();
+      all.push({
+        products,
+        productCategory,
+        productCount,
+        _id: filials[i]._id,
+        name: filials[i].name,
+        image: filials[i].image,
+        phone1: filials[i].phone1,
+        createdAt: filials[i].createdAt,
+        director: filials[i].director,
+      });
+    }
+    console.log(all);
+
+    return socket.emit("getAllFilials", { id: market, filials: all });
   } catch (error) {
     return socket.emit("error", {
       id: market,

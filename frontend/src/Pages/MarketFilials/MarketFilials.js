@@ -32,10 +32,12 @@ function MarketFilials() {
                                     lastname: filial?.director?.lastname,
                                     image: filial?.director?.image,
                                 },
-                                typecount: 10,
-                                productcount: 100,
-                                totalPrice: 1000000,
-                                totalPriceUSD: 100,
+                                typecount: filial?.productCategory || 0,
+                                productcount: filial?.productCount || 0,
+                                totalPrice:
+                                    filial?.products?.totalPriceuzs || 0,
+                                totalPriceUSD:
+                                    filial?.products?.totalPrice || 0,
                                 shopname: filial?.name,
                                 _id: filial?._id,
                             }
