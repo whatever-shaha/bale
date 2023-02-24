@@ -106,7 +106,6 @@ const getAllFilials = async ({ socket, market }) => {
         director: filials[i].director,
       });
     }
-    console.log(all);
 
     return socket.emit("getAllFilials", { id: market, filials: all });
   } catch (error) {

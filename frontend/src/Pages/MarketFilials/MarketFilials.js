@@ -28,9 +28,10 @@ function MarketFilials() {
                         map(filials, (filial) => {
                             return {
                                 director: {
-                                    firstname: filial?.director?.firstname,
-                                    lastname: filial?.director?.lastname,
-                                    image: filial?.director?.image,
+                                    firstname:
+                                        filial?.director?.firstname || '',
+                                    lastname: filial?.director?.lastname || '',
+                                    image: filial?.director?.image || '',
                                 },
                                 typecount: filial?.productCategory || 0,
                                 productcount: filial?.productCount || 0,
@@ -38,8 +39,8 @@ function MarketFilials() {
                                     filial?.products?.totalPriceuzs || 0,
                                 totalPriceUSD:
                                     filial?.products?.totalPrice || 0,
-                                shopname: filial?.name,
-                                _id: filial?._id,
+                                shopname: filial?.name || '',
+                                _id: filial?._id || '',
                             }
                         })
                     )
