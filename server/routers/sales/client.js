@@ -1,16 +1,16 @@
-const { Client, validateClient } = require('../../models/Sales/Client.js');
-const { Market } = require('../../models/MarketAndBranch/Market');
-const { Packman } = require('../../models/Sales/Packman.js');
-const { SaleConnector } = require('../../models/Sales/SaleConnector');
-require('../../models/Sales/SaleProduct');
-require('../../models/Sales/Packman');
-require('../../models/Sales/Payment');
-require('../../models/Sales/Discount');
-require('../../models/Sales/Debt');
-require('../../models/Sales/DailySaleConnector');
-require('../../models/Products/Productdata');
-require('../../models/Products/Product');
-require('../../models/Users');
+const { Client, validateClient } = require("../../models/Sales/Client.js");
+const { Market } = require("../../models/MarketAndBranch/Market");
+const { Packman } = require("../../models/Sales/Packman.js");
+const { SaleConnector } = require("../../models/Sales/SaleConnector");
+require("../../models/Sales/SaleProduct");
+require("../../models/Sales/Packman");
+require("../../models/Sales/Payment");
+require("../../models/Sales/Discount");
+require("../../models/Sales/Debt");
+require("../../models/Sales/DailySaleConnector");
+require("../../models/Products/Productdata");
+require("../../models/Products/Product");
+require("../../models/Users");
 
 module.exports.register = async (req, res) => {
   try {
@@ -58,18 +58,18 @@ module.exports.register = async (req, res) => {
       }
     }
     const clientname = new RegExp(
-      '.*' + search ? search.client : '' + '.*',
-      'i'
+      ".*" + search ? search.client : "" + ".*",
+      "i"
     );
     const clientpackman = new RegExp(
-      '.*' + search ? search.packman : '' + '.*',
-      'i'
+      ".*" + search ? search.packman : "" + ".*",
+      "i"
     );
 
     const clientsCount = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } });
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } });
 
     const filterCount = clientsCount.filter((item) => {
       return item.packman !== null;
@@ -77,9 +77,9 @@ module.exports.register = async (req, res) => {
 
     const clients = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } })
-      .populate('packman', 'name')
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } })
+      .populate("packman", "name")
       .skip(currentPage * countPage)
       .limit(countPage);
 
@@ -89,7 +89,7 @@ module.exports.register = async (req, res) => {
 
     res.status(201).json({ clients: filter, count: filterCount.length });
   } catch (error) {
-    res.status(400).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(400).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -105,8 +105,8 @@ module.exports.getAll = async (req, res) => {
     }
 
     const clients = await Client.find({ market })
-      .select('name')
-      .populate('packman', 'name')
+      .select("name")
+      .populate("packman", "name")
       .lean();
 
     if (clients.length > 0) {
@@ -122,7 +122,7 @@ module.exports.getAll = async (req, res) => {
 
     res.status(201).send(clients);
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -173,18 +173,18 @@ module.exports.updateClient = async (req, res) => {
     });
 
     const clientname = new RegExp(
-      '.*' + search ? search.client : '' + '.*',
-      'i'
+      ".*" + search ? search.client : "" + ".*",
+      "i"
     );
     const clientpackman = new RegExp(
-      '.*' + search ? search.packman : '' + '.*',
-      'i'
+      ".*" + search ? search.packman : "" + ".*",
+      "i"
     );
 
     const clientsCount = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } });
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } });
 
     const filterCount = clientsCount.filter((item) => {
       return item.packman !== null;
@@ -192,9 +192,9 @@ module.exports.updateClient = async (req, res) => {
 
     const clients = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } })
-      .populate('packman', 'name')
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } })
+      .populate("packman", "name")
       .skip(currentPage * countPage)
       .limit(countPage);
 
@@ -204,7 +204,7 @@ module.exports.updateClient = async (req, res) => {
 
     res.status(201).json({ clients: filter, count: filterCount.length });
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
@@ -240,18 +240,18 @@ module.exports.deleteClient = async (req, res) => {
     await Client.findByIdAndDelete(_id);
 
     const clientname = new RegExp(
-      '.*' + search ? search.client : '' + '.*',
-      'i'
+      ".*" + search ? search.client : "" + ".*",
+      "i"
     );
     const clientpackman = new RegExp(
-      '.*' + search ? search.packman : '' + '.*',
-      'i'
+      ".*" + search ? search.packman : "" + ".*",
+      "i"
     );
 
     const clientsCount = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } });
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } });
 
     const filterCount = clientsCount.filter((item) => {
       return item.packman !== null;
@@ -259,9 +259,9 @@ module.exports.deleteClient = async (req, res) => {
 
     const clients = await Client.find({ market, name: clientname })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: clientpackman } })
-      .populate('packman', 'name')
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: clientpackman } })
+      .populate("packman", "name")
       .skip(currentPage * countPage)
       .limit(countPage);
 
@@ -271,13 +271,14 @@ module.exports.deleteClient = async (req, res) => {
 
     res.status(201).json({ clients: filter, count: filterCount.length });
   } catch (error) {
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
 
 module.exports.getClients = async (req, res) => {
   try {
-    const { market, currentPage, countPage, search, startDate, endDate } = req.body;
+    const { market, currentPage, countPage, search, startDate, endDate } =
+      req.body;
     const marke = await Market.findById(market);
     if (!marke) {
       return res
@@ -285,13 +286,13 @@ module.exports.getClients = async (req, res) => {
         .json({ message: "Diqqat! Do'kon malumotlari topilmadi." });
     }
 
-    const name = new RegExp('.*' + search ? search.client : '' + '.*', 'i');
-    const packman = new RegExp('.*' + search ? search.packman : '' + '.*', 'i');
+    const name = new RegExp(".*" + search ? search.client : "" + ".*", "i");
+    const packman = new RegExp(".*" + search ? search.packman : "" + ".*", "i");
 
     const clientsCount = await Client.find({ market, name: name })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: packman } });
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: packman } });
 
     const filterCount = clientsCount.filter((item) => {
       return item.packman !== null;
@@ -299,8 +300,8 @@ module.exports.getClients = async (req, res) => {
 
     const clients = await Client.find({ market, name: name })
       .sort({ _id: -1 })
-      .select('name market packman')
-      .populate({ path: 'packman', match: { name: packman }, select: 'name' })
+      .select("name market packman")
+      .populate({ path: "packman", match: { name: packman }, select: "name" })
       .skip(currentPage * countPage)
       .limit(countPage)
       .lean();
@@ -324,56 +325,56 @@ module.exports.getClients = async (req, res) => {
           $lt: endDate,
         },
       })
-        .select('-isArchive -market -__v')
+        .select("-isArchive -market -__v")
         .sort({ createdAt: -1 })
         .populate({
-          path: 'products',
-          select: 'user',
+          path: "products",
+          select: "user",
           populate: {
-            path: 'user',
-            select: 'firstname lastname',
+            path: "user",
+            select: "firstname lastname",
           },
         })
         .populate({
-          path: 'products',
-          select: 'price',
+          path: "products",
+          select: "price",
           populate: {
-            path: 'price',
-            select: 'incomingprice incomingpriceuzs',
+            path: "price",
+            select: "incomingprice incomingpriceuzs",
           },
         })
         .populate({
-          path: 'products',
+          path: "products",
           select:
-            'totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product',
+            "totalprice unitprice totalpriceuzs unitpriceuzs pieces createdAt discount saleproducts product",
           options: { sort: { createdAt: -1 } },
           populate: {
-            path: 'product',
-            select: 'productdata',
-            populate: { path: 'productdata', select: 'name code' },
+            path: "product",
+            select: "productdata",
+            populate: { path: "productdata", select: "name code" },
           },
         })
         .populate(
-          'payments',
-          'payment paymentuzs comment totalprice totalpriceuzs createdAt'
+          "payments",
+          "payment paymentuzs comment totalprice totalpriceuzs createdAt"
         )
         .populate(
-          'discounts',
-          'discount discountuzs procient products totalprice totalpriceuzs'
+          "discounts",
+          "discount discountuzs procient products totalprice totalpriceuzs"
         )
-        .populate({ path: 'client', select: 'name' })
-        .populate('packman', 'name')
-        .populate('user', 'firstname lastname')
-        .populate('dailyconnectors', 'comment');
+        .populate({ path: "client", select: "name" })
+        .populate("packman", "name")
+        .populate("user", "firstname lastname")
+        .populate("dailyconnectors", "comment");
 
       if (saleconnectors.length > 0) {
-        const payments = reduceForSales(saleconnectors, 'payments');
-        const products = reduceForSales(saleconnectors, 'products');
-        const debts = reduceForSales(saleconnectors, 'debts');
-        const discounts = reduceForSales(saleconnectors, 'discounts');
+        const payments = reduceForSales(saleconnectors, "payments");
+        const products = reduceForSales(saleconnectors, "products");
+        const debts = reduceForSales(saleconnectors, "debts");
+        const discounts = reduceForSales(saleconnectors, "discounts");
         const dailyconnectors = reduceForSales(
           saleconnectors,
-          'dailyconnectors'
+          "dailyconnectors"
         );
 
         const totalsales = [...products].reduce(
@@ -385,11 +386,13 @@ module.exports.getClients = async (req, res) => {
           0
         );
         const incomings = [...products].reduce(
-          (prev, el) => prev + el.pieces * (el.price && el.price.incomingprice || 0),
+          (prev, el) =>
+            prev + el.pieces * ((el.price && el.price.incomingprice) || 0),
           0
         );
         const incomingsuzs = [...products].reduce(
-          (prev, el) => prev + el.pieces * (el.price && el.price.incomingpriceuzs || 0),
+          (prev, el) =>
+            prev + el.pieces * ((el.price && el.price.incomingpriceuzs) || 0),
           0
         );
 
@@ -412,7 +415,6 @@ module.exports.getClients = async (req, res) => {
 
     res.status(201).json({ clients: filterClients, count: filterCount.length });
   } catch (error) {
-    console.log(error);
-    res.status(501).json({ error: 'Serverda xatolik yuz berdi...' });
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };

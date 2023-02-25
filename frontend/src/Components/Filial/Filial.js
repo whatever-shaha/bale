@@ -58,13 +58,13 @@ const Filial = ({active, value}) => {
                     <div
                         className={'flex flex-col items-center justify-center'}
                     >
-                        <p className='product'>{t('Maxsulotlar turi')}</p>
+                        <p className='product'>{t('Kategoriyalar')}</p>
                         <p className='product-number'>{value.typecount}</p>
                     </div>
                     <div
                         className={'flex flex-col items-center justify-center'}
                     >
-                        <p className='product'>{t('Maxsulotlar soni')}</p>
+                        <p className='product'>{t('Maxsulotlar turi')}</p>
                         <p className='product-number'>{value.productcount}</p>
                     </div>
                     <div

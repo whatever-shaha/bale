@@ -546,7 +546,6 @@ module.exports.getAllFilials = async (req, res) => {
   }
 };
 
-
 module.exports.filialProducts = async (req, res) => {
   try {
     const { filial, productcode, categorycode } = req.body;
@@ -558,17 +557,30 @@ module.exports.filialProducts = async (req, res) => {
       });
     }
 
-    const category = await Category.findOne({ market: filial, code: categorycode })
-    const productdata = await ProductData.findOne({ market: filial, category: category._id, code: productcode })
-    const product = await Product.findOne({ market: filial, productdata: productdata._id })
-      .select('total')
+    const category = await Category.findOne({
+      market: filial,
+      code: categorycode,
+    });
+    const productdata = await ProductData.findOne({
+      market: filial,
+      category: category._id,
+      code: productcode,
+    });
+    const product = await Product.findOne({
+      market: filial,
+      productdata: productdata._id,
+    }).select("total");
 
-    res.status(200).json({ total: product.total })
-
+    res.status(200).json({ total: product.total });
   } catch (error) {
-    res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
+    res
+      .status(501)
+      .json({
+        error: "Serverda xatolik yuz berdi...",
+        description: error.message,
+      });
   }
-}
+};
 
 // getFilials For sale
 module.exports.getFilialsForSale = async (req, res) => {
@@ -582,31 +594,34 @@ module.exports.getFilialsForSale = async (req, res) => {
       });
     }
 
-    let markets = []
+    let markets = [];
 
     if (marketData.mainmarket) {
       const filials = await Market.find({
-        mainmarket: marketData.mainmarket
+        mainmarket: marketData.mainmarket,
       })
-        .select('name')
+        .select("name")
         .lean()
-        .then(filials => filials.filter(f => f._id !== marketData._id))
+        .then((filials) => filials.filter((f) => f._id !== marketData._id));
       const mainmarket = await Market.findById(marketData.mainmarket)
-        .select('name')
-        .lean()
-      markets = [...filials, mainmarket]
+        .select("name")
+        .lean();
+      markets = [...filials, mainmarket];
     } else {
       const mainmarket = await Market.findById(marketData._id)
-        .select('filials name')
-        .populate('filials', 'name')
-        .lean()
+        .select("filials name")
+        .populate("filials", "name")
+        .lean();
       markets = [mainmarket, ...mainmarket.filials];
     }
 
-    res.status(200).json({ filials: markets })
-
+    res.status(200).json({ filials: markets });
   } catch (error) {
-    console.log(error);
-    res.status(501).json({ error: "Serverda xatolik yuz berdi...", description: error.message });
+    res
+      .status(501)
+      .json({
+        error: "Serverda xatolik yuz berdi...",
+        description: error.message,
+      });
   }
-}
+};
