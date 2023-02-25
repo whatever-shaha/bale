@@ -20,8 +20,9 @@ import {useTranslation} from 'react-i18next'
 import {filter, map} from 'lodash'
 import {universalToast} from '../../Components/ToastMessages/ToastMessages'
 
-const Labels = () => {
+const Labels = ({id}) => {
     const {t} = useTranslation(['common'])
+
     const headers = [
         {
             title: t('№'),
@@ -65,6 +66,7 @@ const Labels = () => {
     ]
 
     const dispatch = useDispatch()
+
     const {
         products,
         total,
@@ -73,10 +75,13 @@ const Labels = () => {
         totalSearched,
         loadingExcel,
     } = useSelector((state) => state.products)
+
     const {currencyType} = useSelector((state) => state.currency)
+
     const {
         market: {name},
     } = useSelector((state) => state.login)
+
     const [data, setData] = useState(products)
     const [searchedData, setSearchedData] = useState(searchedProducts)
     const [filteredDataTotal, setFilteredDataTotal] = useState(total)
@@ -85,7 +90,6 @@ const Labels = () => {
     const [searchByCode, setSearchByCode] = useState('')
     const [searchByName, setSearchByName] = useState('')
     const [searchByCategory, setSearchByCategory] = useState('')
-
     const [productForCheques, setProductForCheques] = useState(null)
     const [countOfCheques, setCountOfCheques] = useState('')
     const [sorItem, setSorItem] = useState({
@@ -236,6 +240,7 @@ const Labels = () => {
             }, 2000)
         })
     }
+
     const handleChequeCounts = (e) => {
         setCountOfCheques(e.target.value)
         setProductForCheques(searchedData.length > 0 ? searchedData : data)
@@ -280,6 +285,7 @@ const Labels = () => {
         if (e.key === 'Enter') {
             setCurrentPage(0)
             const body = {
+                filialId: id,
                 currentPage: 0,
                 countPage: showByTotal,
                 search: {
@@ -338,6 +344,7 @@ const Labels = () => {
 
     useEffect(() => {
         const body = {
+            filialId: id,
             currentPage,
             countPage: showByTotal,
             search: {
@@ -349,6 +356,7 @@ const Labels = () => {
         dispatch(getProducts(body))
         //    eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentPage, showByTotal, dispatch])
+
     useEffect(() => {
         setData(products)
     }, [products])
@@ -360,6 +368,7 @@ const Labels = () => {
     useEffect(() => {
         setSearchedData(searchedProducts)
     }, [searchedProducts])
+
     useEffect(() => {
         if (
             dataLoaded &&
@@ -369,6 +378,7 @@ const Labels = () => {
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [onBeforeGetContentResolve.current, dataLoaded])
+
     useEffect(() => {
         if (!dataLoaded) {
             setPrintedData([])
@@ -376,6 +386,7 @@ const Labels = () => {
             setProductForCheques(null)
         }
     }, [dataLoaded])
+
     return (
         <motion.section
             key='content'

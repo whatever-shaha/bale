@@ -728,13 +728,16 @@ module.exports.getAll = async (req, res) => {
 
 module.exports.getProducts = async (req, res) => {
   try {
-    const { market, currentPage, countPage, search } = req.body;
-    const marke = await Market.findById(market);
+    const { market, currentPage, countPage, search, filialId } = req.body;
+    const id = filialId || market;
+    const marke = await Market.findById(id);
+
     if (!marke) {
       return res
         .status(401)
         .json({ message: "Diqqat! Do'kon malumotlari topilmadi" });
     }
+
     const code = new RegExp(".*" + search ? search.code : "" + ".*", "i");
     const name = new RegExp(".*" + search ? search.name : "" + ".*", "i");
     const category = new RegExp(
@@ -744,7 +747,7 @@ module.exports.getProducts = async (req, res) => {
     const barcode = new RegExp(".*" + search ? search.barcode : "" + ".*", "i");
 
     const products = await Product.find({
-      market,
+      market: id,
     })
       .sort({ code: 1 })
       .select("total market category minimumcount connections")

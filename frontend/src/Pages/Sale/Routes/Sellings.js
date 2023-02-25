@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, {useEffect, useState} from 'react'
 import ExportBtn from '../../../Components/Buttons/ExportBtn.js'
 import Pagination from '../../../Components/Pagination/Pagination.js'
 import Table from '../../../Components/Table/Table.js'
 import SearchForm from '../../../Components/SearchForm/SearchForm.js'
-import { useDispatch, useSelector } from 'react-redux'
+import {useDispatch, useSelector} from 'react-redux'
 import Spinner from '../../../Components/Spinner/SmallLoader.js'
 import NotFind from '../../../Components/NotFind/NotFind.js'
-import { motion } from 'framer-motion'
+import {motion} from 'framer-motion'
 import {
     clearSearchedSellings,
     getSellings,
@@ -14,15 +14,15 @@ import {
     excelAllSellings,
     addClient,
 } from '../Slices/sellingsSlice.js'
-import { regexForTypeNumber } from '../../../Components/RegularExpressions/RegularExpressions.js'
+import {regexForTypeNumber} from '../../../Components/RegularExpressions/RegularExpressions.js'
 import UniversalModal from '../../../Components/Modal/UniversalModal.js'
-import { useTranslation } from 'react-i18next'
-import { filter, map } from 'lodash'
-import { universalSort, exportExcel } from './../../../App/globalFunctions'
-import { universalToast } from '../../../Components/ToastMessages/ToastMessages.js'
+import {useTranslation} from 'react-i18next'
+import {filter, map} from 'lodash'
+import {universalSort, exportExcel} from './../../../App/globalFunctions'
+import {universalToast} from '../../../Components/ToastMessages/ToastMessages.js'
 
-const Sellings = () => {
-    const { t } = useTranslation(['common'])
+const Sellings = ({id}) => {
+    const {t} = useTranslation(['common'])
     const headers = [
         {
             title: '№',
@@ -56,8 +56,8 @@ const Sellings = () => {
         },
     ]
     const dispatch = useDispatch()
-    const { currencyType } = useSelector((state) => state.currency)
-    const { user } = useSelector((state) => state.login)
+    const {currencyType} = useSelector((state) => state.currency)
+    const {user} = useSelector((state) => state.login)
     const {
         sellings,
         searchedSellings,
@@ -94,7 +94,7 @@ const Sellings = () => {
     const [saleConnectorId, setSaleConnectorId] = useState(null)
 
     // filter by total
-    const filterByTotal = ({ value }) => {
+    const filterByTotal = ({value}) => {
         setShowByTotal(value)
         setCurrentPage(0)
     }
@@ -103,9 +103,9 @@ const Sellings = () => {
     const handleChangeId = (e) => {
         const val = e.target.value
         const valForSearch = val.replace(/\s+/g, ' ').trim()
-        regexForTypeNumber.test(val) && setSearch({ ...search, id: val })
-            ; (searchedData.length > 0 || totalSearched > 0) &&
-                dispatch(clearSearchedSellings())
+        regexForTypeNumber.test(val) && setSearch({...search, id: val})
+        ;(searchedData.length > 0 || totalSearched > 0) &&
+            dispatch(clearSearchedSellings())
         if (valForSearch === '') {
             setData(sellings)
             setFilteredDataTotal(total)
@@ -120,9 +120,9 @@ const Sellings = () => {
     const handleChangeClient = (e) => {
         const val = e.target.value
         const valForSearch = val.toLowerCase().replace(/\s+/g, ' ').trim()
-        setSearch({ ...search, client: val })
-            ; (searchedData.length > 0 || totalSearched > 0) &&
-                dispatch(clearSearchedSellings())
+        setSearch({...search, client: val})
+        ;(searchedData.length > 0 || totalSearched > 0) &&
+            dispatch(clearSearchedSellings())
         if (valForSearch === '') {
             setData(sellings)
             setFilteredDataTotal(total)
@@ -143,6 +143,7 @@ const Sellings = () => {
         if (e.key === 'Enter') {
             setCurrentPage(0)
             const body = {
+                filialId: id,
                 currentPage,
                 countPage: showByTotal,
                 startDate: startDate.toISOString(),
@@ -157,6 +158,7 @@ const Sellings = () => {
         setModalVisible(!modalVisible)
         setPrintedSelling(null)
         const body = {
+            filialId: id,
             currentPage,
             countPage: showByTotal,
             startDate: startDate.toISOString(),
@@ -192,32 +194,32 @@ const Sellings = () => {
                 discount:
                     item.discounts.length > 0
                         ? item.discounts.map((discount) => {
-                            return discount
-                        })
+                              return discount
+                          })
                         : 0,
                 discountusd:
                     item.discounts.length > 0
                         ? item.discounts.map((discount) => {
-                            return discount
-                        })
+                              return discount
+                          })
                         : 0,
                 debd:
                     item?.products[0]?.totalpriceuzs -
                         item?.payments[0]?.paymentuzs -
                         item?.discounts.length >
-                        0
+                    0
                         ? item.discounts.map((discount) => {
-                            return discount.discount
-                        })
+                              return discount.discount
+                          })
                         : 0,
                 debdusd:
                     item.products[0].totalprice -
                         item.payments[0].payment -
                         item.discounts.length >
-                        0
+                    0
                         ? item.discounts.map((discount) => {
-                            return discount.discount
-                        })
+                              return discount.discount
+                          })
                         : 0,
             }))
             exportExcel(SellingData, fileName, sellingHeaders)
@@ -243,7 +245,7 @@ const Sellings = () => {
 
     const editComment = (daily, text) => {
         setCommentText(text)
-        setDailyId(daily._id);
+        setDailyId(daily._id)
         setChooseBody('changeComment')
         setModalVisible(true)
     }
@@ -261,6 +263,7 @@ const Sellings = () => {
     }, [total])
     useEffect(() => {
         const body = {
+            filialId: id,
             currentPage,
             countPage: showByTotal,
             startDate: startDate.toISOString(),
@@ -271,7 +274,7 @@ const Sellings = () => {
             },
         }
         dispatch(getSellings(body))
-    }, [currentPage, showByTotal, startDate, endDate, dispatch])
+    }, [currentPage, showByTotal, startDate, endDate, dispatch, id])
 
     useEffect(() => {
         const body = {
@@ -290,6 +293,7 @@ const Sellings = () => {
             })
         ).then(() => {
             const body = {
+                filialId: id,
                 currentPage,
                 countPage: showByTotal,
                 startDate: startDate.toISOString(),
@@ -348,10 +352,10 @@ const Sellings = () => {
             animate='open'
             exit='collapsed'
             variants={{
-                open: { opacity: 1, height: 'auto' },
-                collapsed: { opacity: 0, height: 0 },
+                open: {opacity: 1, height: 'auto'},
+                collapsed: {opacity: 0, height: 0},
             }}
-            transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
+            transition={{duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98]}}
         >
             <UniversalModal
                 printedSelling={printedSelling}

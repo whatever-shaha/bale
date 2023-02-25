@@ -610,9 +610,17 @@ module.exports.check = async (req, res) => {
 
 module.exports.getsaleconnectors = async (req, res) => {
   try {
-    const { market, countPage, currentPage, startDate, endDate, search } =
-      req.body;
-    const marke = await Market.findById(market);
+    const {
+      market,
+      countPage,
+      currentPage,
+      startDate,
+      endDate,
+      search,
+      filialId,
+    } = req.body;
+    const marketId = filialId || market;
+    const marke = await Market.findById(marketId);
     if (!marke) {
       return res.status(400).json({
         message: `Diqqat! Do'kon haqida malumotlar topilmadi!`,
@@ -624,7 +632,7 @@ module.exports.getsaleconnectors = async (req, res) => {
     const name = new RegExp(".*" + search ? search.client : "" + ".*", "i");
 
     const saleconnectors = await SaleConnector.find({
-      market,
+      market: marketId,
       id,
       updatedAt: {
         $gte: startDate,
@@ -724,12 +732,14 @@ module.exports.getsaleconnectors = async (req, res) => {
       };
     });
 
+    const count = filteredProductsSale.length;
+
     res.status(200).json({
       saleconnectors: filteredProductsSale.splice(
         countPage * currentPage,
         countPage
       ),
-      count: filteredProductsSale.length,
+      count,
     });
   } catch (error) {
     res.status(400).json({ error: "Serverda xatolik yuz berdi..." });
