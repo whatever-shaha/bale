@@ -5,7 +5,6 @@ import { useSelector } from 'react-redux'
 import PaymentInput from './PaymentInput/PaymentInput.js'
 import { t } from 'i18next'
 import { useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
 
 function CustomerPayment({
     returned,
@@ -127,7 +126,7 @@ function CustomerPayment({
                     </div>
                     <ul className='w-full pb-[1.25rem]'>
                         {!returned && defineLabel()}
-                        {location.pathname.includes('/kassa/debts') && defineLabel()}
+                        {(location.pathname.includes('/kassa/debts') || location.pathname.includes('/qarzdorlar')) && defineLabel()}
                         <PaymentInput
                             value={saleComment}
                             key={'sale-card'}
