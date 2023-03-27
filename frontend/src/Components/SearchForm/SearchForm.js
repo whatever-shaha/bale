@@ -52,6 +52,9 @@ function SearchForm({
     filterByMarketInn,
     filterByMarketInnWhenPressEnter,
     filterByMarketNameWhenPressEnter,
+    selectedProduct,
+    handleChangeSelectedProduct,
+    filteredProducts
 }) {
     const { t } = useTranslation(['common'])
     const chooseComponent = (key) => {
@@ -276,6 +279,16 @@ function SearchForm({
                         placeholder={"Do'kon INN si..."}
                         someClasses={'grow'}
                         onKeyUp={filterByMarketInnWhenPressEnter}
+                    />
+                )
+            case 'product_name':
+                return (
+                    <FieldContainer
+                        select={true}
+                        placeholder={t('misol: kompyuter')}
+                        value={selectedProduct}
+                        onChange={handleChangeSelectedProduct}
+                        options={filteredProducts}
                     />
                 )
             default:

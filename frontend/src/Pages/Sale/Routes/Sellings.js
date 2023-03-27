@@ -20,6 +20,8 @@ import {useTranslation} from 'react-i18next'
 import {filter, map} from 'lodash'
 import {universalSort, exportExcel} from './../../../App/globalFunctions'
 import {universalToast} from '../../../Components/ToastMessages/ToastMessages.js'
+import socket from '../../../Config/socket.js'
+import { setAllProductsBySocket } from '../Slices/registerSellingSlice.js'
 
 const Sellings = ({id}) => {
     const {t} = useTranslation(['common'])
@@ -57,7 +59,7 @@ const Sellings = ({id}) => {
     ]
     const dispatch = useDispatch()
     const {currencyType} = useSelector((state) => state.currency)
-    const {user} = useSelector((state) => state.login)
+    const {user, market} = useSelector((state) => state.login)
     const {
         sellings,
         searchedSellings,
@@ -75,6 +77,7 @@ const Sellings = ({id}) => {
     const [search, setSearch] = useState({
         id: '',
         client: '',
+        product: ""
     })
     const [sorItem, setSorItem] = useState({
         filter: '',
@@ -92,6 +95,8 @@ const Sellings = ({id}) => {
     const [printedSelling, setPrintedSelling] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
     const [saleConnectorId, setSaleConnectorId] = useState(null)
+    const [filteredProducts, setFilteredProducts] = useState([])
+    const [selectedProduct, setSelectedProduct] = useState('')
 
     // filter by total
     const filterByTotal = ({value}) => {
@@ -166,6 +171,7 @@ const Sellings = ({id}) => {
             search: {
                 id: '',
                 client: '',
+                product: selectedProduct?.label
             },
         }
         dispatch(getSellings(body))
@@ -345,6 +351,59 @@ const Sellings = ({id}) => {
         }
     }
 
+    //
+    useEffect(() => {
+        let allProductsReducer = []
+        let productsForSearch = [
+            {
+                label: "Xammasi",
+                value: ""
+            },
+        ]
+        market &&
+            socket.emit('getProductsOfCount', {
+                market: market._id,
+            })
+        market &&
+            socket.on('getProductsOfCount', ({id, products}) => {
+                if (id === market._id) {
+                    productsForSearch = [
+                        ...productsForSearch,
+                        ...map(products, (product) => ({
+                            value: product._id,
+                            label: product.productdata.name
+                        })),
+                    ]
+                    setFilteredProducts(productsForSearch)
+                    allProductsReducer.push(...products)
+                    dispatch(setAllProductsBySocket(allProductsReducer))
+                }
+            })
+        market &&
+            socket.on('error', ({id, message}) => {
+                id === market._id && universalToast(message, 'error')
+            })
+
+        //    eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [market, dispatch])
+
+    const handleChangeSelectedProduct = (option) => {
+        setSelectedProduct(option)
+        const body = {
+            filialId: id,
+            currentPage,
+            countPage: showByTotal,
+            startDate: startDate.toISOString(),
+            endDate: endDate.toISOString(),
+            search: {
+                id: '',
+                client: '',
+                product: option.label
+            },
+        }
+        dispatch(getSellingsByFilter(body))
+    }
+
     return (
         <motion.section
             key='content'
@@ -380,7 +439,7 @@ const Sellings = ({id}) => {
                 )}
             </div>
             <SearchForm
-                filterBy={['total', 'startDate', 'endDate', 'id', 'clientName']}
+                filterBy={['total', 'startDate', 'endDate', 'id', 'clientName', "product_name"]}
                 filterByTotal={filterByTotal}
                 startDate={startDate}
                 setStartDate={setStartDate}
@@ -394,6 +453,9 @@ const Sellings = ({id}) => {
                     handleChangeIdAndClientWhenPressEnter
                 }
                 filterByIdWhenPressEnter={handleChangeIdAndClientWhenPressEnter}
+                filteredProducts={filteredProducts}
+                handleChangeSelectedProduct={handleChangeSelectedProduct}
+                selectedProduct={selectedProduct}
             />
             <div className='tableContainerPadding'>
                 {getSellingsLoading ? (
