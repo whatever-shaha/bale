@@ -65,7 +65,10 @@ module.exports.getAll = async (req, res) => {
       });
     }
 
-    const packman = await Packman.find({ market }).select("name market");
+    const packman = await Packman.find({ market })
+      .select("name market clients")
+      .populate("clients");
+
     res.status(201).send(packman);
   } catch (error) {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
