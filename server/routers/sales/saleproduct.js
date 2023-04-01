@@ -275,6 +275,7 @@ module.exports.register = async (req, res) => {
         const newClient = new Client({
           market,
           name: client.name,
+          packman,
         });
         await newClient.save();
         if (packman) {
@@ -620,6 +621,7 @@ module.exports.getsaleconnectors = async (req, res) => {
       filialId,
     } = req.body;
     const marketId = filialId || market;
+
     const marke = await Market.findById(marketId);
     if (!marke) {
       return res.status(400).json({

@@ -11,6 +11,8 @@ require("../../models/Sales/DailySaleConnector");
 require("../../models/Products/Productdata");
 require("../../models/Products/Product");
 require("../../models/Users");
+const { filter } = require("lodash/collection.js");
+const { regExpression } = require("../globalFunctions.js");
 
 module.exports.register = async (req, res) => {
   try {
@@ -286,28 +288,44 @@ module.exports.getClients = async (req, res) => {
         .json({ message: "Diqqat! Do'kon malumotlari topilmadi." });
     }
 
-    const name = new RegExp(".*" + search ? search.client : "" + ".*", "i");
-    const packman = new RegExp(".*" + search ? search.packman : "" + ".*", "i");
+    const name = regExpression(search ? search.client : "");
+    const packman = search.packman;
 
-    const clientsCount = await Client.find({ market, name: name })
-      .sort({ _id: -1 })
-      .select("name market packman")
-      .populate({ path: "packman", match: { name: packman } });
+    let clientsCount = [];
+    let clients = [];
+    if (packman) {
+      clientsCount = await Client.find({
+        market,
+        name: name,
+        packman,
+      }).count();
 
-    const filterCount = clientsCount.filter((item) => {
-      return item.packman !== null;
-    });
+      clients = await Client.find({
+        market,
+        name: name,
+        packman,
+      })
+        .sort({ _id: -1 })
+        .select("name market packman")
+        .populate("packman", "name")
+        .skip(currentPage * countPage)
+        .limit(countPage);
+    } else {
+      clientsCount = await Client.find({
+        market,
+        name: name,
+      }).count();
 
-    const clients = await Client.find({ market, name: name })
-      .sort({ _id: -1 })
-      .select("name market packman")
-      .populate({ path: "packman", match: { name: packman }, select: "name" })
-      .skip(currentPage * countPage)
-      .limit(countPage)
-      .lean();
-    const filterClients = clients.filter((item) => {
-      return item.packman !== null;
-    });
+      clients = await Client.find({
+        market,
+        name: name,
+      })
+        .sort({ _id: -1 })
+        .select("name market packman")
+        .populate("packman", "name")
+        .skip(currentPage * countPage)
+        .limit(countPage);
+    }
 
     const reduceForSales = (arr, key) => {
       return arr.reduce((prev, connector) => {
@@ -316,7 +334,9 @@ module.exports.getClients = async (req, res) => {
       }, []);
     };
 
-    for (let client of filterClients) {
+    let newClients = [];
+
+    for (let client of clients) {
       const saleconnectors = await SaleConnector.find({
         market,
         client: client._id,
@@ -367,6 +387,7 @@ module.exports.getClients = async (req, res) => {
         .populate("user", "firstname lastname")
         .populate("dailyconnectors", "comment");
 
+      let s = null;
       if (saleconnectors.length > 0) {
         const payments = reduceForSales(saleconnectors, "payments");
         const products = reduceForSales(saleconnectors, "products");
@@ -396,7 +417,7 @@ module.exports.getClients = async (req, res) => {
           0
         );
 
-        client.saleconnector = {
+        s = {
           products: products,
           payments: payments,
           debts: debts,
@@ -411,9 +432,17 @@ module.exports.getClients = async (req, res) => {
           id: saleconnectors[0].id,
         };
       }
+      const newClient = {
+        _id: client._id,
+        name: client.name,
+        market: client.market,
+        packman: client.packman,
+        saleconnector: s,
+      };
+      newClients.push(newClient);
     }
 
-    res.status(201).json({ clients: filterClients, count: filterCount.length });
+    res.status(201).json({ clients: newClients, count: clientsCount });
   } catch (error) {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }

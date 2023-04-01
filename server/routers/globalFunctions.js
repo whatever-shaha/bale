@@ -99,3 +99,6 @@ module.exports.reducerDuobleProperty = (arr, el1, el2) =>
 
 module.exports.roundToUzs = (number) => Math.round(number * 1) / 1;
 module.exports.roundToUsd = (number) => Math.round(number * 1000) / 1000;
+
+module.exports.regExpression = (expression) =>
+  new RegExp(".*" + expression + ".*", "i");

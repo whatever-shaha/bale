@@ -3,12 +3,15 @@ import SelectForm from '../Select/SelectForm.js'
 import FilterButtons from '../FilterButtons/FilterButtons.js'
 import FieldContainer from '../FieldContainer/FieldContainer.js'
 import PrintBtn from '../Buttons/PrintBtn.js'
-import { ConfirmBtn } from '../Buttons/SaveConfirmBtn.js'
+import {ConfirmBtn} from '../Buttons/SaveConfirmBtn.js'
 import Dates from '../Dates/Dates.js'
-import { useTranslation } from 'react-i18next'
-import { map } from 'lodash'
+import {useTranslation} from 'react-i18next'
+import {map} from 'lodash'
+import SelectInput from '../SelectInput/SelectInput.js'
 
 function SearchForm({
+    filterByPackman,
+    searchByPackmans,
     filterByTotal,
     searchByCode,
     searchById,
@@ -53,7 +56,7 @@ function SearchForm({
     filterByMarketInnWhenPressEnter,
     filterByMarketNameWhenPressEnter,
 }) {
-    const { t } = useTranslation(['common'])
+    const {t} = useTranslation(['common'])
     const chooseComponent = (key) => {
         switch (key) {
             case 'total':
@@ -276,6 +279,14 @@ function SearchForm({
                         placeholder={"Do'kon INN si..."}
                         someClasses={'grow'}
                         onKeyUp={filterByMarketInnWhenPressEnter}
+                    />
+                )
+            case 'select':
+                return (
+                    <SelectInput
+                        placeholder={'Yetkazib beruvchi'}
+                        onSelect={filterByPackman}
+                        options={searchByPackmans}
                     />
                 )
             default:
