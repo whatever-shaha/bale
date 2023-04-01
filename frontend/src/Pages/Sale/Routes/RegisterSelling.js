@@ -1347,13 +1347,13 @@ const RegisterSelling = () => {
                         ...product,
                         totalprice: product.tradeprice
                             ? convertToUsd(
-                                  Number(product.pieces) * product.tradeprice
-                              )
+                                Number(product.pieces + product.fromFilial) * product.tradeprice
+                            )
                             : product.totalprice,
                         totalpriceuzs: product.tradepriceuzs
                             ? convertToUzs(
-                                  Number(product.pieces) * product.tradepriceuzs
-                              )
+                                Number(product.pieces + product.fromFilial) * product.tradepriceuzs
+                            )
                             : product.totalpriceuzs,
                     }))
                 )
@@ -1363,13 +1363,13 @@ const RegisterSelling = () => {
                         ...product,
                         totalprice: product.unitprice
                             ? convertToUsd(
-                                  Number(product.pieces) * product.unitprice
-                              )
+                                Number(product.pieces + product.fromFilial) * product.unitprice
+                            )
                             : product.totalprice,
                         totalpriceuzs: product.unitpriceuzs
                             ? convertToUzs(
-                                  Number(product.pieces) * product.unitpriceuzs
-                              )
+                                Number(product.pieces + product.fromFilial) * product.unitpriceuzs
+                            )
                             : product.totalpriceuzs,
                     }))
                 )

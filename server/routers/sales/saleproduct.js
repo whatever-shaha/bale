@@ -633,6 +633,8 @@ module.exports.getsaleconnectors = async (req, res) => {
 
     const name = new RegExp(".*" + search ? search.client : "" + ".*", "i");
 
+    const product = new RegExp(".*" + search ? search.product : "" + ".*", "i");
+
     const saleconnectors = await SaleConnector.find({
       market: marketId,
       id,
@@ -668,7 +670,11 @@ module.exports.getsaleconnectors = async (req, res) => {
         populate: {
           path: "product",
           select: "productdata",
-          populate: { path: "productdata", select: "name code" },
+          populate: { 
+            path: "productdata", 
+            select: "name code",
+            // match: {name: product}
+          },
         },
       })
       .populate({
@@ -698,10 +704,10 @@ module.exports.getsaleconnectors = async (req, res) => {
         return filter(
           connectors,
           (connector) =>
-            (search.client.length > 0 &&
+            ((search.client.length > 0 &&
               connector.client !== null &&
               connector.client) ||
-            search.client.length === 0
+            search.client.length === 0) && connector.products.some(item => search.product ? item.product.productdata.name === search.product : item.product.productdata.name)
         );
       });
 

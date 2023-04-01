@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
-import {useDispatch, useSelector} from 'react-redux'
-import {UsdToUzs, UzsToUsd} from '../../App/globalFunctions'
+import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { UsdToUzs, UzsToUsd } from '../../App/globalFunctions'
 import UniversalModal from '../../Components/Modal/UniversalModal'
 import CustomerPayment from '../../Components/Payment/CustomerPayment'
 import SearchForm from '../../Components/SearchForm/SearchForm'
@@ -9,14 +9,14 @@ import {
     warningMoreDiscount,
     warningMorePayment,
 } from '../../Components/ToastMessages/ToastMessages'
-import {getDebts, payDebt} from '../Reports/reportsSlice'
-import {filter} from 'lodash'
+import { getDebts, payDebt } from '../Reports/reportsSlice'
+import { filter } from 'lodash'
 const PayDebts = () => {
     const dispatch = useDispatch()
 
-    const {datas} = useSelector((state) => state.reports)
-    const {currencyType, currency} = useSelector((state) => state.currency)
-    const {user} = useSelector((state) => state.login)
+    const { datas } = useSelector((state) => state.reports)
+    const { currencyType, currency } = useSelector((state) => state.currency)
+    const { user } = useSelector((state) => state.login)
 
     const [storageData, setStorageData] = useState([])
     const [currentData, setCurrentData] = useState([])
@@ -53,13 +53,13 @@ const PayDebts = () => {
     const [printedSelling, setPrintedSelling] = useState(null)
 
     const headers = [
-        {title: '№'},
-        {title: 'Kodi'},
-        {title: 'Nomi'},
-        {title: 'Soni'},
-        {title: 'Narxi'},
-        {title: 'Jami', styles: 'w-[10rem]'},
-        {title: ''},
+        { title: '№' },
+        { title: 'Kodi' },
+        { title: 'Nomi' },
+        { title: 'Soni' },
+        { title: 'Narxi' },
+        { title: 'Jami', styles: 'w-[10rem]' },
+        { title: '' },
     ]
 
     // payment
@@ -74,7 +74,7 @@ const PayDebts = () => {
         setPaymentDiscountPercent('')
         setPaymentDebt(0)
         setPaymentDebtUzs(0)
-        setDiscountSelectOption({label: '%', value: '%'})
+        setDiscountSelectOption({ label: '%', value: '%' })
     }
     const toggleCheckModal = () => {
         setModalVisible(!modalVisible)
@@ -424,7 +424,7 @@ const PayDebts = () => {
             user: user._id,
             saleconnectorid: saleConnectorId,
         }
-        dispatch(payDebt(body)).then(({payload}) => {
+        dispatch(payDebt(body)).then(({ payload }) => {
             const startDate = new Date(
                 new Date().setMonth(new Date().getMonth() - 3)
             )
@@ -478,18 +478,32 @@ const PayDebts = () => {
         setModalVisible(true)
     }
 
+    //====================================================
+    //====================================================
+
+    const [startDate, setStartDate] = useState(new Date(
+        new Date().setMonth(new Date().getMonth() - 3)
+    ))
+    const [endDate, setEndDate] = useState(new Date());
+
+    const handleBeginDay = (e) => {
+        setStartDate(new Date(e.setHours(0, 0, 0)))
+    }
+    const handleEndDay = (e) => {
+        setEndDate(new Date(e.setHours(23, 59, 59)))
+    }
+
+    //====================================================
+    //====================================================
+
     useEffect(() => {
-        const startDate = new Date(
-            new Date().setMonth(new Date().getMonth() - 3)
-        )
-        const endDate = new Date()
         dispatch(
             getDebts({
                 startDate,
                 endDate,
             })
         )
-    }, [dispatch])
+    }, [dispatch, startDate, endDate])
 
     useEffect(() => {
         setCurrentData(datas)
@@ -527,9 +541,13 @@ const PayDebts = () => {
         <div className='relative overflow-auto h-full pt-[10px]'>
             <div className='flex items-center justify-between'>
                 <SearchForm
-                    filterBy={['id', 'clientName']}
+                    filterBy={['startDate', 'endDate', 'id', 'clientName']}
                     filterById={searchId}
                     filterByClientName={searchClientName}
+                    startDate={startDate}
+                    endDate={endDate}
+                    setStartDate={handleBeginDay}
+                    setEndDate={handleEndDay}
                 />
             </div>
             <div className='tableContainerPadding'>
@@ -565,8 +583,8 @@ const PayDebts = () => {
                                 ? paymentDiscount
                                 : paymentDiscountPercent
                             : discountSelectOption.value === 'UZS'
-                            ? paymentDiscountUzs
-                            : paymentDiscountPercent
+                                ? paymentDiscountUzs
+                                : paymentDiscountPercent
                     }
                     handleChangeDiscount={handleChangeDiscount}
                     hasDiscount={hasDiscount}
@@ -590,8 +608,8 @@ const PayDebts = () => {
                     modalBody === 'sell'
                         ? toggleModal
                         : modalBody === 'complete'
-                        ? handleClosePay
-                        : toggleCheckModal
+                            ? handleClosePay
+                            : toggleCheckModal
                 }
                 approveFunction={handleApprovePay}
                 isOpen={modalVisible}
