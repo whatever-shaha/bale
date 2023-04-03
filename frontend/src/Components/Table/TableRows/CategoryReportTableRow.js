@@ -1,7 +1,9 @@
 import React from 'react'
-import {map} from 'lodash'
+import { map } from 'lodash'
+import { useSelector } from 'react-redux'
 
-export const CategoryReportTableRow = ({data}) => {
+export const CategoryReportTableRow = ({ data }) => {
+    const { currencyType } = useSelector((state) => state.currency)
     return (
         <>
             {map(data, (product, index) => (
@@ -18,24 +20,30 @@ export const CategoryReportTableRow = ({data}) => {
                         {product.unit && product.unit.name}
                     </td>
                     <td className='td text-right'>
-                        {product.price && product.price.incomingpriceuzs.toLocaleString(
+                        {product.price && currencyType === 'USD' ? product.price.incomingprice.toLocaleString(
                             'ru-RU'
-                        )} UZS
+                        ) : product.price.incomingpriceuzs.toLocaleString(
+                            'ru-RU'
+                        )} {currencyType}
                     </td>
                     <td className='td text-right'>
-                        {product.price && product.price.incomingprice.toLocaleString(
+                        {product.price && currencyType === 'USD' ? product.price.sellingprice.toLocaleString(
                             'ru-RU'
-                        )} USD
+                        ) : product.price.sellingpriceuzs.toLocaleString(
+                            'ru-RU'
+                        )} {currencyType}
                     </td>
                     <td className='td text-right'>
-                        {product.price && product.price.sellingpriceuzs.toLocaleString(
+                        {product?.totalsaleproducts.toLocaleString(
                             'ru-RU'
-                        )} UZS
+                        )}
                     </td>
                     <td className='td text-right'>
-                        {product.price && product.price.sellingprice.toLocaleString(
+                        {currencyType === 'USD' ? product?.totalsales.toLocaleString(
                             'ru-RU'
-                        )} USD
+                        ) : product?.totalsalesuzs.toLocaleString(
+                            'ru-RU'
+                        )} {currencyType}
                     </td>
                 </tr>
             ))}

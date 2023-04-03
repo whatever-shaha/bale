@@ -470,7 +470,7 @@
     }
 
     .check-ul-li-span {
-        @apply text-[0.875rem] text-black-700;
+        @apply text-[0.875rem] text-black-900;
     }
 
     .check-text-style {

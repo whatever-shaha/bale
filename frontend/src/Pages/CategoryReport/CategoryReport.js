@@ -38,7 +38,15 @@ const calculateSellings = (data, currency) => {
 }
 
 function CategoryReport() {
-    const headers = [{ title: '№' }, { title: 'Kodi' }, { title: 'Nomi' }, { title: 'Soni' }, { title: 'Olish (UZS)' }, { title: 'Olish (USD)' }, { title: 'Sotish (UZS)' }, { title: 'Sotish (USD)' }]
+    const headers = [
+        { title: '№' }, 
+        { title: 'Kodi' }, 
+        { title: 'Nomi' }, 
+        { title: 'Soni' }, 
+        { title: 'Olish ' }, 
+        { title: 'Sotish' }, 
+        { title: 'Sotilganlar soni' }, 
+        { title: 'Sotilganlar jami' }]
     const dispatch = useDispatch()
     const location = useLocation()
     const navigate = useNavigate()
@@ -46,7 +54,7 @@ function CategoryReport() {
     const { products, loading } = useSelector(state => state.categoryReport)
     useEffect(() => {
         if (location.state) {
-            dispatch(getReportOfCategory({ categoryId: location.state.id }))
+            dispatch(getReportOfCategory({ categoryId: location.state.id, startDate: location.state.startDate, endDate: location.state.endDate  }))
         } else {
             navigate(-1)
         }

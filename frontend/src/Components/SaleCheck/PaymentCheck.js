@@ -55,7 +55,7 @@ export const PaymentCheck = forwardRef((props, ref) => {
             <div className='mt-4'></div>
             <div className='border-t-[0.8px] border-black-700 w-full my-[1rem]'></div>
             <ul>
-                <li className='check-ul-li-foot border-t-0'>
+                <li className='check-ul-li-foot border-t-0 font-bold'>
                     To'lov:{' '}
                     <span>
                         {currencyType === 'USD'
@@ -64,7 +64,7 @@ export const PaymentCheck = forwardRef((props, ref) => {
                         {currencyType}
                     </span>
                 </li>
-                <li className='check-ul-li-foot border-t-0'>
+                <li className='check-ul-li-foot border-t-0 font-bold'>
                     To'lov turi:{' '}
                     <span>
                         {payment.type === 'cash'

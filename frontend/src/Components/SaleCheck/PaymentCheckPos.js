@@ -13,33 +13,33 @@ export const PaymentCheckPos = forwardRef((props, ref) => {
             }
         >
             <div className='flex justify-between'>
-                <span>Do'kon:</span>
-                <span>{market.name}</span>
+                <span className='font-bold'>Do'kon:</span>
+                <span className='font-bold'>{market.name}</span>
             </div>
             <div className='flex justify-between'>
-                <span>Sotuvchi:</span>
-                <span>
+                <span className='font-bold'>Sotuvchi:</span>
+                <span className='font-bold'>
                     {user.firstname} {user.lastname}
                 </span>
             </div>
             <div className='flex justify-between'>
-                <span>Mijoz:</span>
-                <span>
+                <span className='font-bold'>Mijoz:</span>
+                <span className='font-bold'>
                     {payment?.saleconnector?.client?.name ||
                         payment?.saleconnector?.packman?.name ||
                         ''}
                 </span>
             </div>
-            <div className='flex justify-between'>
-                <span>ID:</span>
-                <span>{payment?.saleconnector?.id}</span>
+            <div className='flex justify-between font-bold'>
+                <span className='font-bold'>ID:</span>
+                <span className='font-bold'>{payment?.saleconnector?.id}</span>
             </div>
 
-            <div className='flex justify-between'>
-                <span>
+            <div className='flex justify-between font-bold'>
+                <span className='font-bold'>
                     Vaqt: {new Date(payment?.createdAt).toLocaleTimeString()}
                 </span>
-                <span>
+                <span className='font-bold'>
                     Sana: {new Date(payment?.createdAt).toLocaleDateString()}
                 </span>
             </div>
@@ -49,7 +49,7 @@ export const PaymentCheckPos = forwardRef((props, ref) => {
             <ul>
                 <li className='flex justify-between text-[7pt] border-b border-b-black-300'>
                     Jami:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {currencyType === 'USD'
                             ? payment?.payment?.toLocaleString('ru-RU')
                             : payment?.paymentuzs?.toLocaleString('ru-RU')}{' '}
@@ -58,7 +58,7 @@ export const PaymentCheckPos = forwardRef((props, ref) => {
                 </li>
                 <li className='flex justify-between text-[7pt] border-b border-b-black-300'>
                     To'lov turi:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {payment.type === 'cash'
                             ? 'Naqt'
                             : payment.type === 'card'

@@ -18,11 +18,11 @@ export const SaleCheckPos = forwardRef((props, ref) => {
         >
             <div className='flex justify-between'>
                 <span>Do'kon:</span>
-                <span>{market.name}</span>
+                <span className='font-bold'>{market.name}</span>
             </div>
             <div className='flex justify-between'>
                 <span>Sotuvchi:</span>
-                <span>
+                <span className='font-bold'>
                     {user.firstname} {user.lastname}
                 </span>
             </div>

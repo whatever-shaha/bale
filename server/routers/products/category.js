@@ -5,6 +5,7 @@ const {
 const { Market } = require("../../models/MarketAndBranch/Market");
 const { Product } = require("../../models/Products/Product");
 const { ProductType } = require("../../models/Products/ProductType");
+const { SaleProduct } = require("../../models/Sales/SaleProduct");
 
 //Category register
 module.exports.registerAll = async (req, res) => {
@@ -218,7 +219,7 @@ module.exports.getAll = async (req, res) => {
 //Category getaCategories
 module.exports.getCategories = async (req, res) => {
   try {
-    const { market, currentPage, countPage, search } = req.body;
+    const { market, currentPage, countPage, search, startDate, endDate } = req.body;
 
     const marke = await Market.findById(market);
 
@@ -245,7 +246,31 @@ module.exports.getCategories = async (req, res) => {
       .sort({ code: 1 })
       .select("code market name")
       .skip(currentPage * countPage)
-      .limit(countPage);
+      .limit(countPage)
+      .lean()
+
+      for (const category of categorys) {
+        const products = await SaleProduct.find({
+          market,
+          createdAt: {
+            $gte: startDate,
+            $lte: endDate
+          }
+        })
+          .sort({ _id: -1 })
+          .select('-__v -updatedAt -isArchive')
+          .populate({
+            path: "product",
+            select: "category",
+            match: {category: category}
+          })
+          .lean()
+          .then(products => products.filter(product => product.product));
+          
+          category.totalproducts = products.reduce((prev, product) => prev + product.pieces, 0) 
+          category.totalsales = products.reduce((prev, product) => prev + product.totalprice, 0) 
+          category.totalsalesuzs = products.reduce((prev, product) => prev + product.totalpriceuzs, 0) 
+      }
 
     res.status(201).json({ categories: categorys, count: categoryCount });
   } catch (error) {

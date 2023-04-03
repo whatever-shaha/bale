@@ -85,7 +85,9 @@ function Table({
     handleCountProduct,
     handleUnitPrice,
     selectedFilial,
-    editComment
+    editComment,
+    startDate,
+    endDate
 }) {
     const checkRows = () => {
         switch (page) {
@@ -122,6 +124,8 @@ function Table({
                         countPage={countPage}
                         Edit={Edit}
                         Delete={Delete}
+                        endDate={endDate}
+                        startDate={startDate}
                     />
                 )
             case 'unit':

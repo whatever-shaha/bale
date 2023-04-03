@@ -64,34 +64,34 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                 <ul className='w-[35%]'>
                     <li className='check-ul-li'>
                         Do'kon:
-                        <span className='check-ul-li-span'>{market.name}</span>
+                        <span className='check-ul-li-span font-bold'>{market.name}</span>
                     </li>
                     <li className='check-ul-li'>
                         Telefon:
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold'>
                             {market.phone1}
                         </span>
                     </li>
                     <li className='check-ul-li'>
                         Manzil:
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold' >
                             {market?.address}
                         </span>
                     </li>
                     <li className='check-ul-li'>
                         Sana:
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span' font-bold>
                             {new Date(product?.createdAt).toLocaleDateString()}{' '}
-                            <span className='ml-3'>
+                            <span className='ml-3 font-bold'>
                                 {new Date(
                                     product?.createdAt
                                 ).toLocaleTimeString()}
                             </span>
                         </span>
                     </li>
-                    <li className='check-ul-li'>
+                    <li className='check-ul-li font-bold'>
                         Mijoz:{' '}
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold'>
                             {product?.client?.name ||
                                 product?.packman?.name ||
                                 ''}
@@ -101,13 +101,13 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                 <div className='check-ul-li flex-col'>
                     <div className={'grow text-center'}>
                         <h2 className='check-text-style mb-5'>
-                            Sotuv: <span className={'ml-2'}>{product?.id}</span>
+                            Sotuv: <span className={'ml-2 font-bold'}>{product?.id}</span>
                         </h2>
                     </div>
                     <div className='check-ul-li justify-end'>
                         <p>
                             Sotuvchi:{' '}
-                            <span className='check-ul-li-span'>
+                            <span className='check-ul-li-span font-bold'>
                                 {userInfo?.firstname} {userInfo?.lastname}
                             </span>
                         </p>
@@ -116,7 +116,7 @@ export const SaleCheckAll = forwardRef((props, ref) => {
             </div>
             {selled?.length > 0 && (
                 <div className='mt-5'>
-                    <h3 className='text-[1.3rem] text-black-700 mb-5 font-bold'>
+                    <h3 className='text-[1.3rem] text-black-900 mb-5 font-bold'>
                         Sotilganlar :
                     </h3>
                     <table className='border-collapse border border-slate-400 w-full'>
@@ -192,16 +192,16 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                 </div>
             )}
             <div className='border-t-[0.8px] border-black-700 w-full mt-4 mb-4 text-end'>
-                <h3 className='text-[1.1rem] text-black-700 font-bold pt-4'>
+                <h3 className='text-black-900 text-[1.1rem] text-black-700 font-bold pt-4'>
                     Sotilganlar jami :{' '}
-                    <span>
+                    <span className='text-black-900 font-bold'>
                         {calculateAllSum(selled).toLocaleString('ru-Ru')}{' '}
                         {currencyType}
                     </span>
                 </h3>
-                {selled.some(el => el.fromFilial > 0) && <h3 className='text-[14px] text-black-700 font-bold pt-4'>
+                {selled.some(el => el.fromFilial > 0) && <h3 className='text-black-900 text-[14px] text-black-700 font-bold pt-4'>
                     Ombordagi jami :{' '}
-                    <span>
+                    <span className=' text-black-900 font-bold'>
                         {calculateAllFilialSum(selled).toLocaleString('ru-Ru')}{' '}
                         {currencyType}
                     </span>
@@ -283,9 +283,9 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                         </table>
                     </div>
                     <div className='border-t-[0.8px] border-black-700 w-full mt-4 mb-4 text-end'>
-                        <h3 className='text-[1.1rem] text-black-700 font-bold pt-4'>
+                        <h3 className='text-black-900 text-[1.1rem] text-black-700 font-bold pt-4'>
                             Qaytarilganlar jami :{' '}
-                            <span>
+                            <span className='text-black-900 font-bold'>
                                 {calculateAllSum(returned).toLocaleString(
                                     'ru-Ru'
                                 )}{' '}
@@ -297,20 +297,20 @@ export const SaleCheckAll = forwardRef((props, ref) => {
             )}
             <div className='border-t-[0.8px] border-black-700 w-full my-[1.5rem]'></div>
             <ul>
-                <li className='check-ul-li-foot border-t-0'>
+                <li className='text-black-900 check-ul-li-foot border-t-0'>
                     {' '}
                     Jami:{' '}
-                    <span>
+                    <span className='text-black-900 font-bold'>
                         {(
                             calculateAllSum(selled) + calculateAllSum(returned)
                         ).toLocaleString('ru-Ru')}{' '}
                         {currencyType}
                     </span>
                 </li>
-                <li className='check-ul-li-foot'>
+                <li className='text-black-900 check-ul-li-foot'>
                     {' '}
                     Chegirma:{' '}
-                    <span>
+                    <span className='text-black-900 font-bold'>
                         {(
                             calculateAllDiscounts(selledDiscounts) +
                             calculateAllDiscounts(returnedDiscounts)
@@ -318,10 +318,10 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                         {currencyType}
                     </span>
                 </li>
-                <li className='check-ul-li-foot'>
+                <li className='text-black-900 check-ul-li-foot'>
                     {' '}
                     To'langan:{' '}
-                    <span>
+                    <span className='text-black-900 font-bold'>
                         {(
                             calculateAllPayments(selledPayments) +
                             calculateAllPayments(returnedPayments)
@@ -329,10 +329,10 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                         {currencyType}
                     </span>
                 </li>
-                <li className='check-ul-li-foot'>
+                <li className='text-black-900 check-ul-li-foot'>
                     {' '}
                     Qarz:{' '}
-                    <span>
+                    <span className=' text-black-900 font-bold'>
                         {(
                             calculateAllSum(selled) +
                             calculateAllSum(returned) -

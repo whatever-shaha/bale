@@ -49,15 +49,23 @@ const Category = () => {
         {
             title: t('Kategoriya kodi'),
             filter: 'code',
-            styles: 'w-[16%]'
         },
         {
             title: t('Kategoriya nomi'),
             filter: 'name',
-            styles: 'w-[60%]'
+            // styles: 'w-[60%]'
         },
         {
-            title: ''
+            title: 'Sotilganlar soni',
+            filter: 'totalproducts',
+        },
+        {
+            title: 'Sotilganlar Jami',
+            filter: 'totalsales',
+        },
+        {
+            title: '',
+            styles: 'w-[15%]'
         }
     ]
 
@@ -94,6 +102,15 @@ const Category = () => {
     const [currentCategory, setCurrentCategory] = useState(null)
     const [deletedCategory, setDeletedCategory] = useState(null)
     const [modalVisible, setModalVisible] = useState(false)
+
+    const [startDate, setStartDate] = useState(
+        new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            new Date().getDate()
+        )
+    )
+    const [endDate, setEndDate] = useState(new Date())
 
     // modal toggle
     const toggleModal = () => setModalVisible(!modalVisible)
@@ -407,11 +424,13 @@ const Category = () => {
             search: {
                 name: searchByName.replace(/\s+/g, ' ').trim(),
                 code: searchByCode.replace(/\s+/g, ' ').trim()
-            }
+            },
+            startDate,
+            endDate
         }
         dispatch(getCategories(body))
         //    eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, showByTotal, dispatch])
+    }, [currentPage, showByTotal, dispatch, startDate, endDate])
     useEffect(() => {
         setData(categories)
     }, [categories])
@@ -500,13 +519,17 @@ const Category = () => {
             </div>
 
             <SearchForm
-                filterBy={['total', 'category', 'name']}
+                filterBy={['total', 'category', 'name', 'startDate', 'endDate']}
                 filterByTotal={filterByTotal}
                 filterByCategory={filterByCode}
                 filterByName={filterByName}
                 filterByCodeAndNameAndCategoryWhenPressEnter={
                     filterByCodeAndNameWhenPressEnter
                 }
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
             />
 
             <div className='tableContainerPadding'>
@@ -525,6 +548,8 @@ const Category = () => {
                         sortItem={sorItem}
                         currentPage={currentPage}
                         countPage={showByTotal}
+                        startDate={startDate}
+                        endDate={endDate}
                     />
                 )}
             </div>

@@ -15,29 +15,29 @@ export const SaleCheck = forwardRef((props, ref) => {
                 <ul className='w-[35%]'>
                     <li className='check-ul-li'>
                         Do'kon:
-                        <span className='check-ul-li-span'>{market.name}</span>
+                        <span className='check-ul-li-span font-bold'>{market.name}</span>
                     </li>
                     <li className='check-ul-li'>
                         Telefon:
-                        <span className='check-ul-li-span'>
+                        <span className='text-black check-ul-li-span '>
                             {market.phone1}
                         </span>
                     </li>
                     <li className='check-ul-li'>
                         Manzil:
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold'>
                             {market?.address}
                         </span>
                     </li>
                     <li className='check-ul-li'>
                         Sana:
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold'>
                             {new Date(product?.createdAt).toLocaleDateString()}
                         </span>
                     </li>
                     <li className='check-ul-li'>
                         Mijoz:{' '}
-                        <span className='check-ul-li-span'>
+                        <span className='check-ul-li-span font-bold'>
                             {product?.client?.name ||
                                 product?.packman?.name ||
                                 ''}
@@ -48,18 +48,18 @@ export const SaleCheck = forwardRef((props, ref) => {
                     <div className={'grow text-center'}>
                         <h2 className='check-text-style mb-5'>
                             Sotuv:{' '}
-                            <span className={'ml-2'}>
+                            <span className={'ml-2 font-bold'}>
                                 {product?.saleconnector.id}
                             </span>
                         </h2>
-                        <h2 className='check-text-style'>
+                        <h2 className='check-text-style font-bold'>
                             Chek: {product?.id}
                         </h2>
                     </div>
-                    <div className='check-ul-li justify-end'>
+                    <div className='check-ul-li justify-end font-bold'>
                         <p>
                             Sotuvchi:{' '}
-                            <span className='check-ul-li-span'>
+                            <span className='check-ul-li-span font-bold'>
                                 {product?.user?.firstname}{' '}
                                 {product?.user?.lastname}
                             </span>
@@ -121,7 +121,7 @@ export const SaleCheck = forwardRef((props, ref) => {
             <ul>
                 <li className='check-ul-li-foot border-t-0'>
                     Jami:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {currencyType === 'USD'
                             ? product?.payment?.totalprice
                             : product?.payment?.totalpriceuzs}{' '}
@@ -131,7 +131,7 @@ export const SaleCheck = forwardRef((props, ref) => {
                 <li className='check-ul-li-foot'>
                     {' '}
                     Chegirma:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {product?.hasOwnProperty('discount')
                             ? currencyType === 'USD'
                                 ? product?.discount.discount
@@ -143,7 +143,7 @@ export const SaleCheck = forwardRef((props, ref) => {
                 <li className='check-ul-li-foot'>
                     {' '}
                     To'langan:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {currencyType === 'USD'
                             ? product?.payment?.payment
                             : product?.payment?.paymentuzs}{' '}
@@ -153,7 +153,7 @@ export const SaleCheck = forwardRef((props, ref) => {
                 <li className='check-ul-li-foot'>
                     {' '}
                     Qarz:{' '}
-                    <span>
+                    <span className='font-bold'>
                         {currencyType === 'USD'
                             ? calculateDebt(
                                 product?.payment?.totalprice,

@@ -466,9 +466,9 @@ const RegisterSelling = () => {
 
     const handleChangeDiscount = (value) => {
         const allPaymentAfterDiscount =
-            Math.round(((allPayment * 5) / 100) * 1000) / 1000
+            Math.round(((allPayment * 30) / 100) * 1000) / 1000
         const allPaymentUzsAfterDiscount =
-            Math.round(((allPaymentUzs * 5) / 100) * 1) / 1
+            Math.round(((allPaymentUzs * 30) / 100) * 1) / 1
         if (discountSelectOption.value === 'USD') {
             if (value > allPaymentAfterDiscount) {
                 warningMoreDiscount(`${allPaymentAfterDiscount} USD`)
@@ -494,8 +494,8 @@ const RegisterSelling = () => {
                 setPaymentDebtUzs(allPaymentUzs - value)
             }
         } else {
-            if (value > 5) {
-                warningMoreDiscount('5%')
+            if (value > 30) {
+                warningMoreDiscount('30%')
             } else {
                 const discountUsd =
                     Math.round(((allPayment * value) / 100) * 1000) / 1000

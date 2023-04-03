@@ -19,6 +19,7 @@ const {
   Exchangerate,
   validateExchangerate,
 } = require("../../models/Exchangerate/Exchangerate");
+const { SaleProduct } = require("../../models/Sales/SaleProduct");
 
 const filter = require("lodash").filter;
 
@@ -627,24 +628,20 @@ module.exports.delete = async (req, res) => {
       });
     }
 
-    await ProductData.findByIdAndUpdate(productdata._id, {
-      $pull: {
-        products: new ObjectId(_id),
-      },
-    });
+    await ProductData.findByIdAndDelete(productdata);
 
-    const productData = await ProductData.findById(productdata);
-    if (
-      productData.products.length === 0 &&
-      market === productData.market.toString()
-    ) {
-      await ProductData.findByIdAndDelete(productdata._id);
-      await Category.findByIdAndUpdate(category, {
-        $pull: {
-          products: new ObjectId(productData._id),
-        },
-      });
-    }
+    // const productData = await ProductData.findById(productdata);
+    // if (
+    //   productData.products.length === 0 &&
+    //   market === productData.market.toString()
+    // ) {
+    //   await ProductData.findByIdAndDelete(productdata._id);
+    //   await Category.findByIdAndUpdate(category, {
+    //     $pull: {
+    //       products: new ObjectId(productData._id),
+    //     },
+    //   });
+    // }
 
     const productcode = new RegExp(
       ".*" + search ? search.code : "" + ".*",
@@ -686,6 +683,7 @@ module.exports.delete = async (req, res) => {
       count,
     });
   } catch (error) {
+    console.log(error);
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
@@ -1037,7 +1035,7 @@ module.exports.getAllBrand = async (req, res) => {
 //Product getall by category
 module.exports.getAllCategory = async (req, res) => {
   try {
-    const { market, categoryId } = req.body;
+    const { market, categoryId, startDate, endDate } = req.body;
     const marke = await Market.findById(market);
     const categor = await Category.findById(categoryId);
 
@@ -1059,9 +1057,29 @@ module.exports.getAllCategory = async (req, res) => {
       .populate(
         "price",
         "sellingprice sellingpriceuzs incomingprice incomingpriceuzs"
-      );
+      )
+      .lean()
 
-    res.status(201).send(products);
+      for (const product of products) {
+          const saleproducts = await SaleProduct.find({
+            market,
+            product: product._id,
+            createdAt: {
+              $gte: startDate,
+              $lte: endDate
+            }
+          })
+          .select('pieces totalprice totalpriceuzs')
+          .lean()
+         
+          product.totalsaleproducts = saleproducts.reduce((prev, el) => prev + el.pieces, 0)
+          product.totalsales = saleproducts.reduce((prev, el) => prev + el.totalprice, 0)
+          product.totalsalesuzs = saleproducts.reduce((prev, el) => prev + el.totalpriceuzs, 0)
+      }
+
+      const response = [...products].sort((a, b) => a.totalsaleproducts > b.totalsaleproducts ? -1 : 1)
+
+    res.status(201).send(response);
   } catch (error) {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
