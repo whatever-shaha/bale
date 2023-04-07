@@ -6,6 +6,7 @@ const { Market } = require("../../models/MarketAndBranch/Market");
 const { Product } = require("../../models/Products/Product");
 const { ProductType } = require("../../models/Products/ProductType");
 const { SaleProduct } = require("../../models/Sales/SaleProduct");
+require("../../models/Products/ProductPrice");
 
 //Category register
 module.exports.registerAll = async (req, res) => {
@@ -250,6 +251,7 @@ module.exports.getCategories = async (req, res) => {
       .lean()
 
       for (const category of categorys) {
+        
         const products = await SaleProduct.find({
           market,
           createdAt: {
@@ -261,8 +263,12 @@ module.exports.getCategories = async (req, res) => {
           .select('-__v -updatedAt -isArchive')
           .populate({
             path: "product",
-            select: "category",
+            select: "category price",
             match: {category: category}
+          })
+          .populate({
+            path: "price",
+            select: "incomingprice incomingpriceuzs",
           })
           .lean()
           .then(products => products.filter(product => product.product));
@@ -270,10 +276,15 @@ module.exports.getCategories = async (req, res) => {
           category.totalproducts = products.reduce((prev, product) => prev + product.pieces, 0) 
           category.totalsales = products.reduce((prev, product) => prev + product.totalprice, 0) 
           category.totalsalesuzs = products.reduce((prev, product) => prev + product.totalpriceuzs, 0) 
+          const income = products.reduce((prev, product) => prev + ((product.price.incomingprice || 0) * product.pieces), 0)
+          const incomeuzs = products.reduce((prev, product) => prev + ((product.price.incomingpriceuzs || 0) * product.pieces), 0)
+          category.profit = products.reduce((prev, product) => prev + product.totalprice, 0) - income
+          category.profituzs = products.reduce((prev, product) => prev + product.totalpriceuzs, 0) - incomeuzs
       }
 
     res.status(201).json({ categories: categorys, count: categoryCount });
   } catch (error) {
+    console.log(error);
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };

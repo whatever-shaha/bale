@@ -64,6 +64,10 @@ const Category = () => {
             filter: 'totalsales',
         },
         {
+            title: 'Sof foyda',
+            filter: 'profit',
+        },
+        {
             title: '',
             styles: 'w-[15%]'
         }

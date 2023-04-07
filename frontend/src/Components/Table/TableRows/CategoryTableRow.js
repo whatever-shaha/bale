@@ -26,7 +26,8 @@ export const CategoryTableRow = ({
                     <td className='td'>{category.code}</td>
                     <td className='td'>{category.name}</td>
                     <td className='td'>{category?.totalproducts}</td>
-                    <td className='td'>{currencyType === 'USD' ? roundUsd(category?.totalsales).toLocaleString('ru-RU') : roundUzs(category?.totalsalesuzs).toLocaleString('ru-RU')}</td>
+                    <td className='td'>{currencyType === 'USD' ? roundUsd(category?.totalsales).toLocaleString('ru-RU') : roundUzs(category?.totalsalesuzs).toLocaleString('ru-RU')} {currencyType}</td>
+                    <td className='td'>{currencyType === 'USD' ? roundUsd(category?.profit).toLocaleString('ru-RU') : roundUzs(category?.profituzs).toLocaleString('ru-RU')} {currencyType}</td>
                     <td className='td border-r-0 text-center max-w-[50px] py-[0.375rem]'>
                         <div className='flex items-center justify-center'>
                             <TableBtn

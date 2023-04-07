@@ -1,10 +1,12 @@
-import React, {useEffect, useRef, useState} from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import PrintBtn from '../../Buttons/PrintBtn'
-import {useReactToPrint} from 'react-to-print'
-import {SaleCheckAll} from '../../SaleCheck/SaleCheckAll.js'
+import { useReactToPrint } from 'react-to-print'
+import { SaleCheckAll } from '../../SaleCheck/SaleCheckAll.js'
 import SmallLoader from '../../Spinner/SmallLoader.js'
-import {filter} from 'lodash'
-function AllCheck({product}) {
+import { filter } from 'lodash'
+import { SmallCheck } from './SmallCheck'
+import { IoPrint } from 'react-icons/io5'
+function AllCheck({ product }) {
     const [loadContent, setLoadContent] = useState(false)
     const [selled, setSelled] = useState([])
     const [returned, setReturned] = useState([])
@@ -14,6 +16,7 @@ function AllCheck({product}) {
     const [returnedPayments, setReturnedPayments] = useState([])
     const [userInfo, setUserInfo] = useState({})
     const saleCheckRef = useRef(null)
+    const saleSmallCheckRef = useRef(null)
     const onBeforeGetContentResolve = useRef(null)
     const handleOnBeforeGetContent = React.useCallback(() => {
         setLoadContent(true)
@@ -30,12 +33,26 @@ function AllCheck({product}) {
         return saleCheckRef.current
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [saleCheckRef.current])
+
+    const reactToPrintContent2 = React.useCallback(() => {
+        return saleSmallCheckRef.current
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [saleSmallCheckRef.current])
+
     const print = useReactToPrint({
         content: reactToPrintContent,
         documentTitle: 'All Checks',
         onBeforeGetContent: handleOnBeforeGetContent,
         removeAfterPrint: true,
     })
+
+    const print2 = useReactToPrint({
+        content: reactToPrintContent2,
+        documentTitle: 'All Checks',
+        onBeforeGetContent: handleOnBeforeGetContent,
+        removeAfterPrint: true,
+    })
+
     useEffect(() => {
         if (
             loadContent &&
@@ -79,8 +96,40 @@ function AllCheck({product}) {
                 product={product}
                 userInfo={userInfo}
             />
-            <div className='flex justify-center items-center mt-6'>
-                <PrintBtn onClick={print} isDisabled={loadContent} />
+            <div className='hidden'>
+                <SmallCheck
+                    ref={saleSmallCheckRef}
+                    returned={returned}
+                    selled={selled}
+                    selledDiscounts={selledDiscounts}
+                    returnedDiscounts={returnedDiscounts}
+                    selledPayments={selledPayments}
+                    returnedPayments={returnedPayments}
+                    product={product}
+                    userInfo={userInfo}
+                />
+            </div>
+            <div className='flex justify-between items-center mt-6'>
+                <div>
+                    <button
+
+                        className={`group print-btn-style ml-auto min-w-max ${loadContent ? 'pointer-events-none' : 'pointer-events-auto'
+                            }`}
+                        onClick={print2}
+                        disabled={loadContent}
+                    >
+                        <span className='print-text-style'>Xprinter</span>
+                        <span className='print-icon-style'>
+                            <IoPrint
+                                size={'1.125rem'}
+                                className='text-primary-800 text-lg transition-all ease-in-out duration-200 group-hover:text-primary-900'
+                            />
+                        </span>
+                    </button>
+                </div>
+                <div>
+                    <PrintBtn onClick={print} isDisabled={loadContent} />
+                </div>
             </div>
         </section>
     )

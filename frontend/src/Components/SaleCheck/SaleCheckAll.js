@@ -80,7 +80,7 @@ export const SaleCheckAll = forwardRef((props, ref) => {
                     </li>
                     <li className='check-ul-li'>
                         Sana:
-                        <span className='check-ul-li-span' font-bold>
+                        <span className='check-ul-li-span'>
                             {new Date(product?.createdAt).toLocaleDateString()}{' '}
                             <span className='ml-3 font-bold'>
                                 {new Date(
