@@ -126,7 +126,7 @@ function CustomerPayment({
                     </div>
                     <ul className='w-full pb-[1.25rem]'>
                         {!returned && defineLabel()}
-                        {(location.pathname.includes('/kassa/debts') || location.pathname.includes('/qarzdorlar') || location.pathname.includes('/maxsulotlar/qabul/qabulqilish') ) && defineLabel()}
+                        {(location.pathname.includes('/kassa/debts') || location.pathname.includes('/qarzdorlar') || location.pathname.includes('/maxsulotlar/qabul/qabulqilish') || location.pathname.includes('/maxsulotlar/qabul/qabullar') ) && defineLabel()}
                         <PaymentInput
                             value={saleComment}
                             key={'sale-card'}
