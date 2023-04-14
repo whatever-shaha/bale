@@ -9,6 +9,9 @@ export const SmallCheck2 = forwardRef((props, ref) => {
 
     const { market } = useSelector((state) => state.login)
     const { currencyType } = useSelector((state) => state.currency)
+    const calculateDebt = (total, payment, discount = 0) => {
+        return (total - payment - discount).toLocaleString('ru-Ru')
+    }
 
     return (
         <div ref={ref} className={'bg-white-900 p-4 rounded-md w-[7.5cm]'}>
@@ -85,6 +88,46 @@ export const SmallCheck2 = forwardRef((props, ref) => {
                         {currencyType === 'USD'
                             ? product?.payment?.totalprice
                             : product?.payment?.totalpriceuzs}{' '}
+                        {currencyType}
+                    </span>
+                </h3>
+                <h3 style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold pt-4'>
+                    {' '}
+                    Chegirma:{' '}
+                    <span style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold'>
+                        {product?.hasOwnProperty('discount')
+                            ? currencyType === 'USD'
+                                ? product?.discount.discount
+                                : product?.discount.discountuzs
+                            : 0}{' '}
+                        {currencyType}
+                    </span>
+                </h3>
+                <h3 style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold pt-4'>
+                    {' '}
+                    To'langan:{' '}
+                    <span style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold'>
+                        {currencyType === 'USD'
+                            ? product?.payment?.payment
+                            : product?.payment?.paymentuzs}{' '}
+                        {currencyType}
+                    </span>
+                </h3>
+                <h3 style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold pt-4'>
+                    {' '}
+                    Qarz:{' '}
+                    <span style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold'>
+                        {currencyType === 'USD'
+                            ? calculateDebt(
+                                product?.payment?.totalprice,
+                                product?.payment?.payment,
+                                product?.discount?.discount
+                            )
+                            : calculateDebt(
+                                product?.payment?.totalpriceuzs,
+                                product?.payment?.paymentuzs,
+                                product?.discount?.discountuzs
+                            )}{' '}
                         {currencyType}
                     </span>
                 </h3>
