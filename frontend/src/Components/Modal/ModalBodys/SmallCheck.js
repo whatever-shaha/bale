@@ -192,14 +192,49 @@ export const SmallCheck = forwardRef((props, ref) => {
                     </table> */}
                 </div>
             )}
-            <div className='border-t-[0.8px] border-black-700 w-full mt-4 mb-4 text-left'>
-                <h3 style={{fontWeight: "bolder"}} className='text-black-900 text-[12px] font-bold pt-4'>
+            <div className='text-black-900 check-ul-li-foot mt-4'>
                     Jami :{' '}
-                    <span style={{fontWeight: "bolder"}} className='text-black-900 text-[12px] font-bold'>
+                    <span style={{ fontWeight: "bolder" }} className='text-black-900 text-[12px] font-bold'>
                         {calculateAllSum(selled).toLocaleString('ru-Ru')}{' '}
                         {currencyType}
                     </span>
-                </h3>
+            </div>
+            <div className='text-black-900 check-ul-li-foot'>
+                {' '}
+                Chegirma:{' '}
+                <span className='text-black-900 text-[12px] font-bold'>
+                    {(
+                        calculateAllDiscounts(selledDiscounts) +
+                        calculateAllDiscounts(returnedDiscounts)
+                    ).toLocaleString('ru-Ru')}{' '}
+                    {currencyType}
+                </span>
+            </div>
+            <div className='text-black-900 check-ul-li-foot'>
+                {' '}
+                To'langan:{' '}
+                <span className='text-black-900 text-[12px] font-bold'>
+                    {(
+                        calculateAllPayments(selledPayments) +
+                        calculateAllPayments(returnedPayments)
+                    ).toLocaleString('ru-Ru')}{' '}
+                    {currencyType}
+                </span>
+            </div>
+            <div className='text-black-900 check-ul-li-foot'>
+                {' '}
+                Qarz:{' '}
+                <span className='text-black-900 text-[12px] font-bold'>
+                    {(
+                        calculateAllSum(selled) +
+                        calculateAllSum(returned) -
+                        (calculateAllPayments(selledPayments) +
+                            calculateAllPayments(returnedPayments)) -
+                        (calculateAllDiscounts(selledDiscounts) +
+                            calculateAllDiscounts(returnedDiscounts))
+                    ).toLocaleString('ru-Ru')}{' '}
+                    {currencyType}
+                </span>
             </div>
         </div>
     )
