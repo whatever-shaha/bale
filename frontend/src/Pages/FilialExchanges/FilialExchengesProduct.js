@@ -146,7 +146,7 @@ function FilialExchangesProduct({id, currency}) {
         }
         dispatch(getFilialShopData(body))
     }, [dispatch, id, startDate, endDate, currentPage, showByTotal])
-
+    console.log('worgverge');
     useEffect(() => {
         setData(shops)
     }, [dispatch, shops, startDate, endDate])

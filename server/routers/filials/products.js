@@ -492,6 +492,40 @@ module.exports.getTransferProducts = async (req, res) => {
   }
 };
 
+// Get TransferProducts
+module.exports.getIncomeProducts = async (req, res) => {
+  try {
+    const { market, filial, currentPage, countPage } = req.body;
+
+    const marke = await Market.findById(market);
+    if (!marke) {
+      return res.status(400).json({
+        message:
+          "Diqqat! Foydalanuvchi ro'yxatga olinayotgan do'kon dasturda ro'yxatga olinmagan.",
+      });
+    }
+
+    const transferProducts = await TransferProduct.find({
+      market: filial,
+    })
+      .select("-__v -updatedAt -isArchive")
+      .populate("productdata", "code name barcode")
+      .populate("category", "code")
+      .populate("unit", "name")
+      .populate(
+        "price",
+        "incomingprice incomingpriceuzs sellingprice sellingpriceuzs"
+      );
+
+    return res.status(200).json({
+      count: transferProducts.length,
+      products: transferProducts.splice(currentPage * countPage, countPage),
+    });
+  } catch (error) {
+    res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+  }
+};
+
 // Get Filials List
 module.exports.getFilials = async (req, res) => {
   try {

@@ -1,5 +1,5 @@
 import React from 'react'
-import {IoCartOutline, IoCubeOutline, IoNewspaperOutline} from 'react-icons/io5'
+import {IoCartOutline, IoCubeOutline, IoEnterOutline, IoNewspaperOutline} from 'react-icons/io5'
 
 function FilialButtons({type, onClick, active}) {
     const propsType = {
@@ -13,6 +13,10 @@ function FilialButtons({type, onClick, active}) {
         },
         payments: {
             icon: <IoCubeOutline className='shopIcons' />,
+            bgColor: 'bg-[#00B4CC]'
+        },
+        income: {
+            icon: <IoEnterOutline className='shopIcons' />,
             bgColor: 'bg-[#00B4CC]'
         }
     }

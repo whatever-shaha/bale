@@ -146,12 +146,28 @@ module.exports.updatemarkets = async (req, res) => {
     await Market.findByIdAndUpdate(market._id, { filials: market.filials });
     if (filial.mainmarket) {
       await Market.findByIdAndUpdate(filial._id, {
-        mainmarket: filial.mainmarket,
+        mainmarket: filial.mainmarket
       });
     } else {
       await Market.findByIdAndUpdate(filial._id, {
         $unset: { mainmarket: 1 },
+        filials: []
       });
+    }
+
+    for (const filial of market.filials) {
+      const check = await Market.findById(filial)
+      console.log(check); 
+      if (check.mainmarket) {
+        const filteredId = market.filials.filter(el => String(el) !== String(filial))
+        await Market.findByIdAndUpdate(filial, {
+          filials: [...filteredId, market._id]
+        })
+      } else {
+        await Market.findByIdAndUpdate(filial, {
+          filials: []
+        }) 
+      }
     }
 
     const director = new RegExp(

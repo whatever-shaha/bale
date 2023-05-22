@@ -41,6 +41,7 @@ import { SavedOrdersTableRow } from './TableRows/SavedOrdersTableRow.js'
 import { RegisterIncomingOrdersTableRow } from './TableRows/RegisterIncomingOrdersTableRow.js'
 import { IncomingOrderProductsTableRow } from './TableRows/IncomingOrderProductsTableRow.js'
 import { ReceiveOrderProductsTableRow } from './TableRows/ReceiveOrderProductsTableRow.js'
+import { LabelsIncome } from './TableRows/LabelsIncome'
 function Table({
     page,
     data,
@@ -152,6 +153,20 @@ function Table({
             case 'productreport':
                 return (
                     <ProductReportTableRow
+                        data={data}
+                        currentPage={currentPage}
+                        countPage={countPage}
+                        Edit={Edit}
+                        Delete={Delete}
+                        currency={currency}
+                        changeHandler={changeHandler}
+                        Print={Print}
+                        printedData={printedData}
+                    />
+                )
+            case 'labelsincome':
+                return (
+                    <LabelsIncome
                         data={data}
                         currentPage={currentPage}
                         countPage={countPage}

@@ -20,6 +20,10 @@ router.post("/getproducts", auth, (req, res) => {
   require("./products").getTransferProducts(req, res);
 });
 
+router.post("/getincomeproducts", auth, (req, res) => {
+  require("./products").getIncomeProducts(req, res);
+});
+
 router.post("/getfilials", auth, (req, res) => {
   require("./products").getFilials(req, res);
 });

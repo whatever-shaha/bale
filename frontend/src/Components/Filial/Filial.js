@@ -9,6 +9,7 @@ import {useTranslation} from 'react-i18next'
 import {useSelector} from 'react-redux'
 import FilialExchangesProduct from '../../Pages/FilialExchanges/FilialExchengesProduct'
 import ProductIdExchanges from '../../Pages/ProductIdExchanges/ProductIdExchanges'
+import LabelsIncome from '../../Pages/Labels/LabelsIncome'
 const Filial = ({active, value}) => {
     const {currencyType} = useSelector((state) => state.currency)
     const {tablename, _id} = useParams()
@@ -17,6 +18,9 @@ const Filial = ({active, value}) => {
     const [salesOpen, setSalesOpen] = useState(true)
     const [paymentOpen, setPaymentOpen] = useState(true)
     const [useParamsId, setUseParamsId] = useState(_id)
+    const [incomeProducts, setIncomeProducts] = useState()
+
+
     const handleReportOpen = (e) => {
         e && e.preventDefault()
         setReprotOpen(!reportOpen)
@@ -34,6 +38,13 @@ const Filial = ({active, value}) => {
     const handlePaymentOpen = (e) => {
         e && e.preventDefault()
         setPaymentOpen(!paymentOpen)
+        setReprotOpen(true)
+        setSalesOpen(true)
+    }
+
+    const handleIncomeProducts = (e) => {
+        e && e.preventDefault()
+        setIncomeProducts(!incomeProducts)
         setReprotOpen(true)
         setSalesOpen(true)
     }
@@ -135,6 +146,25 @@ const Filial = ({active, value}) => {
                                 }
                             />
                         </Link>
+                        <Link
+                            to={`${
+                                incomeProducts
+                                    ? `/dukonlar/filiallar/income/${value._id}`
+                                    : '/dukonlar/filiallar'
+                            }`}
+                            onClick={() => handleIncomeProducts()}
+                        >
+                            <FilialButtons
+                                type={'income'}
+                                active={
+                                    (_id === value._id &&
+                                        tablename === 'income') ||
+                                    (_id === value._id &&
+                                        location.pathname ===
+                                            `/dukonlar/filiallar/income/${_id}`)
+                                }
+                            />
+                        </Link>
                     </div>
                 </div>
             </div>
@@ -146,7 +176,9 @@ const Filial = ({active, value}) => {
                             _id === value._id ? (
                                 tablename === 'report' ? (
                                     <Labels id={_id} />
-                                ) : tablename === 'sales' ? (
+                                ) : tablename === 'income' ? (
+                                    <LabelsIncome id={_id} />
+                                ) :  tablename === 'sales' ? (
                                     <Sellings id={_id} />
                                 ) : (
                                     <FilialExchangesProduct

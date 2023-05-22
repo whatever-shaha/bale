@@ -61,9 +61,21 @@ const getAllFilials = async ({ socket, market }) => {
         message: "Diqqat! Do'kon ma'lumotlari topilmadi.",
       });
     }
-    const filials = await Market.find({ mainmarket: market }, { timestamp: 1 })
-      .select("director image name phone1 createdAt")
-      .populate("director", "firstname lastname");
+
+    let filials = []
+
+    const f = await Market.findOne({ _id: market }, { timestamp: 1 })
+      .populate({
+        path: "filials",
+        select: "director image name phone1 createdAt",
+        populate: {
+          path: "director",
+          select: "firstname lastname",
+        }
+      })
+      .lean()
+
+      filials = f.filials
 
     const all = [];
     for (const i in filials) {
