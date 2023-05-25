@@ -1,6 +1,7 @@
 import React from 'react'
 import { BsFillTelephoneFill } from 'react-icons/bs'
 import { motion } from 'framer-motion';
+import Logo from '../../Images/bale_logo.png'
 
 const Loader = () => {
     return (
@@ -14,7 +15,7 @@ const Loader = () => {
             transition={{ repeat: Infinity, duration: 1 }}
         >
             <div className='animation'>
-                <div className='animation-img'>
+                {/* <div className='animation-img'>
                     <motion.div className='animation-bg'
                         initial={{ rotate: [0, 9, 9, 0] }}
                         animate={{
@@ -43,8 +44,13 @@ const Loader = () => {
                     }}
                     transition={{ repeat: Infinity, duration: 3, from: 1.2 }}
                 >
-                    <p className='animation-name'>ALO</p><p className='pl-[8px]'>24</p>
-                </motion.div>
+                    <p className='animation-name'>Bale</p>
+                </motion.div> */}
+                <img
+                    src={Logo}
+                    className={'w-[200px] pointer-events-none'}
+                    alt='Alo24 logo'
+                />
             </div>
         </motion.div>
     )

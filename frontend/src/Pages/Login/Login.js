@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import Logo from '../../Images/logo-lg.svg'
+import Logo from '../../Images/bale_logo.png'
 import Input from '../../Components/Inputs/Input'
 import { clearError, signIn } from './loginSlice'
 import { useDispatch, useSelector } from 'react-redux'
@@ -45,11 +45,11 @@ function Login() {
                 <div
                     className='bg-circle-1 w-full h-full rounded-full backdrop-blur-[10px] bg-white-400 absolute left-0 right-0 top-0 bottom-0'></div>
                 <div
-                    className='bg-circle-2 rounded-full bg-white-900 z-20 flex flex-col gap-[1.875rem] justify-center items-center'>
-                    <div className='logo-container w-[36.9%]'>
+                    className='bg-circle-2 rounded-full bg-white-900 z-20 flex flex-col justify-center items-center'>
+                    <div className='logo-container w-[200px]'>
                         <img
                             src={Logo}
-                            className={'w-full pointer-events-none'}
+                            className={'w-[200px] pointer-events-none'}
                             alt='Alo24 logo'
                         />
                     </div>
