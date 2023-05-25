@@ -100,6 +100,15 @@ const LabelsIncome = ({id}) => {
     const [dataLoaded, setDataLoaded] = useState(false)
     const [printedData, setPrintedData] = useState([])
 
+    const [startDate, setStartDate] = useState(
+        new Date(
+            new Date().getFullYear(),
+            new Date().getMonth(),
+            new Date().getDate()
+        )
+    )
+    const [endDate, setEndDate] = useState(new Date())
+
     // handle change of search inputs
     const filterByCode = (e) => {
         let val = e.target.value
@@ -347,6 +356,8 @@ const LabelsIncome = ({id}) => {
             filial: id,
             currentPage,
             countPage: showByTotal,
+            startDate,
+            endDate,
             search: {
                 name: searchByName.replace(/\s+/g, ' ').trim(),
                 code: searchByCode.replace(/\s+/g, ' ').trim(),
@@ -355,7 +366,7 @@ const LabelsIncome = ({id}) => {
         }
         dispatch(getIncomeProducts(body))
         //    eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [currentPage, showByTotal, dispatch])
+    }, [currentPage, showByTotal, dispatch, startDate, endDate])
 
     useEffect(() => {
         setData(products)
@@ -420,12 +431,16 @@ const LabelsIncome = ({id}) => {
             <SearchForm
                 filterBy={[
                     'total',
-                    'category',
-                    'code',
+                    'startDate',
+                    'endDate',
                     'name',
                     'checks',
                     'printBtn',
                 ]}
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
                 filterByCode={filterByCode}
                 filterByName={filterByName}
                 searchByCode={searchByCode}

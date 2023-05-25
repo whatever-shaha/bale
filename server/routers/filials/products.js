@@ -460,7 +460,7 @@ module.exports.getTransfers = async (req, res) => {
 // Get TransferProducts
 module.exports.getTransferProducts = async (req, res) => {
   try {
-    const { market, transfer, currentPage, countPage } = req.body;
+    const { market, transfer, currentPage, countPage, startDate, endDate } = req.body;
 
     const marke = await Market.findById(market);
     if (!marke) {
@@ -473,6 +473,10 @@ module.exports.getTransferProducts = async (req, res) => {
     const transferProducts = await TransferProduct.find({
       market,
       transfer,
+      createdAt: {
+        $gte: startDate,
+        $lte: endDate,
+      },
     })
       .select("-__v -updatedAt -isArchive")
       .populate("productdata", "code name")
