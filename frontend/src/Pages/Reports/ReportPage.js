@@ -758,7 +758,7 @@ const ReportPage = () => {
                 <SearchForm
                     filterBy={
                         id === 'debts'
-                            ? ['startDate', 'endDate', 'id', 'clientName']
+                            ? ['id', 'clientName']
                             : id === 'expenses'
                                 ? ['total']
                                 : ['total', 'id', 'clientName']

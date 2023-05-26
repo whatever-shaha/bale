@@ -764,7 +764,7 @@ module.exports.getPayment = async (req, res) => {
 
 module.exports.getDebtsReport = async (req, res) => {
   try {
-    const { market, startDate, endDate } = req.body;
+    const { market } = req.body;
     const marke = await Market.findById(market);
     if (!marke) {
       return res
@@ -773,11 +773,7 @@ module.exports.getDebtsReport = async (req, res) => {
     }
 
     const saleconnector = await SaleConnector.find({
-      market,
-      createdAt: {
-        $gte: startDate,
-        $lte: endDate,
-      },
+      market
     })
       .select("-isArchive -updatedAt -__v -packman")
       .populate(

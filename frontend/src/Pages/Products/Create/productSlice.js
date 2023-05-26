@@ -31,6 +31,18 @@ export const getIncomeProducts = createAsyncThunk(
     }
 )
 
+export const getTransferProducts = createAsyncThunk(
+    'products/getProducts',
+    async (body, {rejectWithValue}) => {
+        try {
+            const {data} = await Api.post('/filials/getincomeproducts', body)
+            return data
+        } catch (error) {
+            return rejectWithValue(error)
+        }
+    }
+)
+
 export const getProductsAll = createAsyncThunk(
     'products/getexceldata',
     async (
@@ -166,6 +178,24 @@ const productSlice = createSlice({
             }
         },
         [getProducts.rejected]: (state, {payload}) => {
+            state.loading = false
+            state.errorProducts = payload
+            universalToast(payload, 'error')
+        },
+        [getTransferProducts.pending]: (state) => {
+            state.loading = true
+        },
+        [getTransferProducts.fulfilled]: (state, {payload: {products, count}}) => {
+            state.loading = false
+            if (state.totalSearched > 0) {
+                state.searchedProducts = products
+                state.totalSearched = count
+            } else {
+                state.products = products
+                state.total = count
+            }
+        },
+        [getTransferProducts.rejected]: (state, {payload}) => {
             state.loading = false
             state.errorProducts = payload
             universalToast(payload, 'error')
