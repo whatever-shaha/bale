@@ -24,203 +24,236 @@ const { SaleProduct } = require("../../models/Sales/SaleProduct");
 const filter = require("lodash").filter;
 
 //Product registerall
+// module.exports.registerAll = async (req, res) => {
+//   try {
+//     const products = req.body.products;
+//     const market = req.body.market;
+//     const { currentPage, countPage, search } = req.body;
+
+//     const all = [];
+
+//     const marke = await Market.findById(market);
+
+//     if (!marke) {
+//       return res.status(400).json({
+//         message: "Diqqat! Do'kon ma'lumotlari topilmadi.",
+//       });
+//     }
+//     for (const product of products) {
+//       const category = await Category.findOne({
+//         market,
+//         code: product.category,
+//       });
+
+//       const productData = await ProductData.findOne({
+//         barcode: product.barcode,
+//         market,
+//         code: product.code,
+//         category: category && category._id,
+//       });
+
+//       if (productData) {
+//         return res.status(400).json({
+//           message: `Diqqat! ${product.category} kategoriyasida ${product.code} kodli mahsulot avval yaratilgan.`,
+//         });
+//       }
+//     }
+
+//     for (const product of products) {
+//       const { error } = validateProductExcel(product);
+//       if (error) {
+//         return res.status(400).json({
+//           error: error.message,
+//         });
+//       }
+//       const {
+//         barcode,
+//         category,
+//         name,
+//         code,
+//         unit,
+//         incomingprice,
+//         sellingprice,
+//         incomingpriceuzs,
+//         sellingpriceuzs,
+//         total,
+//         tradeprice,
+//         tradepriceuzs,
+//         minimumcount,
+//       } = product;
+
+//       let categor = await Category.findOne({
+//         code: category,
+//         market,
+//       });
+
+//       if (!categor) {
+//         const newcategory = new Category({
+//           code: category,
+//           market,
+//         });
+//         await newcategory.save();
+//         categor = newcategory;
+//       }
+
+//       const newProductData = new ProductData({
+//         barcode: barcode
+//           ? barcode
+//           : "47800" + categor.code.toString() + code.toString(),
+//         code,
+//         name,
+//         category: categor._id,
+//         market,
+//       });
+//       await newProductData.save();
+
+//       const newProduct = new Product({
+//         productdata: newProductData._id,
+//         category: categor._id,
+//         market,
+//         unit,
+//         total: Math.round(total * 1000) / 1000,
+//         minimumcount: minimumcount ? minimumcount : 0,
+//       });
+
+//       // Create Price
+//       const newPrice = new ProductPrice({
+//         incomingprice: incomingprice
+//           ? Math.round(incomingprice * 1000) / 1000
+//           : 0,
+//         sellingprice: sellingprice ? Math.round(sellingprice * 1000) / 1000 : 0,
+//         incomingpriceuzs: incomingpriceuzs
+//           ? Math.round(incomingpriceuzs * 1) / 1
+//           : 0,
+//         sellingpriceuzs: sellingpriceuzs
+//           ? Math.round(sellingpriceuzs * 1) / 1
+//           : 0,
+//         tradeprice: tradeprice ? Math.round(tradeprice * 1000) / 1000 : 0,
+//         tradepriceuzs: tradepriceuzs ? Math.round(tradepriceuzs * 1) / 1 : 0,
+//         market,
+//       });
+//       await newPrice.save();
+//       newProduct.price = newPrice._id;
+
+//       // Create unit
+//       const uni = await Unit.findOne({
+//         name: unit,
+//         market,
+//       });
+
+//       if (uni) {
+//         newProduct.unit = uni._id;
+//       } else {
+//         const newUnit = new Unit({
+//           name: unit,
+//           market,
+//         });
+//         await newUnit.save();
+//         newProduct.unit = newUnit._id;
+//       }
+
+//       all.push(newProduct);
+//     }
+
+//     for (const product of all) {
+//       await product.save();
+
+//       await ProductData.findByIdAndUpdate(product.productdata, {
+//         unit: product.unit,
+//         $push: {
+//           products: product._id,
+//         },
+//         product: product._id,
+//       });
+
+//       await Category.findByIdAndUpdate(product.category, {
+//         $push: {
+//           products: product._id,
+//         },
+//       });
+
+//       await ProductPrice.findByIdAndUpdate(product.price, {
+//         product: product._id,
+//       });
+//     }
+
+//     const productcode = new RegExp(
+//       ".*" + search ? search.code : "" + ".*",
+//       "i"
+//     );
+//     const productname = new RegExp(
+//       ".*" + search ? search.name : "" + ".*",
+//       "i"
+//     );
+//     const productcategory = new RegExp(
+//       ".*" + search ? search.category : "" + ".*",
+//       "i"
+//     );
+
+//     const allproducts = await Product.find({
+//       market,
+//     })
+//       .sort({ code: 1 })
+//       .select("total market category minimumcount")
+//       .populate(
+//         "price",
+//         "incomingprice sellingprice incomingpriceuzs sellingpriceuzs tradeprice tradepriceuzs"
+//       )
+//       .populate({
+//         path: "productdata",
+//         select: "name code barcode",
+//         match: { name: productname, code: productcode },
+//       })
+//       .populate({
+//         path: "category",
+//         select: "name code",
+//         match: { code: productcategory },
+//       })
+//       .populate("unit", "name");
+
+//     let filtered = filter(
+//       allproducts,
+//       (product) => product.productdata !== null && product.category !== null
+//     );
+
+//     const count = filtered.length;
+//     filtered = filtered.splice(currentPage * countPage, countPage);
+//     res.status(201).json({
+//       products: filtered,
+//       count,
+//     });
+//   } catch (error) {
+//     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });
+//   }
+// };
+
 module.exports.registerAll = async (req, res) => {
   try {
     const products = req.body.products;
     const market = req.body.market;
     const { currentPage, countPage, search } = req.body;
 
-    const all = [];
-
     const marke = await Market.findById(market);
 
-    if (!marke) {
-      return res.status(400).json({
-        message: "Diqqat! Do'kon ma'lumotlari topilmadi.",
-      });
-    }
     for (const product of products) {
-      const category = await Category.findOne({
-        market,
-        code: product.category,
-      });
+      const prod = await Product.findById(product.id)
+      prod.minimumcount = product.minimumcount || 1
+      await prod.save()
+      
+      const productdata = await ProductData.findById(prod.productdata)
+      productdata.barcode = product.barcode || ''
+      await productdata.save()
 
-      const productData = await ProductData.findOne({
-        barcode: product.barcode,
-        market,
-        code: product.code,
-        category: category && category._id,
-      });
-
-      if (productData) {
-        return res.status(400).json({
-          message: `Diqqat! ${product.category} kategoriyasida ${product.code} kodli mahsulot avval yaratilgan.`,
-        });
-      }
+      const productprice = await ProductPrice.findById(prod.price)
+      productprice.tradeprice = product.tradeprice
+      productprice.tradepriceuzs = product.tradepriceuzs
+      await productprice.save()
     }
 
-    for (const product of products) {
-      const { error } = validateProductExcel(product);
-      if (error) {
-        return res.status(400).json({
-          error: error.message,
-        });
-      }
-      const {
-        barcode,
-        category,
-        name,
-        code,
-        unit,
-        incomingprice,
-        sellingprice,
-        incomingpriceuzs,
-        sellingpriceuzs,
-        total,
-        tradeprice,
-        tradepriceuzs,
-        minimumcount,
-      } = product;
-
-      let categor = await Category.findOne({
-        code: category,
-        market,
-      });
-
-      if (!categor) {
-        const newcategory = new Category({
-          code: category,
-          market,
-        });
-        await newcategory.save();
-        categor = newcategory;
-      }
-
-      const newProductData = new ProductData({
-        barcode: barcode
-          ? barcode
-          : "47800" + categor.code.toString() + code.toString(),
-        code,
-        name,
-        category: categor._id,
-        market,
-      });
-      await newProductData.save();
-
-      const newProduct = new Product({
-        productdata: newProductData._id,
-        category: categor._id,
-        market,
-        unit,
-        total: Math.round(total * 1000) / 1000,
-        minimumcount: minimumcount ? minimumcount : 0,
-      });
-
-      // Create Price
-      const newPrice = new ProductPrice({
-        incomingprice: incomingprice
-          ? Math.round(incomingprice * 1000) / 1000
-          : 0,
-        sellingprice: sellingprice ? Math.round(sellingprice * 1000) / 1000 : 0,
-        incomingpriceuzs: incomingpriceuzs
-          ? Math.round(incomingpriceuzs * 1) / 1
-          : 0,
-        sellingpriceuzs: sellingpriceuzs
-          ? Math.round(sellingpriceuzs * 1) / 1
-          : 0,
-        tradeprice: tradeprice ? Math.round(tradeprice * 1000) / 1000 : 0,
-        tradepriceuzs: tradepriceuzs ? Math.round(tradepriceuzs * 1) / 1 : 0,
-        market,
-      });
-      await newPrice.save();
-      newProduct.price = newPrice._id;
-
-      // Create unit
-      const uni = await Unit.findOne({
-        name: unit,
-        market,
-      });
-
-      if (uni) {
-        newProduct.unit = uni._id;
-      } else {
-        const newUnit = new Unit({
-          name: unit,
-          market,
-        });
-        await newUnit.save();
-        newProduct.unit = newUnit._id;
-      }
-
-      all.push(newProduct);
-    }
-
-    for (const product of all) {
-      await product.save();
-
-      await ProductData.findByIdAndUpdate(product.productdata, {
-        unit: product.unit,
-        $push: {
-          products: product._id,
-        },
-        product: product._id,
-      });
-
-      await Category.findByIdAndUpdate(product.category, {
-        $push: {
-          products: product._id,
-        },
-      });
-
-      await ProductPrice.findByIdAndUpdate(product.price, {
-        product: product._id,
-      });
-    }
-
-    const productcode = new RegExp(
-      ".*" + search ? search.code : "" + ".*",
-      "i"
-    );
-    const productname = new RegExp(
-      ".*" + search ? search.name : "" + ".*",
-      "i"
-    );
-    const productcategory = new RegExp(
-      ".*" + search ? search.category : "" + ".*",
-      "i"
-    );
-
-    const allproducts = await Product.find({
-      market,
-    })
-      .sort({ code: 1 })
-      .select("total market category minimumcount")
-      .populate(
-        "price",
-        "incomingprice sellingprice incomingpriceuzs sellingpriceuzs tradeprice tradepriceuzs"
-      )
-      .populate({
-        path: "productdata",
-        select: "name code barcode",
-        match: { name: productname, code: productcode },
-      })
-      .populate({
-        path: "category",
-        select: "name code",
-        match: { code: productcategory },
-      })
-      .populate("unit", "name");
-
-    let filtered = filter(
-      allproducts,
-      (product) => product.productdata !== null && product.category !== null
-    );
-
-    const count = filtered.length;
-    filtered = filtered.splice(currentPage * countPage, countPage);
+    
     res.status(201).json({
-      products: filtered,
-      count,
+      products: [],
+      count: 0,
     });
   } catch (error) {
     res.status(501).json({ error: "Serverda xatolik yuz berdi..." });

@@ -171,6 +171,7 @@ function Products() {
         { name: 'Optom narxi USD', value: 'tradeprice' },
         { name: 'Optom narxi UZS', value: 'tradepriceuzs' },
         { name: 'Minimum qiymat', value: 'minimumcount' },
+        { name: 'ID', value: 'id' },
     ]
 
     // handle change of inputs
@@ -851,6 +852,7 @@ function Products() {
             'Optom narxi USD',
             'Optom narxi UZS',
             'Minimum qiymat',
+            'ID',
         ]
         const body = {
             search: {
@@ -877,6 +879,7 @@ function Products() {
                         tradeprice: item?.price?.tradeprice || '',
                         tradepriceuzs: item?.price?.tradepriceuzs || '',
                         minimumcount: item?.minimumcount || '',
+                        id: item?._id || ""
                     }))
                     exportExcel(newData, fileName, exportHeader)
                 } else {
