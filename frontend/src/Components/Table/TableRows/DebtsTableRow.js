@@ -1,9 +1,11 @@
 import {uniqueId, map} from 'lodash'
 import React, {useState} from 'react'
 import TableBtn from '../../Buttons/TableBtn'
+import {useSelector} from 'react-redux'
 
 export const DebtsTableRow = ({data, currency, Pay, Print, Edit}) => {
     const [isEditComment, setIsEditComment] = useState(null)
+    const isDirector = useSelector((state) => state.login.user.type === "Director")
 
     return (
         <>
@@ -59,11 +61,11 @@ export const DebtsTableRow = ({data, currency, Pay, Print, Edit}) => {
                                 bgcolor={'bg-primary-800'}
                                 onClick={() => Print(debt.saleconnector)}
                             />
-                            <TableBtn
+                            {isDirector && <TableBtn
                                 type={'pay'}
                                 bgcolor={'bg-success-500'}
                                 onClick={() => Pay(debt)}
-                            />
+                            />}
                         </div>
                     </td>
                 </tr>

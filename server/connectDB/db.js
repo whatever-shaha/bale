@@ -12,7 +12,8 @@ module.exports.start = async (app) => {
       .then(() => {
         console.log('Connect to MongoDB');
       })
-      .catch(() => {
+      .catch((e) => {
+        console.log(e)
         console.log('Connecting error to MongoDB');
       });
     app.listen(PORT, () => console.log(`App has been started on port ${PORT}`));

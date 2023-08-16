@@ -6,7 +6,7 @@ import {uniqueId, map} from 'lodash'
 
 export const SavedSalesCheck = forwardRef((props, ref) => {
     const {product} = props
-    const {user, market} = useSelector((state) => state.login)
+    const {market} = useSelector((state) => state.login)
     const {currencyType} = useSelector((state) => state.currency)
     const [loadContent, setLoadContent] = useState(false)
     const saleCheckRef = useRef(null)
@@ -87,7 +87,7 @@ export const SavedSalesCheck = forwardRef((props, ref) => {
                             <p>
                                 Sotuvchi:{' '}
                                 <span className='check-ul-li-span'>
-                                    {user.firstname} {user.lastname}
+                                {product.user? `${product?.user?.firstname} ${product?.user?.lastname}`: "Ma'lumot Saqlanmagan"}
                                 </span>
                             </p>
                         </div>

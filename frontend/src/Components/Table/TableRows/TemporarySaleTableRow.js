@@ -13,7 +13,7 @@ export const TemporarySaleTableRow = ({ data, Delete, currency, Print }) => {
     }
     return (
         <>
-            {map(data, ({ _id, temporary, createdAt }, index) => (
+            {map(data, ({ _id, temporary, createdAt, user:saleCreator }, index) => (
                 <tr className='tr' key={uniqueId('sale')}>
                     <td className='td'>{1 + index}</td>
                     <td className='td text-left'>
@@ -43,7 +43,7 @@ export const TemporarySaleTableRow = ({ data, Delete, currency, Print }) => {
                                 type={'print'}
                                 bgcolor={'bg-primary-800'}
                                 onClick={() =>
-                                    Print({ _id, temporary, createdAt })
+                                    Print({ _id, temporary, createdAt, user: saleCreator })
                                 }
                             />
                             <TableBtn

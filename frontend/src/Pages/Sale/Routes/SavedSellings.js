@@ -68,6 +68,7 @@ const SavedSellings = () => {
             products: el.temporary.tableProducts,
             client: { name: el.temporary.clientValue?.label },
             packman: { name: el.temporary.packmanValue.label },
+            user: el.user
         })
     }
 

@@ -58,6 +58,11 @@ module.exports.updateProductPrices = async (req, res) => {
       price.sellingpriceuzs = roundToUzs(
         price.sellingprice * exchangerate.exchangerate
       );
+      if(price.incomingprice) {
+        price.incomingpriceuzs = roundToUzs(
+            price.incomingprice * exchangerate.exchangerate
+        )
+      }
       if (price.tradeprice) {
         price.tradepriceuzs = roundToUzs(
           price.tradeprice * exchangerate.exchangerate

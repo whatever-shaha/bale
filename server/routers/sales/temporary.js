@@ -22,15 +22,17 @@ module.exports.register = async (req, res) => {
     const newTemporary = new Temporary({
       temporary,
       market,
+      user: req.user.userId
     });
     await newTemporary.save();
 
     const temporaries = await Temporary.find({ market }).select(
-      "temporary createdAt"
-    );
+      "temporary createdAt user"
+    ).populate('user', 'firstname lastname');
 
     res.status(201).send(temporaries);
   } catch (error) {
+    console.log(error)
     res.status(400).json({ error: "Serverda xatolik yuz berdi..." });
   }
 };
@@ -47,8 +49,7 @@ module.exports.getAll = async (req, res) => {
 
     const temporaries = await Temporary.find({ market }).select(
       "temporary createdAt"
-    )
-      .lean()
+    ).populate('user', 'firstname lastname').lean()
 
     for (const temp of temporaries) {
       for (const prod of temp.temporary.tableProducts) {
@@ -89,7 +90,9 @@ module.exports.getbById = async (req, res) => {
       });
     }
 
-    const temporary = await Temporary.findById(temporaryId).select("temporary");
+    const temporary = await Temporary.findById(temporaryId)
+        .select("temporary")
+        .populate('user', 'firstname lastname');
 
     res.status(201).send(temporary);
   } catch (error) {
@@ -112,7 +115,7 @@ module.exports.deleteTemporary = async (req, res) => {
 
     const temporaries = await Temporary.find({ market }).select(
       "temporary createdAt"
-    );
+    ).populate('user', 'firstname lastname');
 
     res.status(201).send(temporaries);
   } catch (error) {
