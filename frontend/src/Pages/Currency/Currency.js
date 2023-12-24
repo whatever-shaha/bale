@@ -18,6 +18,7 @@ import {checkEmptyString} from '../../App/globalFunctions.js'
 import {universalToast} from '../../Components/ToastMessages/ToastMessages.js'
 import {useTranslation} from 'react-i18next'
 import SmallLoader from '../../Components/Spinner/SmallLoader.js'
+import Checkbox from '../../Components/Checkbox/Checkbox.js'
 
 const Currency = () => {
     const {t} = useTranslation(['common'])
@@ -41,6 +42,10 @@ const Currency = () => {
     const [stickyForm, setStickyForm] = useState(false)
     const [newExchange, setNewExchange] = useState(false)
     const [modalBody, setModalBody] = useState(null)
+
+
+    const [isIncomingPrice, setIsIncomingPrice] = useState(false)
+    const [isSellingPrice, setIsSellingPrice] = useState(false)
 
     const toggleModal = () => setModalVisible(!modalVisible)
 
@@ -71,21 +76,21 @@ const Currency = () => {
 
     const addNewExchange = (e) => {
         e.preventDefault()
-        const body = {exchangerate: exchangeName}
-        const {failed} = checkEmptyString([
-            {value: exchangeName, message: 'Kurs narxi'},
+
+        const body = { exchangerate: exchangeName, isIncomingPrice, isSellingPrice }
+        const { failed } = checkEmptyString([
+            { value: exchangeName, message: 'Kurs narxi' },
         ])
         if (failed) {
             return universalToast(t('Valyuta kursini kiriting!'), 'error')
         }
-        dispatch(addExchangerate(body)).then(({error}) => {
-            if (!error) {
-                clearForm()
-                setNewExchange(true)
-                setModalVisible(true)
-                setModalBody('complete')
-            }
-        })
+        if (isIncomingPrice || isSellingPrice) {
+            setNewExchange(true)
+            setModalVisible(true)
+            setModalBody('complete')
+        } else {
+            return universalToast(t('Sotish yoki kelish tanlang!'), 'warning')
+        }
     }
 
     const handleEdit = (e) => {
@@ -111,11 +116,13 @@ const Currency = () => {
     }
 
     const updateAllProducts = () => {
-        dispatch(updateProductPrices()).then(({error}) => {
+        const body = { exchangerate: exchangeName, isIncomingPrice, isSellingPrice }
+        dispatch(addExchangerate(body)).then(({ error }) => {
             if (!error) {
-                setModalBody(null)
-                setModalVisible(false)
+                clearForm()
                 setNewExchange(false)
+                setModalVisible(false)
+                setModalBody(null)
             }
         })
     }
@@ -123,6 +130,8 @@ const Currency = () => {
     const clearForm = (e) => {
         e && e.preventDefault()
         setExchangeName('')
+        setIsIncomingPrice(false)
+        setIsSellingPrice(false)
         setCurrentExchange(null)
         setStickyForm(false)
     }
@@ -197,6 +206,18 @@ const Currency = () => {
                         type={'number'}
                         border={true}
                         onKeyPress={handleKeyUp}
+                    />
+                    <Checkbox
+                        id={'isIncomingPrice'}
+                        onChange={() => setIsIncomingPrice(!isIncomingPrice)}
+                        value={isIncomingPrice}
+                        label={t('Kelish narxi')}
+                    />
+                    <Checkbox
+                        id={'isSellingPrice'}
+                        onChange={() => setIsSellingPrice(!isSellingPrice)}
+                        value={isSellingPrice}
+                        label={t('Sotish narxi')}
                     />
                     <div
                         className={'w-full flex gap-[1.25rem] grow w-[33.2rem]'}

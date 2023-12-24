@@ -7,14 +7,14 @@ const { roundToUzs } = require("../globalFunctions.js");
 
 module.exports.register = async (req, res) => {
   try {
-    const { error } = validateExchangerate(req.body);
-    if (error) {
-      return res.status(400).json({
-        error: error.message,
-      });
-    }
+    // const { error } = validateExchangerate(req.body);
+    // if (error) {
+    //   return res.status(400).json({
+    //     error: error.message,
+    //   });
+    // }
 
-    const { exchangerate, market } = req.body;
+    const { exchangerate, market, isIncomingPrice, isSellingPrice } = req.body;
 
     const marke = await Market.findById(market);
 
@@ -23,12 +23,39 @@ module.exports.register = async (req, res) => {
         message: "Diqqat! Do'kon ma'lumotlari topilmadi.",
       });
     }
+    
+    const products = await Product.find({ market });
 
     const newExchangerate = new Exchangerate({
       exchangerate,
       market,
     });
     await newExchangerate.save();
+
+    if (isSellingPrice) {
+      map(products, async (product) => {
+        const price = await ProductPrice.findById(product.price);
+        price.sellingpriceuzs = roundToUzs(
+          price.sellingprice * newExchangerate.exchangerate
+        );
+        if (price.tradeprice) {
+          price.tradepriceuzs = roundToUzs(
+            price.tradeprice * newExchangerate.exchangerate
+          );
+        }
+        await price.save();
+      });
+    }
+
+    if (isIncomingPrice) {
+      map(products, async (product) => {
+        const price = await ProductPrice.findById(product.price);
+        price.incomingpriceuzs = roundToUzs(
+          price.incomingprice * newExchangerate.exchangerate
+        );
+        await price.save();
+      });
+    }
 
     res.send(newExchangerate);
   } catch (error) {
@@ -58,11 +85,6 @@ module.exports.updateProductPrices = async (req, res) => {
       price.sellingpriceuzs = roundToUzs(
         price.sellingprice * exchangerate.exchangerate
       );
-      if(price.incomingprice) {
-        price.incomingpriceuzs = roundToUzs(
-            price.incomingprice * exchangerate.exchangerate
-        )
-      }
       if (price.tradeprice) {
         price.tradepriceuzs = roundToUzs(
           price.tradeprice * exchangerate.exchangerate
